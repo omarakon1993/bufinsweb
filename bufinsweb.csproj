@@ -130,7 +130,7 @@
     <Content Include="Assets\css\bootstrap.min.css" />
     <Content Include="Assets\css\flex-slider.css" />
     <Content Include="Assets\css\font-awesome.css" />
-    <Content Include="Assets\css\templatemo-softy-pinko.css" />
+    <Content Include="Assets\css\general.css" />
     <Content Include="Assets\fonts\flexslider-icon.svg" />
     <Content Include="Assets\fonts\fontawesome-webfont.svg" />
     <Content Include="Assets\fonts\slick.svg" />
