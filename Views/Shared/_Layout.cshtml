@@ -4,7 +4,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
+    <title>@ViewBag.Title - BUSINESS. FINANCE. ALWAYS. EVERYWHERE.</title>
+    <meta name="description" content="Bufins - Business. Finance. Always. Everywhere. Transforme sus cifras en mejores decisiones de negocio.">
     <link rel="icon" type="image/x-icon" href="~/favicon.ico">
 
     <!-- Bootstrap 5 CSS -->
@@ -298,9 +299,102 @@
 
         /* Final CTA Section */
         .final-cta-section {
-            background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-dark-purple) 100%);
+            background: var(--color-dark-purple);
             color: white;
-            padding: 6rem 0 !important;
+            padding: 5rem 0 !important;
+            position: relative;
+        }
+
+        .final-cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 30% 40%, rgba(88, 58, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(1, 225, 215, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .cta-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(1, 225, 215, 0.15);
+            border-radius: 20px;
+            padding: 3.5rem 2.5rem;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+
+        .cta-main-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 700;
+            line-height: 1.4;
+            color: white;
+        }
+
+        .transform-text {
+            color: var(--color-cyan);
+            font-weight: 700;
+        }
+
+        .cta-divider {
+            width: 80px;
+            height: 3px;
+            background: var(--color-cyan);
+            margin: 1.5rem auto;
+            border-radius: 2px;
+        }
+
+        .cta-benefit {
+            background: rgba(88, 58, 255, 0.08);
+            border: 1px solid rgba(88, 58, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .cta-benefit:hover {
+            background: rgba(88, 58, 255, 0.12);
+            border-color: var(--color-purple);
+            transform: translateY(-3px);
+        }
+
+        .cta-benefit i {
+            font-size: 2.5rem;
+            color: var(--color-cyan);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .cta-benefit p {
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .btn-cta-custom {
+            background: var(--color-cyan);
+            color: var(--color-dark-purple) !important;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-cta-custom:hover {
+            background: var(--color-purple);
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(88, 58, 255, 0.3);
         }
 
         /* Buttons */
@@ -430,40 +524,55 @@
 
         /* Problem Section */
         .problem-section {
-            background-color: #fff;
+            background: var(--color-dark-purple);
+            position: relative;
+            padding: 5rem 0 !important;
         }
 
-        .problem-card {
-            background: white;
-            border: 2px solid #f0f0f0;
-            border-radius: 15px;
-            padding: 2rem 1rem;
+        .problem-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(88, 58, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(1, 225, 215, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .problem-header {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(1, 225, 215, 0.15);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            position: relative;
+            backdrop-filter: blur(5px);
             text-align: center;
-            transition: all 0.3s ease;
-            height: 100%;
-            min-height: 150px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
 
-        .problem-card:hover {
-            border-color: var(--color-orange);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(255, 85, 0, 0.15);
+        .problem-main-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 700;
+            color: white;
+            line-height: 1.4;
         }
 
-        .problem-card i {
-            font-size: 2.5rem;
-            color: var(--color-orange);
-            margin-bottom: 1rem;
+        .problem-divider {
+            width: 80px;
+            height: 3px;
+            background: var(--color-cyan);
+            margin: 1.5rem auto;
+            border-radius: 2px;
         }
 
-        .problem-card p {
-            margin: 0;
-            font-weight: 600;
-            color: var(--color-dark-purple);
+        .problem-description {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.7;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
         .section-title {
@@ -474,21 +583,54 @@
 
         /* What is Section */
         .what-is-section {
-            background-color: #fff;
+            background: linear-gradient(135deg, #0f0a24 0%, #160933 100%);
+            position: relative;
+            padding: 6rem 0 !important;
+        }
+
+        .what-is-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 80% 20%, rgba(1, 225, 215, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(88, 58, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .what-is-section .section-title {
+            color: white;
+        }
+
+        .what-is-section .lead {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .what-is-section p {
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .benefit-card {
-            background: var(--color-light-cyan);
+            background: rgba(1, 225, 215, 0.08);
+            border: 2px solid rgba(1, 225, 215, 0.2);
             border-radius: 15px;
             padding: 2rem 1.5rem;
             text-align: center;
             transition: all 0.3s ease;
             height: 100%;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
         }
 
         .benefit-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(1, 225, 215, 0.2);
+            background: rgba(1, 225, 215, 0.15);
+            border-color: var(--color-cyan);
+            box-shadow: 0 10px 30px rgba(1, 225, 215, 0.3);
         }
 
         .benefit-card i {
@@ -500,7 +642,7 @@
         .benefit-card p {
             margin: 0;
             font-weight: 600;
-            color: var(--color-dark-purple);
+            color: white;
         }
 
         /* Advantages List */
@@ -593,38 +735,197 @@
 
         /* Target Section */
         .target-section {
-            background-color: #fff;
+            background: linear-gradient(135deg, #160933 0%, #0f0a24 100%);
+            position: relative;
+            padding: 6rem 0 !important;
+        }
+
+        .target-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 30% 50%, rgba(88, 58, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .target-section .section-title {
+            color: white;
+        }
+
+        .target-section .lead {
+            color: rgba(255, 255, 255, 0.95);
         }
 
         .target-list {
             list-style: none;
             padding: 0;
+            position: relative;
+            z-index: 1;
         }
 
         .target-list li {
             padding: 1rem 0;
             font-size: 1.2rem;
-            color: #333;
-            border-bottom: 1px solid #eee;
+            color: white;
+            border-bottom: 1px solid rgba(1, 225, 215, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .target-list li:hover {
+            color: var(--color-cyan);
+            padding-left: 1rem;
         }
 
         /* Culture Section */
         .culture-section {
-            background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-dark-purple) 100%);
+            background: linear-gradient(135deg, #1a0a3e 0%, #2d1b69 50%, #160933 100%);
             color: white;
+            position: relative;
+            overflow: hidden;
+            padding: 6rem 0 !important;
+        }
+
+        .culture-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(1, 225, 215, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .culture-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(88, 58, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .culture-icon-wrapper {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .culture-icon-wrapper i {
+            font-size: 15rem;
+            background: linear-gradient(135deg, var(--color-cyan) 0%, var(--color-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.3;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.05); opacity: 0.5; }
+        }
+
+        .culture-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .culture-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .culture-emoji {
+            font-size: 3rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @@keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .culture-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .culture-text strong {
+            font-weight: 700;
         }
 
         /* Responsive updates */
         @@media (max-width: 768px) {
-            .problem-card {
-                min-height: 120px;
-            }
-
             .hero-subtitle {
                 font-size: 1.1rem;
             }
 
             .hero-description {
+                font-size: 1rem;
+            }
+
+            .problem-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .problem-main-title {
+                font-size: 1.5rem;
+            }
+
+            .problem-description {
+                font-size: 1rem;
+            }
+
+            .culture-icon-wrapper i {
+                font-size: 8rem;
+            }
+
+            .culture-title {
+                font-size: 1.8rem;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .culture-emoji {
+                font-size: 2.5rem;
+            }
+
+            .culture-text {
+                font-size: 1rem;
+            }
+
+            .cta-card {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .cta-main-title {
+                font-size: 1.5rem;
+            }
+
+            .cta-benefit {
+                padding: 1.5rem 1rem;
+            }
+
+            .cta-benefit i {
+                font-size: 2rem;
+            }
+
+            .btn-cta-custom {
+                padding: 0.9rem 2rem;
                 font-size: 1rem;
             }
         }
