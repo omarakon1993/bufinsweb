@@ -416,6 +416,218 @@
             color: var(--color-dark-purple);
             margin-bottom: 0.5rem;
         }
+
+        /* New Sections Styles */
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--color-dark-purple);
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        /* Problem Section */
+        .problem-section {
+            background-color: #fff;
+        }
+
+        .problem-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 2rem 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .problem-card:hover {
+            border-color: var(--color-orange);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 85, 0, 0.15);
+        }
+
+        .problem-card i {
+            font-size: 2.5rem;
+            color: var(--color-orange);
+            margin-bottom: 1rem;
+        }
+
+        .problem-card p {
+            margin: 0;
+            font-weight: 600;
+            color: var(--color-dark-purple);
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 700;
+            color: var(--color-dark-purple);
+        }
+
+        /* What is Section */
+        .what-is-section {
+            background-color: #fff;
+        }
+
+        .benefit-card {
+            background: var(--color-light-cyan);
+            border-radius: 15px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(1, 225, 215, 0.2);
+        }
+
+        .benefit-card i {
+            font-size: 2.5rem;
+            color: var(--color-cyan);
+            margin-bottom: 1rem;
+        }
+
+        .benefit-card p {
+            margin: 0;
+            font-weight: 600;
+            color: var(--color-dark-purple);
+        }
+
+        /* Advantages List */
+        .advantages-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .advantages-list li {
+            padding: 0.8rem 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        /* How it Works Section */
+        .how-it-works-section {
+            background-color: #fff;
+        }
+
+        .process-step-card {
+            background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-dark-purple) 100%);
+            border-radius: 15px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: white;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .process-step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(88, 58, 255, 0.3);
+        }
+
+        .step-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--color-cyan);
+            margin-bottom: 1rem;
+        }
+
+        .module-item {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .module-item:hover {
+            border-color: var(--color-purple);
+            transform: translateX(5px);
+        }
+
+        .module-item i {
+            font-size: 1.5rem;
+            color: var(--color-purple);
+        }
+
+        .module-item span {
+            font-weight: 600;
+            color: var(--color-dark-purple);
+        }
+
+        /* Testimonials Section */
+        .testimonial-card {
+            background: white;
+            border-left: 4px solid var(--color-cyan);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            height: 100%;
+        }
+
+        .testimonial-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--color-purple);
+            margin: 0;
+        }
+
+        /* Target Section */
+        .target-section {
+            background-color: #fff;
+        }
+
+        .target-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .target-list li {
+            padding: 1rem 0;
+            font-size: 1.2rem;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Culture Section */
+        .culture-section {
+            background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-dark-purple) 100%);
+            color: white;
+        }
+
+        /* Responsive updates */
+        @@media (max-width: 768px) {
+            .problem-card {
+                min-height: 120px;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -432,9 +644,6 @@
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Index", "Home")">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("About", "Home")">Servicios</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Contact", "Home")">Contacto</a>
@@ -467,7 +676,6 @@
                     <h5 class="mb-3">Enlaces</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
-                        <li class="mb-2"><a href="@Url.Action("About", "Home")">Servicios</a></li>
                         <li class="mb-2"><a href="@Url.Action("Contact", "Home")">Contacto</a></li>
                     </ul>
                 </div>
