@@ -51,9 +51,9 @@
 
         /* Navbar Styles */
         .navbar {
-            background-color: rgba(255, 255, 255, 0.98) !important;
+            background: linear-gradient(135deg, #160933 0%, #583AFF 50%, #01E1D7 100%) !important;
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
             padding: 1rem 0;
             transition: all 0.3s ease;
         }
@@ -63,18 +63,21 @@
             font-size: 1.8rem;
             color: var(--color-cyan) !important;
             letter-spacing: -0.02em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .nav-link {
-            color: #333 !important;
+            color: white !important;
             font-weight: 500;
             margin: 0 1rem;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
             position: relative;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .nav-link:hover {
-            color: var(--color-purple) !important;
+            color: var(--color-cyan) !important;
+            transform: translateY(-2px);
         }
 
         .nav-link::after {
@@ -84,12 +87,38 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--color-purple);
+            background: var(--color-cyan);
             transition: width 0.3s ease;
         }
 
         .nav-link:hover::after {
             width: 100%;
+        }
+
+        /* Portal Clientes Button */
+        .btn-portal {
+            background: linear-gradient(135deg, var(--color-cyan) 0%, #00c9c0 100%);
+            color: var(--color-dark-purple) !important;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(1, 225, 215, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-portal:hover {
+            background: linear-gradient(135deg, #00c9c0 0%, var(--color-cyan) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(1, 225, 215, 0.4);
+            color: var(--color-dark-purple) !important;
+        }
+
+        .btn-portal i {
+            font-size: 1.1rem;
         }
 
         /* Hero Section */
@@ -308,9 +337,20 @@
 
             .nav-link {
                 margin: 0.5rem 0;
+                text-align: center;
             }
 
             .slogan-text {
+                font-size: 1.5rem;
+            }
+
+            .btn-portal {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .navbar-brand {
                 font-size: 1.5rem;
             }
         }
@@ -354,7 +394,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="@Url.Action("Index", "Home")">
                 Bufins
@@ -372,6 +412,11 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Contact", "Home")">Contacto</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-portal" href="https://customers.bufins.com">
+                            <i class="fas fa-user-circle me-2"></i>Portal Clientes
+                        </a>
                     </li>
                 </ul>
             </div>
