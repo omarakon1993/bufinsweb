@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Archivos temporales del sistema operativo
+Thumbs.db
+.DS_Store
+
+# Archivos específicos que causan el error en OneDrive
+.vsidx
+SemanticSymbols.db-shm
+CodeChunks.db-shm

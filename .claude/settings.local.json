@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(msbuild:*)",
+      "Bash(where:*)",
+      "Bash(\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe\" bufinsweb.sln /t:Build /p:Configuration=Debug /verbosity:minimal)",
+      "Bash(\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe\" bufinsweb.sln /p:Configuration=Debug)",
+      "Bash(cmd /c \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe\"\" bufinsweb.sln /p:Configuration=Debug\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

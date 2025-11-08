@@ -1,19 +1,40 @@
-﻿@{
-    ViewBag.Title = "Contact";
+@{
+    ViewBag.Title = "Contacto - Bufins Web";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <address>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399<br />
-        <abbr title="Phone">P:</abbr>
-        425.555.0100
-    </address>
+<div class="container">
+    <div class="mt-5">
+        <h1>@ViewBag.Message</h1>
+        <hr>
 
-    <address>
-        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-    </address>
-</main>
+        <div class="row">
+            <div class="col-md-8">
+                <h3>Formulario de Contacto</h3>
+                <form>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="nombre@ejemplo.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="mensaje" class="form-label">Mensaje</label>
+                        <textarea class="form-control" id="mensaje" rows="5" placeholder="Escriba su mensaje aquí"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar Mensaje</button>
+                </form>
+            </div>
+
+            <div class="col-md-4">
+                <h3>Información de Contacto</h3>
+                <p><strong>Email:</strong> info@bufins.com</p>
+                <p><strong>Teléfono:</strong> +57 300 123 4567</p>
+                <p><strong>Dirección:</strong> Colombia</p>
+            </div>
+        </div>
+
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-4">Volver al Inicio</a>
+    </div>
+</div>

@@ -1,9 +1,33 @@
-﻿@{
-    ViewBag.Title = "About";
+@{
+    ViewBag.Title = "Acerca de - Bufins Web";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <p>Use this area to provide additional information.</p>
-</main>
+<div class="container">
+    <div class="mt-5">
+        <h1>@ViewBag.Message</h1>
+        <hr>
+        <p class="lead">Este es un proyecto web desarrollado con ASP.NET MVC 5</p>
+
+        <h3 class="mt-4">Tecnologías Utilizadas</h3>
+        <ul>
+            <li>.NET Framework 4.8</li>
+            <li>ASP.NET MVC 5.2.9</li>
+            <li>Bootstrap 5</li>
+            <li>Entity Framework (listo para configurar)</li>
+        </ul>
+
+        <h3 class="mt-4">Estructura del Proyecto</h3>
+        <ul>
+            <li><strong>Controllers:</strong> Controladores MVC</li>
+            <li><strong>Views:</strong> Vistas Razor</li>
+            <li><strong>Models:</strong> Modelos de datos</li>
+            <li><strong>Services:</strong> Lógica de negocio</li>
+            <li><strong>Helpers:</strong> Clases auxiliares</li>
+            <li><strong>Filters:</strong> Filtros personalizados</li>
+            <li><strong>Permisos:</strong> Gestión de permisos</li>
+            <li><strong>SQL:</strong> Scripts de base de datos</li>
+        </ul>
+
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">Volver al Inicio</a>
+    </div>
+</div>

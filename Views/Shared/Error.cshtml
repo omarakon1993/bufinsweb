@@ -1,14 +1,18 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width" />
-    <title>Error</title>
-</head>
-<body>
-    <hgroup>
-        <h1>Error.</h1>
-        <h2>Error al procesar la solicitud.</h2>
-    </hgroup>
-</body>
-</html>
+@{
+    ViewBag.Title = "Error";
+}
+
+<div class="container">
+    <div class="mt-5">
+        <div class="alert alert-danger" role="alert">
+            <h1 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Error</h1>
+            <hr>
+            <p>Ha ocurrido un error inesperado. Por favor, intente nuevamente.</p>
+            <p>Si el problema persiste, contacte al administrador del sistema.</p>
+        </div>
+
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+            <i class="fas fa-home"></i> Volver al Inicio
+        </a>
+    </div>
+</div>
