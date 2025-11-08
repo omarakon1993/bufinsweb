@@ -1,66 +1,377 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Bufins Web</title>
+    <title>@ViewBag.Title</title>
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            /* Colores Primarios */
+            --color-dark-purple: #160933;
+            --color-cyan: #01E1D7;
+            --color-purple: #583AFF;
+            --color-orange: #FF5500;
+
+            /* Colores Secundarios */
+            --color-light-gray: #F4F4F4;
+            --color-light-cyan: #DBFCF6;
+            --color-light-purple: #E4E3FF;
+            --color-light-peach: #FFE7DE;
+
+            /* Typography */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            padding-top: 56px;
+            font-family: var(--font-family);
+            color: #333;
+            line-height: 1.7;
+            overflow-x: hidden;
         }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
         .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--color-cyan) !important;
+            letter-spacing: -0.02em;
         }
+
+        .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--color-purple) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-purple);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 2rem 0;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            line-height: 1.2;
+            color: var(--color-dark-purple);
+        }
+
+        .hero-title .text-italic {
+            font-weight: 700;
+            font-style: italic;
+            color: var(--color-purple);
+        }
+
+        .rounded-shadow {
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        /* Dark Section */
+        .dark-section {
+            background-color: var(--color-dark-purple);
+            color: white;
+            padding: 5rem 0 !important;
+        }
+
+        /* Slogan Section */
+        .slogan-section {
+            background-color: var(--color-dark-purple);
+            padding: 5rem 0 !important;
+        }
+
+        .slogan-text {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+
+        .text-cyan { color: var(--color-cyan) !important; }
+        .text-purple { color: var(--color-purple) !important; }
+        .text-orange { color: var(--color-orange) !important; }
+        .text-white { color: white !important; }
+
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background-color: #fff;
+        }
+
+        .feature-card {
+            padding: 2.5rem 1.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--color-cyan);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h4 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--color-dark-purple);
+        }
+
+        /* Modules Section */
+        .modules-section {
+            padding: 6rem 0;
+        }
+
+        .brand-text {
+            color: var(--color-purple);
+            font-weight: 800;
+        }
+
+        .modules-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modules-list li {
+            padding: 0.8rem 0;
+            padding-left: 2rem;
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modules-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--color-cyan);
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5rem 0 !important;
+        }
+
+        .cta-section h2 {
+            font-weight: 300;
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+        }
+
+        /* Process Section */
+        .process-section {
+            padding: 6rem 0;
+        }
+
+        .process-card {
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #f0f0f0;
+            transition: border-color 0.3s ease;
+            height: 100%;
+        }
+
+        .process-card:hover {
+            border-color: var(--color-purple);
+        }
+
+        .process-step {
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Final CTA Section */
+        .final-cta-section {
+            background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-dark-purple) 100%);
+            color: white;
+            padding: 6rem 0 !important;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--color-purple);
+            border: none;
+            padding: 1rem 3rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-cyan);
+            color: var(--color-dark-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-cyan {
+            background-color: var(--color-cyan);
+            color: var(--color-dark-purple);
+            border: none;
+            padding: 1rem 3rem;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cyan:hover {
+            background-color: white;
+            color: var(--color-dark-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Footer */
         footer {
-            margin-top: 50px;
-            padding: 20px 0;
-            background-color: #f8f9fa;
-            border-top: 1px solid #dee2e6;
+            background-color: var(--color-dark-purple);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 0;
         }
-        .jumbotron {
-            background-color: #e9ecef;
-            padding: 2rem 1rem;
-            border-radius: 0.3rem;
+
+        footer a {
+            color: var(--color-cyan);
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
-        .card {
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        footer a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .hero-section {
+                padding: 4rem 0;
+            }
+
+            .nav-link {
+                margin: 0.5rem 0;
+            }
+
+            .slogan-text {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Contact Form Styles */
+        .contact-section {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .contact-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--color-purple);
+            box-shadow: 0 0 0 0.2rem rgba(88, 58, 255, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--color-dark-purple);
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="@Url.Action("Index", "Home")">
-                <i class="fas fa-globe"></i> Bufins Web
+                Bufins
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Index", "Home")">
-                            <i class="fas fa-home"></i> Inicio
-                        </a>
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("About", "Home")">
-                            <i class="fas fa-info-circle"></i> Acerca de
-                        </a>
+                        <a class="nav-link" href="@Url.Action("About", "Home")">Servicios</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Contact", "Home")">
-                            <i class="fas fa-envelope"></i> Contacto
-                        </a>
+                        <a class="nav-link" href="@Url.Action("Contact", "Home")">Contacto</a>
                     </li>
                 </ul>
             </div>
@@ -68,7 +379,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main role="main">
+    <main>
         @RenderBody()
     </main>
 
@@ -76,15 +387,30 @@
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <p>&copy; @DateTime.Now.Year - Bufins Web - Todos los derechos reservados</p>
+                <div class="col-md-4 mb-4">
+                    <h4 class="brand-text mb-3">Bufins</h4>
+                    <p class="small">Business. Finance. Always. Everywhere.</p>
+                    <p class="small">Transforme sus cifras en mejores decisiones de negocio.</p>
                 </div>
-                <div class="col-md-6 text-end">
-                    <p>
-                        <a href="@Url.Action("Index", "Home")" class="text-decoration-none">Inicio</a> |
-                        <a href="@Url.Action("About", "Home")" class="text-decoration-none">Acerca de</a> |
-                        <a href="@Url.Action("Contact", "Home")" class="text-decoration-none">Contacto</a>
-                    </p>
+                <div class="col-md-4 mb-4">
+                    <h5 class="mb-3">Enlaces</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+                        <li class="mb-2"><a href="@Url.Action("About", "Home")">Servicios</a></li>
+                        <li class="mb-2"><a href="@Url.Action("Contact", "Home")">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="mb-3">Contacto</h5>
+                    <p class="small mb-2"><i class="fas fa-envelope me-2"></i> info@bufins.com</p>
+                    <p class="small mb-2"><i class="fas fa-phone me-2"></i> +57 300 123 4567</p>
+                    <p class="small mb-2"><i class="fas fa-map-marker-alt me-2"></i> Colombia</p>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.1)">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="small mb-0">&copy; @DateTime.Now.Year Bufins - Todos los derechos reservados</p>
                 </div>
             </div>
         </div>

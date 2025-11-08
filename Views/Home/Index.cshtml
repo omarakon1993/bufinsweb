@@ -1,44 +1,206 @@
 @{
-    ViewBag.Title = "Inicio - Bufins Web";
+    ViewBag.Title = "Bufins - Business. Finance. Always. Everywhere.";
 }
 
-<div class="container">
-    <div class="jumbotron mt-5">
-        <h1 class="display-4">¡Hola Mundo!</h1>
-        <p class="lead">@ViewBag.Message</p>
-        <hr class="my-4">
-        <p>Este es un proyecto ASP.NET MVC 5 con .NET Framework 4.8</p>
-        <p><strong>Fecha y hora actual:</strong> @ViewBag.DateTime</p>
-        <p class="lead">
-            <a class="btn btn-primary btn-lg" href="@Url.Action("About", "Home")" role="button">Acerca de</a>
-            <a class="btn btn-secondary btn-lg" href="@Url.Action("Contact", "Home")" role="button">Contacto</a>
-        </p>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-12 text-center" data-aos="fade-up">
+                <h1 class="hero-title mb-4">
+                    Transforme<br />
+                    sus cifras<br />
+                    en<br />
+                    <span class="text-italic">mejores</span><br />
+                    <span class="text-italic">decisiones</span><br />
+                    <span class="text-italic">de negocio.</span>
+                </h1>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Característica 1</h5>
-                    <p class="card-text">Tu proyecto está limpio y listo para comenzar a desarrollar.</p>
-                </div>
+<!-- What is Bufins Section -->
+<section class="dark-section py-5">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-10 text-center" data-aos="fade-up">
+                <h2 class="text-white mb-4 display-5">¿Qué es <span class="text-cyan">Bufins</span>?</h2>
+                <p class="text-white lead">
+                    Es un sistema de información basado en la web que transforma las cifras contables de su negocio en información de alto valor, ordenada, confiable y fácil de visualizar desde cualquier lugar o dispositivo, así podrá tomar decisiones basadas en data justo en el momento que usted lo requiere.
+                </p>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Característica 2</h5>
-                    <p class="card-text">Configuración completa con sesiones y conexión a base de datos.</p>
-                </div>
+    </div>
+</section>
+
+<!-- Slogan Section -->
+<section class="slogan-section py-5">
+    <div class="container text-center" data-aos="fade-up">
+        <h2 class="slogan-text mb-4">
+            <span class="text-cyan">BUSINESS.</span>
+            <span class="text-purple">FINANCE.</span>
+            <span class="text-white">ALWAYS.</span>
+            <span class="text-orange">EVERYWHERE.</span>
+        </h2>
+        <div class="row mt-5">
+            <div class="col-md-3">
+                <p class="text-white">Negocios</p>
+            </div>
+            <div class="col-md-3">
+                <p class="text-white">Finanzas</p>
+            </div>
+            <div class="col-md-3">
+                <p class="text-white">Siempre</p>
+            </div>
+            <div class="col-md-3">
+                <p class="text-white">En todas partes</p>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Característica 3</h5>
-                    <p class="card-text">Estructura de carpetas siguiendo las mejores prácticas.</p>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2>Lo que <span class="brand-text">Bufins</span> hace por usted.</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4>El punto final al desorden.</h4>
+                    <p>Ponga fin al manejo inadecuado y la falta de homogeneidad en su información financiera con bases de datos online estandarizadas y seguras.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Números sí. Fácil también.</h4>
+                    <p>Es extraordinario cómo nuestros dashboards le facilitarán la lectura de la información numérica de su negocio. Consulte sus cifras de forma confiable y oportuna, siempre.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>Menos carga. Más decisiones.</h4>
+                    <p>Preparar la información financiera para comités y juntas colapsa la operación y entorpece la gestión; permita que Bufins asuma esa carga operativa optimizando su tiempo para la toma de decisiones.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Su equipo más financiero.</h4>
+                    <p>Provea a su equipo de trabajo de conocimientos e instrumentos financieros para que entiendan el valor de la información y conozcan las formas correctas de manejarla.</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- What You Can Visualize Section -->
+<section class="modules-section py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5" data-aos="fade-right">
+                <h2 class="brand-text mb-4">Bufins</h2>
+                <p class="lead">es un sistema desarrollado bajo una estructura web de módulos, que nos permite la recolección, almacenamiento, procesamiento y transmisión de información. Así usted podrá visualizar datos históricos y de control presupuestal relacionados con:</p>
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <ul class="modules-list">
+                    <li>Estados de resultados (General, líneas de negocio, líneas de venta, productos y servicios, gastos fijos y variables)</li>
+                    <li>Balance</li>
+                    <li>EBITDA</li>
+                    <li>Flujo de caja</li>
+                    <li>Tesorería</li>
+                    <li>Plan de choque</li>
+                    <li>Indicadores financieros (Confianza o respaldo, eficiencia o actividad, inversión, productividad, endeudamiento, sostenibilidad, DuPont)</li>
+                    <li>Forecast de cierre (De meses ejecutados y presupuesto, de meses por ejecutar: Estados de resultados, general, balance, EBITDA)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5">
+    <div class="container text-center" data-aos="fade-up">
+        <h2 class="mb-4">Está a punto de tomar la decisión<br/><span class="text-purple">más importante</span><br/>de sus próximas decisiones.</h2>
+        <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg mt-4">Empezar ahora</a>
+    </div>
+</section>
+
+<!-- Process Section -->
+<section class="process-section py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2>Empiece a trabajar con <span class="brand-text">Bufins</span> ahora.</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="process-card">
+                    <div class="process-step text-purple">MEETUP</div>
+                    <p>Agendamos una reunión que nos permita entender su negocio y sus necesidades.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="process-card">
+                    <div class="process-step text-purple">PROPOSAL</div>
+                    <p>Presentamos nuestra propuesta de trabajo, el valor de la inversión y tiempos.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="process-card">
+                    <div class="process-step text-purple">PLANNING</div>
+                    <p>Se definen todas las variables claves de su modelo de negocio como líneas de negocio, líneas de venta, empresas, países, etc.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="process-card">
+                    <div class="process-step text-purple">DATA</div>
+                    <p>Recibirá el archivo maestro de la base de datos que deberá suministrar para el procesamiento de la información en la plataforma.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="process-card">
+                    <div class="process-step text-purple">DASHBOARDS</div>
+                    <p>Se procesa la información y se calculan los tableros que mostrarán los resultados para el análisis financiero.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
+                <div class="process-card">
+                    <div class="process-step text-purple">CHECK</div>
+                    <p>Auditamos que los datos de Bufins corresponden a los originales de su empresa. Así aseguramos que usted obtendrá información confiable y precisa.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="final-cta-section py-5">
+    <div class="container text-center" data-aos="fade-up">
+        <p class="lead text-cyan mb-4">Creemos en el impacto que genera desarrollar una cultura financiera en las organizaciones, al usar esta solución en el día a día de su negocio, sus equipos de trabajo construyen una cultura donde las cifras y los indicadores son el insumo más importante para la medición de desempeño y la toma de decisiones.</p>
+        <h2 class="text-white display-4">¿Empezamos?</h2>
+        <a href="@Url.Action("Contact", "Home")" class="btn btn-cyan btn-lg mt-4">Contáctenos</a>
+    </div>
+</section>
+
+@section scripts {
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true
+    });
+</script>
+}

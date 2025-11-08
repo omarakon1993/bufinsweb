@@ -1,33 +1,143 @@
 @{
-    ViewBag.Title = "Acerca de - Bufins Web";
+    ViewBag.Title = "Servicios - Bufins";
 }
 
-<div class="container">
-    <div class="mt-5">
-        <h1>@ViewBag.Message</h1>
-        <hr>
-        <p class="lead">Este es un proyecto web desarrollado con ASP.NET MVC 5</p>
-
-        <h3 class="mt-4">Tecnologías Utilizadas</h3>
-        <ul>
-            <li>.NET Framework 4.8</li>
-            <li>ASP.NET MVC 5.2.9</li>
-            <li>Bootstrap 5</li>
-            <li>Entity Framework (listo para configurar)</li>
-        </ul>
-
-        <h3 class="mt-4">Estructura del Proyecto</h3>
-        <ul>
-            <li><strong>Controllers:</strong> Controladores MVC</li>
-            <li><strong>Views:</strong> Vistas Razor</li>
-            <li><strong>Models:</strong> Modelos de datos</li>
-            <li><strong>Services:</strong> Lógica de negocio</li>
-            <li><strong>Helpers:</strong> Clases auxiliares</li>
-            <li><strong>Filters:</strong> Filtros personalizados</li>
-            <li><strong>Permisos:</strong> Gestión de permisos</li>
-            <li><strong>SQL:</strong> Scripts de base de datos</li>
-        </ul>
-
-        <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">Volver al Inicio</a>
+<!-- Services Hero -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-12 text-center" data-aos="fade-up">
+                <h1 class="hero-title mb-5">
+                    Ahora<br />
+                    gerencie<br />
+                    con<br />
+                    <span class="brand-text">Bufins</span>
+                </h1>
+                <p class="lead">Un experto financiero llevará a cabo con su equipo de trabajo el<br /><strong>comité financiero mensual</strong> con los siguientes objetivos:</p>
+            </div>
+        </div>
     </div>
-</div>
+</section>
+
+<!-- Objectives Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>1. Acompañamiento en la ejecución financiera de las estrategias de crecimiento.</h4>
+                </div>
+            </div>
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h4>2. Control del presupuesto.</h4>
+                </div>
+            </div>
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h4>3. Seguimiento de los indicadores financieros de mayor impacto en la generación de valor.</h4>
+                </div>
+            </div>
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h4>4. Análisis de resultados y recomendaciones.</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Generalidades Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="text-purple">Generalidades</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 mx-auto" data-aos="fade-up">
+                <ul class="modules-list">
+                    <li>La primera fase de estructuración de la base de datos necesaria, para preparar el modelo financiero, se cobra por separado y equivale a un mes de honorarios. La base de datos son dos años históricos mensuales y el año corriente mensual.</li>
+                    <li>La empresa debe suministrar el presupuesto del año en curso en PYG, si tiene balance proyectado se incluye en el modelo, pero si no lo tiene se proyecta con la metodología.</li>
+                    <li>El modelo de preparación del comité no se entrega, por tratarse del Know How del servicio.</li>
+                    <li>El comité se prepara durante los tres días siguientes a la entrega de la información del cierre del mes.</li>
+                    <li>Los resultados del comité se publican en la WEB en la estructura de PowerBi.</li>
+                    <li>Para la implementación de la metodología financiera se requiere de la participación de la organización, que deberá tener un líder interno con capacidad de decisión.</li>
+                    <li>La metodología de recopilación de la información estará siempre disponible para el cliente, en Excel.</li>
+                    <li>Usamos Office 365 para mayor seguridad y confidencialidad de la información.</li>
+                    <li>Los honorarios previamente cotizados deberán pagarse dentro de los 5 días primeros días del mes.</li>
+                    <li>El contrato para la implementación del comité debe firmarse por un año.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Consultant Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="text-purple">Consultor Líder</h2>
+            <h3 class="mt-3">Marta Elena Hoyos</h3>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <h5 class="text-purple mb-3">Background</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><strong>Estadístico</strong><br />Universidad de Medellín</li>
+                        <li class="mb-2"><strong>MBA con especialización en finanzas</strong><br />Universidad EAFIT</li>
+                        <li class="mb-2"><strong>Diplomada en Consultoría Empresarial</strong><br />Cámara de Comercio de Bogotá</li>
+                        <li class="mb-2"><strong>Diplomada en NIIF</strong><br />Universidad de Asturias</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <h5 class="text-purple mb-3">Expertise</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">Más de 20 años como gerente</li>
+                        <li class="mb-2">25 años de dedicación al asesoramiento estratégico y financiero</li>
+                        <li class="mb-2">Valoración, reestructuración y negociación de compañías por más de COP2 Billones de pesos</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <h5 class="text-purple mb-3">Sectores</h5>
+                    <p class="small">Construcción – Financiero – Servicios – Salud – Tecnología – Comercio – Hotelería – Restaurantes – Agrícola – Farmacéutico – Textil – Cooperativo – Turismo – Industria en general.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="final-cta-section py-5">
+    <div class="container text-center" data-aos="fade-up">
+        <h2 class="text-white display-4 mb-4">Desde el primer momento que use Bufins será una herramienta indispensable</h2>
+        <p class="lead text-cyan mb-4">para sus asambleas, juntas, equipos de trabajo y comités.</p>
+        <a href="@Url.Action("Contact", "Home")" class="btn btn-cyan btn-lg mt-4">Agendar una reunión</a>
+    </div>
+</section>
+
+@section scripts {
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true
+    });
+</script>
+}
