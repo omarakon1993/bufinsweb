@@ -11,7 +11,9 @@
       "Bash(curl:*)",
       "Bash(Where-Object { $_xtension -match '\\.(html|aspx|cshtml|css)$' -and $_irectoryName -notmatch '(packages|obj|bin)' })",
       "Bash(Select-Object FullName)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git checkout:*)",
+      "Bash(python -c:*)"
     ],
     "deny": [],
     "ask": []

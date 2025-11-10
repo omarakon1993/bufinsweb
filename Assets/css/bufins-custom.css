@@ -1,0 +1,1297 @@
+/* Bufins Custom Styles */
+
+:root {
+    /* Colores Primarios - Especificados por el cliente */
+    --color-primary: #160933;
+    --color-secondary-1: #583AFF;
+    --color-secondary-2: #01E1D7;
+
+    /* Alias para compatibilidad */
+    --color-dark-purple: #160933;
+    --color-cyan: #01E1D7;
+    --color-purple: #583AFF;
+
+    /* Colores Complementarios */
+    --color-light-gray: #F5F7FA;
+    --color-medium-gray: #E8EBF0;
+    --color-text-dark: #1A1A2E;
+    --color-text-muted: #6B7280;
+
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* Spacing */
+    --section-padding: 7rem;
+    --section-padding-mobile: 4rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    color: #333;
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* Navbar Styles */
+.navbar {
+    background: rgba(22, 9, 51, 0.95) !important;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(1, 225, 215, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.8rem;
+    color: var(--color-cyan) !important;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-link {
+    color: white !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin: 0 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.nav-link:hover {
+    color: var(--color-cyan) !important;
+    transform: translateY(-2px);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-cyan);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Portal Clientes Button */
+.btn-portal {
+    background: linear-gradient(135deg, var(--color-cyan) 0%, #00c9c0 100%);
+    color: var(--color-dark-purple) !important;
+    border: none;
+    padding: 0.4rem 1rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(1, 225, 215, 0.3);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-portal:hover {
+    background: linear-gradient(135deg, #00c9c0 0%, var(--color-cyan) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(1, 225, 215, 0.4);
+    color: var(--color-dark-purple) !important;
+}
+
+.btn-portal i {
+    font-size: 0.95rem;
+}
+
+/* Hero Section - Con imagen de fondo */
+.hero-section {
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    padding: 8rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(1, 225, 215, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 70% 50%, rgba(88, 58, 255, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, 30px) scale(1.1); }
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: white;
+    margin-bottom: 2rem;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hero-title .text-italic {
+    font-weight: 700;
+    font-style: italic;
+    color: var(--color-secondary-2);
+    text-shadow: 0 2px 8px rgba(1, 225, 215, 0.5);
+}
+
+.rounded-shadow {
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+/* Dark Section - Diseño según PDF */
+.dark-section {
+    background: var(--color-primary);
+    color: white;
+    padding: var(--section-padding) 0 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.dark-section::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(88, 58, 255, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+/* Slogan Section */
+.slogan-section {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #0a0621 100%);
+    padding: var(--section-padding) 0 !important;
+    position: relative;
+}
+
+.slogan-text {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+}
+
+.text-cyan { color: var(--color-cyan) !important; }
+.text-purple { color: var(--color-purple) !important; }
+.text-orange { color: var(--color-orange) !important; }
+.text-white { color: white !important; }
+
+/* Features Section - Diseño limpio y moderno */
+.features-section {
+    padding: var(--section-padding) 0;
+    background: linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%);
+}
+
+.feature-card {
+    padding: 3rem 2rem;
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid var(--color-medium-gray);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    background: linear-gradient(135deg, var(--color-secondary-1) 0%, var(--color-secondary-2) 100%);
+    opacity: 0.03;
+    transition: height 0.35s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(22, 9, 51, 0.12);
+    border-color: var(--color-secondary-2);
+}
+
+.feature-card:hover::after {
+    height: 100%;
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--color-secondary-1), var(--color-secondary-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1);
+}
+
+.feature-card h4 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+    font-size: 1.25rem;
+    line-height: 1.4;
+}
+
+.feature-card p {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* Modules Section */
+.modules-section {
+    padding: 6rem 0;
+}
+
+.brand-text {
+    color: var(--color-purple);
+    font-weight: 800;
+}
+
+.modules-list {
+    list-style: none;
+    padding: 0;
+}
+
+.modules-list li {
+    padding: 0.8rem 0;
+    padding-left: 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+}
+
+.modules-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-cyan);
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-dark-purple) 100%);
+    color: white;
+    padding: 5rem 0 !important;
+}
+
+.cta-section h2 {
+    font-weight: 300;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+/* Process Section */
+.process-section {
+    padding: 6rem 0;
+}
+
+.process-card {
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #f0f0f0;
+    transition: border-color 0.3s ease;
+    height: 100%;
+}
+
+.process-card:hover {
+    border-color: var(--color-purple);
+}
+
+.process-step {
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+}
+
+/* Final CTA Section - Diseño impactante según PDF */
+.final-cta-section {
+    background: var(--color-primary);
+    color: white;
+    padding: var(--section-padding) 0 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.final-cta-section::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -20%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(88, 58, 255, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.final-cta-section::after {
+    content: '';
+    position: absolute;
+    bottom: -35%;
+    right: -15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(1, 225, 215, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.cta-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 4rem 3rem;
+    text-align: center;
+    position: relative;
+    backdrop-filter: blur(10px);
+    z-index: 1;
+}
+
+.cta-main-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    line-height: 1.3;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.transform-text {
+    background: linear-gradient(135deg, var(--color-secondary-2) 0%, var(--color-secondary-1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.cta-divider {
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-secondary-1), var(--color-secondary-2));
+    margin: 2rem auto;
+    border-radius: 2px;
+}
+
+.cta-benefit {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-benefit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--color-secondary-1) 0%, var(--color-secondary-2) 100%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.cta-benefit:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--color-secondary-2);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(1, 225, 215, 0.2);
+}
+
+.cta-benefit:hover::before {
+    opacity: 0.08;
+}
+
+.cta-benefit i {
+    font-size: 2.8rem;
+    background: linear-gradient(135deg, var(--color-secondary-2), var(--color-secondary-1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.2rem;
+    display: block;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.cta-benefit:hover i {
+    transform: scale(1.15);
+}
+
+.cta-benefit p {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    line-height: 1.5;
+}
+
+.btn-cta-custom {
+    background: linear-gradient(135deg, var(--color-secondary-2) 0%, var(--color-secondary-1) 100%);
+    color: white !important;
+    border: none;
+    padding: 1.2rem 3rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 15px 35px rgba(1, 225, 215, 0.3);
+}
+
+.btn-cta-custom:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 45px rgba(1, 225, 215, 0.4);
+    filter: brightness(1.1);
+}
+
+/* Buttons - Diseño según PDF */
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-secondary-1) 0%, var(--color-secondary-2) 100%);
+    border: none;
+    padding: 1.1rem 3rem;
+    font-weight: 600;
+    font-size: 1.05rem;
+    border-radius: 50px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white !important;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 10px 30px rgba(88, 58, 255, 0.25);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(88, 58, 255, 0.35);
+    filter: brightness(1.1);
+}
+
+.btn-cyan {
+    background: var(--color-secondary-2);
+    color: var(--color-primary) !important;
+    border: none;
+    padding: 1.1rem 3rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    border-radius: 50px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 10px 30px rgba(1, 225, 215, 0.25);
+}
+
+.btn-cyan:hover {
+    background: var(--color-secondary-1);
+    color: white !important;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(88, 58, 255, 0.35);
+}
+
+/* Footer */
+footer {
+    background-color: var(--color-dark-purple);
+    color: white;
+    padding: 3rem 0 1.5rem;
+    margin-top: 0;
+}
+
+footer a {
+    color: var(--color-cyan);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: white;
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Contact Form Styles */
+.contact-section {
+    padding: 6rem 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.contact-form {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+}
+
+.form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--color-purple);
+    box-shadow: 0 0 0 0.2rem rgba(88, 58, 255, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--color-dark-purple);
+    margin-bottom: 0.5rem;
+}
+
+/* New Sections Styles */
+.hero-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: white;
+    font-weight: 500;
+    line-height: 1.6;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.hero-description {
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 400;
+    line-height: 1.7;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Problem Section - Diseño limpio según PDF */
+.problem-section {
+    background: var(--color-primary);
+    position: relative;
+    padding: var(--section-padding) 0 !important;
+    overflow: hidden;
+}
+
+.problem-section::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(88, 58, 255, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.problem-section::after {
+    content: '';
+    position: absolute;
+    bottom: -20%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(1, 225, 215, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.problem-header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.problem-main-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    color: white;
+    line-height: 1.3;
+    margin-bottom: 2rem;
+}
+
+.problem-divider {
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-secondary-1), var(--color-secondary-2));
+    margin: 2rem auto;
+    border-radius: 2px;
+}
+
+.problem-description {
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+    font-weight: 300;
+}
+
+.problem-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.problem-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(1, 225, 215, 0.3);
+    transform: translateY(-3px);
+}
+
+.section-title {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.25;
+}
+
+/* What is Section - Diseño profesional sin muchos íconos */
+.what-is-section {
+    background: #FFFFFF;
+    position: relative;
+    padding: var(--section-padding) 0 !important;
+}
+
+.what-is-section .section-title {
+    color: var(--color-primary);
+}
+
+.what-is-section .lead {
+    font-size: clamp(1.15rem, 2vw, 1.35rem);
+    color: var(--color-text-dark);
+    font-weight: 400;
+    line-height: 1.7;
+}
+
+.what-is-section p {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+}
+
+.benefit-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+    border: 1px solid var(--color-medium-gray);
+    border-radius: 12px;
+    padding: 2rem 1.8rem;
+    text-align: left;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.benefit-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 0;
+    background: linear-gradient(180deg, var(--color-secondary-1), var(--color-secondary-2));
+    transition: height 0.35s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--color-secondary-2);
+    box-shadow: 0 20px 40px rgba(22, 9, 51, 0.08);
+}
+
+.benefit-card:hover::before {
+    height: 100%;
+}
+
+.benefit-card i {
+    font-size: 2rem;
+    color: var(--color-secondary-1);
+    margin-bottom: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover i {
+    color: var(--color-secondary-2);
+    transform: scale(1.1);
+}
+
+.benefit-card p {
+    margin: 0;
+    font-weight: 500;
+    color: var(--color-text-dark);
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+/* Advantages List */
+.advantages-list {
+    list-style: none;
+    padding: 0;
+}
+
+.advantages-list li {
+    padding: 0.8rem 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* How it Works Section - Diseño limpio según PDF */
+.how-it-works-section {
+    background: #FFFFFF;
+    padding: var(--section-padding) 0;
+}
+
+.process-step-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+    border: 2px solid var(--color-medium-gray);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    color: var(--color-text-dark);
+    height: 100%;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.process-step-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(135deg, var(--color-secondary-1) 0%, var(--color-secondary-2) 100%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.process-step-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(88, 58, 255, 0.15);
+    border-color: var(--color-secondary-1);
+}
+
+.process-step-card:hover::before {
+    opacity: 0.05;
+}
+
+.step-icon {
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--color-secondary-1), var(--color-secondary-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    display: block;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.process-step-card:hover .step-icon {
+    transform: scale(1.1);
+}
+
+.step-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 1.2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.process-step-card p {
+    position: relative;
+    z-index: 1;
+    color: var(--color-text-dark);
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.module-item {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+    border: 1px solid var(--color-medium-gray);
+    border-radius: 12px;
+    padding: 1.5rem 1.8rem;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.module-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(135deg, var(--color-secondary-1), var(--color-secondary-2));
+    transition: width 0.3s ease;
+}
+
+.module-item:hover {
+    border-color: var(--color-secondary-1);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(88, 58, 255, 0.12);
+}
+
+.module-item:hover::before {
+    width: 4px;
+}
+
+.module-item span {
+    font-weight: 600;
+    color: var(--color-text-dark);
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+
+.module-item:hover span {
+    color: var(--color-secondary-1);
+}
+
+/* Testimonials Section - Diseño profesional */
+.testimonials-section {
+    background: linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%);
+    padding: var(--section-padding) 0;
+}
+
+.testimonial-card {
+    background: #FFFFFF;
+    border-left: 4px solid transparent;
+    border-image: linear-gradient(180deg, var(--color-secondary-1), var(--color-secondary-2)) 1;
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 10px 30px rgba(22, 9, 51, 0.06);
+    height: 100%;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(22, 9, 51, 0.12);
+}
+
+.testimonial-text {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--color-text-dark);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    font-weight: 400;
+}
+
+.testimonial-author {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--color-secondary-1), var(--color-secondary-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Target Section - Diseño según PDF */
+.target-section {
+    background: var(--color-primary);
+    position: relative;
+    padding: var(--section-padding) 0 !important;
+    overflow: hidden;
+}
+
+.target-section::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(88, 58, 255, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.target-section::after {
+    content: '';
+    position: absolute;
+    bottom: -25%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(1, 225, 215, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.target-section .section-title {
+    color: white;
+}
+
+.target-section .lead {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 300;
+}
+
+.target-list {
+    list-style: none;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.target-list li {
+    padding: 1.2rem 1.5rem;
+    font-size: 1.15rem;
+    color: white;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 400;
+}
+
+.target-list li:hover {
+    background: rgba(1, 225, 215, 0.08);
+    border-color: var(--color-secondary-2);
+    transform: translateX(10px);
+    box-shadow: 0 8px 20px rgba(1, 225, 215, 0.15);
+}
+
+/* Culture Section - Fondo blanco para alternar con secciones moradas */
+.culture-section {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
+    color: var(--color-text-dark);
+    position: relative;
+    overflow: hidden;
+    padding: var(--section-padding) 0 !important;
+}
+
+.culture-section::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(88, 58, 255, 0.04) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.culture-section::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(1, 225, 215, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.culture-content {
+    position: relative;
+    z-index: 1;
+}
+
+.culture-title {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+}
+
+.culture-text {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--color-text-dark);
+    font-weight: 400;
+}
+
+.culture-text strong {
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--color-secondary-1), var(--color-secondary-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Image Styles */
+.bufins-product-image {
+    max-width: 90%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(22, 9, 51, 0.15);
+}
+
+.bufins-target-image {
+    max-width: 85%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(1, 225, 215, 0.2);
+}
+
+/* Inline Styles Classes - Extracted from Index.cshtml */
+.problem-question-title {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.bufins-changes-title {
+    color: var(--color-secondary-2);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.features-italic-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.3rem);
+    font-style: italic;
+}
+
+.control-title {
+    font-size: 1.8rem;
+    color: var(--color-primary);
+}
+
+.advantages-subtitle {
+    font-size: 1.3rem;
+    color: var(--color-text-dark);
+}
+
+.module-footer-note {
+    font-style: italic;
+    font-weight: 600;
+}
+
+.testimonial-footer-lead {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.cta-text-intro {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.cta-text-emphasis {
+    font-size: 1.3rem;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 2.5rem;
+}
+
+/* Responsive - Optimizado para todos los dispositivos */
+@media (max-width: 1200px) {
+    :root {
+        --section-padding: 5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    :root {
+        --section-padding: 4rem;
+    }
+
+    .hero-section {
+        padding: 6rem 0 3rem;
+    }
+
+    .feature-card {
+        padding: 2.5rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --section-padding: var(--section-padding-mobile);
+    }
+
+    .hero-section {
+        padding: 5rem 0 3rem;
+    }
+
+    .hero-section::before,
+    .hero-section::after {
+        width: 400px;
+        height: 400px;
+    }
+
+    .nav-link {
+        margin: 0.5rem 0;
+        text-align: center;
+    }
+
+    .slogan-text {
+        font-size: 1.5rem;
+    }
+
+    .btn-portal {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+
+    .benefit-card,
+    .feature-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-primary,
+    .btn-cyan {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        width: 100%;
+    }
+
+    .problem-section::before,
+    .problem-section::after {
+        width: 300px;
+        height: 300px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .hero-description {
+        font-size: 1rem;
+    }
+
+    .problem-header {
+        padding: 2rem 1.5rem;
+    }
+
+    .problem-main-title {
+        font-size: 1.5rem;
+    }
+
+    .problem-description {
+        font-size: 1rem;
+    }
+
+    .culture-icon-wrapper i {
+        font-size: 8rem;
+    }
+
+    .culture-title {
+        font-size: 1.8rem;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .culture-emoji {
+        font-size: 2.5rem;
+    }
+
+    .culture-text {
+        font-size: 1rem;
+    }
+
+    .cta-card {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .cta-main-title {
+        font-size: 1.5rem;
+    }
+
+    .cta-benefit {
+        padding: 1.5rem 1rem;
+    }
+
+    .cta-benefit i {
+        font-size: 2rem;
+    }
+
+    .btn-cta-custom {
+        padding: 0.9rem 2rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+    }
+
+    .problem-main-title {
+        font-size: 1.6rem;
+    }
+
+    .feature-card {
+        padding: 2rem 1.5rem;
+    }
+}
