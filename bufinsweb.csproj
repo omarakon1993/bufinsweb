@@ -131,6 +131,7 @@
     <Content Include="Assets\css\font-awesome.min.css" />
     <Content Include="Assets\css\aos.css" />
     <Content Include="Assets\css\inter-font.css" />
+    <Content Include="Assets\images\FondoIndex.jpg" />
     <Content Include="Assets\js\bootstrap.bundle.min.js" />
     <Content Include="Assets\js\aos.js" />
     <Content Include="Assets\fonts\inter-300.ttf" />
@@ -162,7 +163,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Assets\images\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
