@@ -686,10 +686,16 @@ html {
     margin: 0 auto;
 }
 
+.problem-header-left {
+    position: relative;
+    z-index: 1;
+    text-align: left;
+}
+
 .problem-header-icon {
-    font-size: 3.5rem;
+    font-size: 3rem;
     color: var(--color-secondary-2);
-    display: block;
+    display: inline-block;
     animation: pulse 2s ease-in-out infinite;
 }
 
@@ -705,7 +711,7 @@ html {
 }
 
 .problem-main-title {
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
     font-weight: 300;
     color: white;
     line-height: 1.3;
@@ -716,15 +722,22 @@ html {
     width: 60px;
     height: 4px;
     background: linear-gradient(90deg, var(--color-secondary-1), var(--color-secondary-2));
-    margin: 2rem auto;
+    margin: 1rem 0;
     border-radius: 2px;
 }
 
 .problem-description {
-    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
     color: rgba(255, 255, 255, 0.9);
-    line-height: 1.8;
+    line-height: 1.6;
     font-weight: 300;
+}
+
+.problem-question-title-left {
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+    line-height: 1.4;
 }
 
 .problem-item {
@@ -1038,6 +1051,27 @@ html {
     padding: var(--section-padding) 0;
 }
 
+.testimonial-header-icon {
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--color-secondary-1), var(--color-secondary-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    animation: starPulse 2s ease-in-out infinite;
+}
+
+@keyframes starPulse {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1) rotate(5deg);
+        opacity: 0.8;
+    }
+}
+
 .testimonial-card {
     background: #FFFFFF;
     border-left: 4px solid transparent;
@@ -1172,6 +1206,27 @@ html {
 .culture-content {
     position: relative;
     z-index: 1;
+}
+
+.culture-header-icon {
+    font-size: 3.5rem;
+    background: linear-gradient(135deg, var(--color-secondary-1), var(--color-secondary-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    animation: graduationFloat 3s ease-in-out infinite;
+}
+
+@keyframes graduationFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-10px) rotate(-5deg);
+        opacity: 0.85;
+    }
 }
 
 .culture-title {
