@@ -115,8 +115,37 @@
         </div>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top" aria-label="Volver arriba">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="~/Assets/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Back to Top Button Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const backToTopButton = document.getElementById('backToTop');
+
+            // Mostrar/ocultar el botón según el scroll
+            window.addEventListener('scroll', function () {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('show');
+                } else {
+                    backToTopButton.classList.remove('show');
+                }
+            });
+
+            // Volver arriba con animación suave al hacer clic
+            backToTopButton.addEventListener('click', function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 
     @RenderSection("scripts", required: false)
 </body>
