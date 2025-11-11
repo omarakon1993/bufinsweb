@@ -57,29 +57,59 @@
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h4 class="brand-text mb-3">Bufins</h4>
-                    <p class="small">Business. Finance. Always. Everywhere.</p>
-                    <p class="small">Transforme sus cifras en mejores decisiones de negocio.</p>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h4 class="footer-brand mb-3">Bufins</h4>
+                    <p class="footer-text mb-2">Business. Finance. Always. Everywhere.</p>
+                    <p class="footer-text mb-3">Transforme sus cifras en mejores decisiones de negocio.</p>
+                    <div class="footer-social mt-3">
+                        <a href="#" class="social-icon me-2"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="mb-3">Enlaces</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
-                        <li class="mb-2"><a href="@Url.Action("Contact", "Home")">Contacto</a></li>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="footer-title mb-3">Enlaces Rápidos</h5>
+                    <ul class="footer-links list-unstyled">
+                        <li class="mb-2"><a href="@Url.Action("Index", "Home")"><i class="fas fa-chevron-right me-2"></i>Inicio</a></li>
+                        <li class="mb-2"><a href="@Url.Action("Contact", "Home")"><i class="fas fa-chevron-right me-2"></i>Contacto</a></li>
+                        <li class="mb-2"><a href="https://customers.bufins.com"><i class="fas fa-chevron-right me-2"></i>Portal Clientes</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="mb-3">Contacto</h5>
-                    <p class="small mb-2"><i class="fas fa-envelope me-2"></i> info@bufins.com</p>
-                    <p class="small mb-2"><i class="fas fa-phone me-2"></i> +57 300 123 4567</p>
-                    <p class="small mb-2"><i class="fas fa-map-marker-alt me-2"></i> Colombia</p>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="footer-title mb-3">Contacto</h5>
+                    <ul class="footer-contact list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-envelope footer-icon"></i>
+                            <span>info@bufins.com</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-phone footer-icon"></i>
+                            <span>+57 300 123 4567</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-map-marker-alt footer-icon"></i>
+                            <span>Bogotá, Colombia</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="footer-title mb-3">Ubicación</h5>
+                    <div class="footer-map">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d254508.39252092425!2d-74.2478938!3d4.6486259!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9bfd2da6cb29%3A0x239d635520a33914!2sBogot%C3%A1%2C%20Colombia!5e0!3m2!1ses!2sco!4v1234567890"
+                                width="100%"
+                                height="150"
+                                style="border:0; border-radius: 8px;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
                 </div>
             </div>
-            <hr class="my-4" style="border-color: rgba(255,255,255,0.1)">
+            <hr class="footer-divider my-4">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="small mb-0">&copy; @DateTime.Now.Year Bufins - Todos los derechos reservados</p>
+                    <p class="footer-copyright mb-0">&copy; @DateTime.Now.Year Bufins - Todos los derechos reservados</p>
                 </div>
             </div>
         </div>
