@@ -132,6 +132,7 @@
     <Content Include="Assets\css\font-awesome.min.css" />
     <Content Include="Assets\css\aos.css" />
     <Content Include="Assets\css\inter-font.css" />
+    <Content Include="Assets\images\ImagenBufins_4.jpg" />
     <Content Include="Assets\images\FondoIndex.jpg" />
     <Content Include="Assets\images\ImagenBufins_1.png" />
     <Content Include="Assets\images\ImagenBufins_2.jpg" />

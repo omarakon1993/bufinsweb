@@ -270,6 +270,18 @@ body {
     transform: scale(1.1);
 }
 
+.feature-icon-custom {
+    font-size: 2.5rem;
+    color: #160933;
+    margin-bottom: 1.5rem;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon-custom {
+    transform: scale(1.1);
+}
+
 .feature-card h4 {
     font-weight: 700;
     margin-bottom: 1rem;
@@ -571,6 +583,29 @@ html {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
+.contact-header {
+    padding-top: 3rem;
+    margin-bottom: 3rem !important;
+}
+
+.contact-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem !important;
+    line-height: 1.2;
+}
+
+.contact-subtitle {
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    color: var(--color-primary);
+    font-weight: 500;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0.85;
+}
+
 .contact-form {
     background: white;
     padding: 3rem;
@@ -649,6 +684,24 @@ html {
     text-align: center;
     max-width: 900px;
     margin: 0 auto;
+}
+
+.problem-header-icon {
+    font-size: 3.5rem;
+    color: var(--color-secondary-2);
+    display: block;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
 }
 
 .problem-main-title {
@@ -780,7 +833,7 @@ html {
     line-height: 1.6;
 }
 
-/* Advantages List */
+/* Advantages List - Old style (deprecated) */
 .advantages-list {
     list-style: none;
     padding: 0;
@@ -790,6 +843,73 @@ html {
     padding: 0.8rem 0;
     font-size: 1.1rem;
     color: #333;
+}
+
+/* Advantages Section - New style with white background */
+.advantages-section {
+    background: #FFFFFF;
+    position: relative;
+    padding: var(--section-padding) 0 !important;
+    overflow: hidden;
+}
+
+.advantages-section::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(88, 58, 255, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.advantages-section::after {
+    content: '';
+    position: absolute;
+    bottom: -25%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(1, 225, 215, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.advantages-section .section-title {
+    color: var(--color-primary);
+}
+
+.advantages-list-styled {
+    list-style: none;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.advantages-list-styled li {
+    padding: 1.2rem 1.5rem;
+    font-size: 1.15rem;
+    color: var(--color-text-dark);
+    background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+    border: 1px solid var(--color-medium-gray);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 400;
+}
+
+.advantages-list-styled li:hover {
+    background: rgba(88, 58, 255, 0.05);
+    border-color: var(--color-secondary-1);
+    transform: translateX(10px);
+    box-shadow: 0 8px 20px rgba(88, 58, 255, 0.15);
+}
+
+.bufins-advantages-image {
+    max-width: 85%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(88, 58, 255, 0.2);
 }
 
 /* How it Works Section - Diseño limpio según PDF */
@@ -1097,6 +1217,24 @@ html {
     color: rgba(255, 255, 255, 0.95);
     font-size: 1.3rem;
     font-weight: 600;
+}
+
+.bufins-changes-icon {
+    font-size: 3rem;
+    color: var(--color-secondary-2);
+    display: block;
+    animation: flash 1.5s ease-in-out infinite;
+}
+
+@keyframes flash {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
 }
 
 .bufins-changes-title {
