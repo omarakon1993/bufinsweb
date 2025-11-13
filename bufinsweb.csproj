@@ -132,11 +132,15 @@
     <Content Include="Assets\css\font-awesome.min.css" />
     <Content Include="Assets\css\aos.css" />
     <Content Include="Assets\css\inter-font.css" />
+    <Content Include="Assets\images\Bufins_Favicon.png" />
     <Content Include="Assets\images\ImagenBufins_4.jpg" />
     <Content Include="Assets\images\FondoIndex.jpg" />
     <Content Include="Assets\images\ImagenBufins_1.png" />
     <Content Include="Assets\images\ImagenBufins_2.jpg" />
     <Content Include="Assets\images\ImagenBufins_3.jpg" />
+    <Content Include="Assets\images\ImagenParaQuien.jpg" />
+    <Content Include="Assets\images\ImagenVentajas.jpg" />
+    <Content Include="Assets\images\LaptopSinFondo.jpg" />
     <Content Include="Assets\js\bootstrap.bundle.min.js" />
     <Content Include="Assets\js\aos.js" />
     <Content Include="Assets\fonts\inter-300.ttf" />
