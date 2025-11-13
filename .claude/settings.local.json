@@ -13,7 +13,10 @@
       "Bash(Select-Object FullName)",
       "Bash(find:*)",
       "Bash(git checkout:*)",
-      "Bash(python -c:*)"
+      "Bash(python -c:*)",
+      "Bash(nuget install:*)",
+      "Bash(ls:*)",
+      "Bash(certutil -encode:*)"
     ],
     "deny": [],
     "ask": []
