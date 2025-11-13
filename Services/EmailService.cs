@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Text;
+using System.Web.Hosting;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
@@ -57,7 +59,7 @@ namespace bufinsweb.Services
                     <!-- Header -->
                     <tr>
                         <td style=""background: linear-gradient(135deg, #160933 0%, #2d1555 100%); padding: 40px 30px; text-align: center;"">
-                            <img src=""https://www.bufins.com/Assets/images/Bufins_Logofinal.png"" alt=""Bufins Logo"" style=""max-width: 200px; height: auto; margin-bottom: 15px;"">
+                            <img src=""cid:bufinslogo"" alt=""Bufins Logo"" style=""max-width: 200px; height: auto; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;"">
                             <p style=""margin: 10px 0 0 0; color: #a8a8ff; font-size: 12px; letter-spacing: 1.5px; font-weight: 500;"">BUSINESS. FINANCE. ALWAYS. EVERYWHERE.</p>
                         </td>
                     </tr>
@@ -178,7 +180,7 @@ namespace bufinsweb.Services
                     <!-- Header -->
                     <tr>
                         <td style=""background: linear-gradient(135deg, #160933 0%, #2d1555 100%); padding: 50px 30px; text-align: center;"">
-                            <img src=""https://www.bufins.com/Assets/images/Bufins_Logofinal.png"" alt=""Bufins Logo"" style=""max-width: 220px; height: auto; margin-bottom: 15px;"">
+                            <img src=""cid:bufinslogo"" alt=""Bufins Logo"" style=""max-width: 220px; height: auto; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;"">
                             <p style=""margin: 15px 0 0 0; color: #a8a8ff; font-size: 13px; letter-spacing: 1.5px; font-weight: 500;"">BUSINESS. FINANCE. ALWAYS. EVERYWHERE.</p>
                         </td>
                     </tr>
@@ -298,6 +300,21 @@ namespace bufinsweb.Services
             if (isHtml)
             {
                 bodyBuilder.HtmlBody = body;
+
+                // Adjuntar el logo con Content-ID
+                try
+                {
+                    string logoPath = HostingEnvironment.MapPath("~/Assets/images/Bufins_Logofinal.png");
+                    if (File.Exists(logoPath))
+                    {
+                        var image = bodyBuilder.LinkedResources.Add(logoPath);
+                        image.ContentId = "bufinslogo";
+                    }
+                }
+                catch
+                {
+                    // Si no se puede adjuntar el logo, continuar sin él
+                }
             }
             else
             {
