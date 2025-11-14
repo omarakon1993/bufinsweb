@@ -254,7 +254,7 @@ namespace bufinsweb.Services
                             </p>
                             <p style=""margin: 0 0 15px 0; color: #999999; font-size: 12px; line-height: 1.6;"">
                                 📧 admin@bufins.com<br>
-                                📱 +57 300 123 4567<br>
+                                📱 +57 312 478 1486<br>
                                 🌐 www.bufins.com
                             </p>
                             <p style=""margin: 15px 0 0 0; color: #999999; font-size: 11px;"">
