@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Web;
 using System.Web.Hosting;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -39,6 +40,12 @@ namespace bufinsweb.Services
         /// </summary>
         public void SendContactFormToAdmin(ContactFormModel model)
         {
+            string nombre = HttpUtility.HtmlEncode(model.Nombre);
+            string empresa = HttpUtility.HtmlEncode(model.Empresa ?? "");
+            string email = HttpUtility.HtmlEncode(model.Email);
+            string telefono = HttpUtility.HtmlEncode(model.Telefono ?? "");
+            string mensaje = HttpUtility.HtmlEncode(model.Mensaje);
+
             string subject = $"📧 Nuevo mensaje de contacto - {model.Nombre}";
 
             string body = $@"
@@ -85,21 +92,21 @@ namespace bufinsweb.Services
                                         <table width=""100%"" cellpadding=""8"" cellspacing=""0"">
                                             <tr>
                                                 <td width=""30%"" style=""color: #160933; font-weight: 600; font-size: 14px;"">👤 Nombre:</td>
-                                                <td style=""color: #333333; font-size: 14px;"">{model.Nombre}</td>
+                                                <td style=""color: #333333; font-size: 14px;"">{nombre}</td>
                                             </tr>
                                             {(!string.IsNullOrWhiteSpace(model.Empresa) ? $@"
                                             <tr>
                                                 <td style=""color: #160933; font-weight: 600; font-size: 14px;"">🏢 Empresa:</td>
-                                                <td style=""color: #333333; font-size: 14px;"">{model.Empresa}</td>
+                                                <td style=""color: #333333; font-size: 14px;"">{empresa}</td>
                                             </tr>" : "")}
                                             <tr>
                                                 <td style=""color: #160933; font-weight: 600; font-size: 14px;"">📧 Email:</td>
-                                                <td style=""color: #333333; font-size: 14px;""><a href=""mailto:{model.Email}"" style=""color: #5e35b1; text-decoration: none;"">{model.Email}</a></td>
+                                                <td style=""color: #333333; font-size: 14px;""><a href=""mailto:{email}"" style=""color: #5e35b1; text-decoration: none;"">{email}</a></td>
                                             </tr>
                                             {(!string.IsNullOrWhiteSpace(model.Telefono) ? $@"
                                             <tr>
                                                 <td style=""color: #160933; font-weight: 600; font-size: 14px;"">📱 Teléfono:</td>
-                                                <td style=""color: #333333; font-size: 14px;"">{model.Telefono}</td>
+                                                <td style=""color: #333333; font-size: 14px;"">{telefono}</td>
                                             </tr>" : "")}
                                         </table>
                                     </td>
@@ -109,14 +116,14 @@ namespace bufinsweb.Services
                             <!-- Message Card -->
                             <div style=""background-color: #f8f9fa; border-left: 4px solid #160933; border-radius: 8px; padding: 20px; margin-bottom: 20px;"">
                                 <h3 style=""margin: 0 0 15px 0; color: #160933; font-size: 16px; font-weight: 600;"">💬 Mensaje:</h3>
-                                <p style=""margin: 0; color: #333333; font-size: 14px; line-height: 1.6; white-space: pre-wrap;"">{model.Mensaje}</p>
+                                <p style=""margin: 0; color: #333333; font-size: 14px; line-height: 1.6; white-space: pre-wrap;"">{mensaje}</p>
                             </div>
 
                             <!-- Quick Actions -->
                             <table width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""margin-top: 30px;"">
                                 <tr>
                                     <td align=""center"">
-                                        <a href=""mailto:{model.Email}"" style=""display: inline-block; background: linear-gradient(135deg, #160933 0%, #2d1555 100%); color: #ffffff; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(22,9,51,0.3);"">
+                                        <a href=""mailto:{email}"" style=""display: inline-block; background: linear-gradient(135deg, #160933 0%, #2d1555 100%); color: #ffffff; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(22,9,51,0.3);"">
                                             Responder ahora
                                         </a>
                                     </td>
@@ -160,6 +167,10 @@ namespace bufinsweb.Services
         /// </summary>
         public void SendConfirmationToUser(ContactFormModel model)
         {
+            string nombre = HttpUtility.HtmlEncode(model.Nombre);
+            string email = HttpUtility.HtmlEncode(model.Email);
+            string mensaje = HttpUtility.HtmlEncode(model.Mensaje);
+
             string subject = "✓ Hemos recibido tu mensaje - Bufins";
 
             string body = $@"
@@ -199,10 +210,10 @@ namespace bufinsweb.Services
                         <td style=""padding: 0 30px 30px 30px; text-align: center;"">
                             <h2 style=""margin: 0 0 20px 0; color: #160933; font-size: 28px; font-weight: 600;"">¡Mensaje recibido!</h2>
                             <p style=""margin: 0 0 25px 0; color: #555555; font-size: 16px; line-height: 1.6;"">
-                                Hola <strong style=""color: #160933;"">{model.Nombre}</strong>,
+                                Hola <strong style=""color: #160933;"">{nombre}</strong>,
                             </p>
                             <p style=""margin: 0 0 30px 0; color: #666666; font-size: 15px; line-height: 1.7;"">
-                                Gracias por contactarnos. Hemos recibido tu mensaje y nuestro equipo lo revisará a la brevedad. Te responderemos pronto a <strong style=""color: #5e35b1;"">{model.Email}</strong>
+                                Gracias por contactarnos. Hemos recibido tu mensaje y nuestro equipo lo revisará a la brevedad. Te responderemos pronto a <strong style=""color: #5e35b1;"">{email}</strong>
                             </p>
 
                             <!-- Message Summary Card -->
@@ -211,7 +222,7 @@ namespace bufinsweb.Services
                                     <td style=""padding: 25px;"">
                                         <h3 style=""margin: 0 0 15px 0; color: #160933; font-size: 16px; font-weight: 600; text-align: left;"">📝 Tu mensaje:</h3>
                                         <div style=""background-color: #ffffff; border-radius: 8px; padding: 18px; text-align: left; border-left: 3px solid #160933;"">
-                                            <p style=""margin: 0; color: #333333; font-size: 14px; line-height: 1.6; white-space: pre-wrap;"">{model.Mensaje}</p>
+                                            <p style=""margin: 0; color: #333333; font-size: 14px; line-height: 1.6; white-space: pre-wrap;"">{mensaje}</p>
                                         </div>
                                     </td>
                                 </tr>

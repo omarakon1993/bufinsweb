@@ -125,7 +125,7 @@
 </section>
 
 @section scripts {
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="~/Assets/js/aos.js"></script>
 <script>
     AOS.init({
         duration: 1000,
@@ -184,11 +184,6 @@
             } else {
                 // Show error message
                 var errorMessage = data.message;
-
-                // Mostrar el error técnico detallado si existe
-                if (data.error) {
-                    errorMessage += '<br><br><strong>Detalle técnico:</strong><br><small>' + data.error + '</small>';
-                }
 
                 if (data.errors && data.errors.length > 0) {
                     errorMessage += '<ul class="mb-0 mt-2">';

@@ -366,6 +366,9 @@ FodyWeavers.xsd
 Thumbs.db
 .DS_Store
 
+# Credenciales y configuración sensible — NUNCA subir a git
+secretsSettings.config
+
 # Archivos específicos que causan el error en OneDrive
 .vsidx
 SemanticSymbols.db-shm

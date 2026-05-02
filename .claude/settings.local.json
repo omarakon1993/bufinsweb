@@ -16,7 +16,11 @@
       "Bash(python -c:*)",
       "Bash(nuget install:*)",
       "Bash(ls:*)",
-      "Bash(certutil -encode:*)"
+      "Bash(certutil -encode:*)",
+      "Bash(Find-Item -Path \"C:\\\\Users\\\\omara\\\\OneDrive\\\\Omar Akon Personal\\\\Proyectos OAG\\\\Bufins Web\\\\Bufins principal web\\\\bufinsweb\" -Filter \"EnvironmentHelper.cs\" -Recurse)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "WebFetch(domain:github.com)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

@@ -70,24 +70,20 @@ namespace bufinsweb.Controllers
                     message = "¡Gracias por contactarnos! Hemos recibido tu mensaje y te responderemos pronto."
                 });
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
-                // Error de configuración (variables de entorno no configuradas)
                 return Json(new
                 {
                     success = false,
-                    message = "Error de configuración del servidor. Por favor, contacte al administrador.",
-                    error = ex.Message
+                    message = "Error de configuración del servidor. Por favor, contacte al administrador."
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Error general
                 return Json(new
                 {
                     success = false,
-                    message = "Ha ocurrido un error al enviar el mensaje. Por favor, inténtelo más tarde.",
-                    error = ex.Message
+                    message = "Ha ocurrido un error al enviar el mensaje. Por favor, inténtelo más tarde."
                 });
             }
         }
