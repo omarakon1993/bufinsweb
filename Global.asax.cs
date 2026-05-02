@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -16,6 +16,18 @@ namespace bufinsweb
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+
+        protected void Application_AcquireRequestState(object sender, EventArgs e)
+        {
+            string lang = "es-CO";
+            var cookie = Request.Cookies["lang"];
+            if (cookie != null && (cookie.Value == "es-CO" || cookie.Value == "en-US"))
+                lang = cookie.Value;
+
+            var culture = new CultureInfo(lang);
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
         }
     }
 }

@@ -1,27 +1,27 @@
+@{
+    var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+    bool isEnglish = currentLang == "en";
+    string switchToLang = isEnglish ? "es-CO" : "en-US";
+    string switchToLabel = isEnglish ? "Español" : "English";
+    string switchToTitle = isEnglish ? Resources.Strings.LangSwitch_ToSpanish : Resources.Strings.LangSwitch_ToEnglish;
+}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="@(isEnglish ? "en" : "es")">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - BUSINESS. FINANCE. ALWAYS. EVERYWHERE.</title>
-    <meta name="description" content="Bufins - Business. Finance. Always. Everywhere. Transforme sus cifras en mejores decisiones de negocio.">
+    <meta name="description" content="@Resources.Strings.Meta_Description">
     <link rel="icon" type="image/png" href="~/Assets/images/Bufins_Favicon.png">
 
-    <!-- Bootstrap 5 CSS -->
     <link href="~/Assets/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="~/Assets/css/font-awesome.min.css">
-    <!-- AOS Animation Library -->
     <link href="~/Assets/css/aos.css" rel="stylesheet">
-    <!-- Google Fonts - Inter -->
     <link href="~/Assets/css/inter-font.css" rel="stylesheet">
-
-    <!-- Bufins Custom Styles -->
     <link href="~/Assets/css/bufins-custom.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="@Url.Action("Index", "Home")">
@@ -33,14 +33,30 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Index", "Home")">Inicio</a>
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">@Resources.Strings.Nav_Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Contact", "Home")">Contacto</a>
+                        <a class="nav-link" href="@Url.Action("Contact", "Home")">@Resources.Strings.Nav_Contact</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <div class="lang-switcher-wrapper">
+                            <i class="fas fa-globe lang-switcher-icon"></i>
+                            <div class="lang-switcher">
+                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Request.Url.PathAndQuery })"
+                                   class="lang-btn @(!isEnglish ? "active" : "")" title="Español (Colombia)">
+                                    Español
+                                </a>
+                                <span class="lang-sep"></span>
+                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Request.Url.PathAndQuery })"
+                                   class="lang-btn @(isEnglish ? "active" : "")" title="English (US)">
+                                    English
+                                </a>
+                            </div>
+                        </div>
                     </li>
                     <li class="nav-item ms-lg-3">
                         <a class="btn btn-portal" href="https://customers.bufins.com">
-                            <i class="fas fa-user-circle me-2"></i>Portal Clientes
+                            <i class="fas fa-user-circle me-2"></i>@Resources.Strings.Nav_Portal
                         </a>
                     </li>
                 </ul>
@@ -48,19 +64,17 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main>
         @RenderBody()
     </main>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h4 class="footer-brand mb-3">Bufins</h4>
                     <p class="footer-text mb-2">Business. Finance. Always. Everywhere.</p>
-                    <p class="footer-text mb-3">Transforme sus cifras en mejores decisiones de negocio.</p>
+                    <p class="footer-text mb-3">@Resources.Strings.Footer_Slogan</p>
                     <div class="footer-social mt-3">
                         <a href="#" class="social-icon me-2"><i class="fab fa-linkedin"></i></a>
                         <a href="#" class="social-icon me-2"><i class="fab fa-twitter"></i></a>
@@ -68,15 +82,15 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="footer-title mb-3">Enlaces Rápidos</h5>
+                    <h5 class="footer-title mb-3">@Resources.Strings.Footer_LinksTitle</h5>
                     <ul class="footer-links list-unstyled">
-                        <li class="mb-2"><a href="@Url.Action("Index", "Home")"><i class="fas fa-chevron-right me-2"></i>Inicio</a></li>
-                        <li class="mb-2"><a href="@Url.Action("Contact", "Home")"><i class="fas fa-chevron-right me-2"></i>Contacto</a></li>
-                        <li class="mb-2"><a href="https://customers.bufins.com"><i class="fas fa-chevron-right me-2"></i>Portal Clientes</a></li>
+                        <li class="mb-2"><a href="@Url.Action("Index", "Home")"><i class="fas fa-chevron-right me-2"></i>@Resources.Strings.Nav_Home</a></li>
+                        <li class="mb-2"><a href="@Url.Action("Contact", "Home")"><i class="fas fa-chevron-right me-2"></i>@Resources.Strings.Nav_Contact</a></li>
+                        <li class="mb-2"><a href="https://customers.bufins.com"><i class="fas fa-chevron-right me-2"></i>@Resources.Strings.Nav_Portal</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="footer-title mb-3">Contacto</h5>
+                    <h5 class="footer-title mb-3">@Resources.Strings.Footer_ContactTitle</h5>
                     <ul class="footer-contact list-unstyled">
                         <li class="mb-3">
                             <i class="fas fa-envelope footer-icon"></i>
@@ -93,7 +107,7 @@
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="footer-title mb-3">Ubicación</h5>
+                    <h5 class="footer-title mb-3">@Resources.Strings.Footer_LocationTitle</h5>
                     <div class="footer-map">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d254508.39252092425!2d-74.2478938!3d4.6486259!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9bfd2da6cb29%3A0x239d635520a33914!2sBogot%C3%A1%2C%20Colombia!5e0!3m2!1ses!2sco!4v1234567890"
                                 width="100%"
@@ -107,28 +121,46 @@
                 </div>
             </div>
             <hr class="footer-divider my-4">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="footer-copyright mb-0">&copy; @DateTime.Now.Year Bufins - Todos los derechos reservados</p>
+            <div class="row align-items-center">
+                <div class="col-md-7 text-center text-md-start mb-3 mb-md-0">
+                    <p class="footer-copyright mb-0">&copy; @DateTime.Now.Year Bufins &mdash; @Resources.Strings.Footer_AllRights</p>
+                </div>
+                <div class="col-md-5 text-center text-md-end">
+                    <div class="lang-switcher-wrapper lang-switcher-wrapper-footer">
+                        <i class="fas fa-globe lang-switcher-icon"></i>
+                        <div class="lang-switcher lang-switcher-footer">
+                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Request.Url.PathAndQuery })"
+                               class="lang-btn @(!isEnglish ? "active" : "")" title="Español (Colombia)">
+                                Español
+                            </a>
+                            <span class="lang-sep"></span>
+                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Request.Url.PathAndQuery })"
+                               class="lang-btn @(isEnglish ? "active" : "")" title="English (US)">
+                                English
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
+    <!-- Botón Volver Arriba -->
     <button id="backToTop" class="back-to-top" aria-label="Volver arriba">
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="~/Assets/js/bootstrap.bundle.min.js"></script>
+    <!-- Botón Flotante de Idioma -->
+    <a href="@Url.Action("SetLanguage", "Home", new { lang = switchToLang, returnUrl = Request.Url.PathAndQuery })"
+       class="lang-float-btn" title="@switchToTitle" aria-label="@switchToTitle">
+        <i class="fas fa-globe lang-float-globe"></i>
+        <span class="lang-float-label">@switchToLabel</span>
+    </a>
 
-    <!-- Back to Top Button Script -->
+    <script src="~/Assets/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const backToTopButton = document.getElementById('backToTop');
-
-            // Mostrar/ocultar el botón según el scroll
             window.addEventListener('scroll', function () {
                 if (window.pageYOffset > 300) {
                     backToTopButton.classList.add('show');
@@ -136,13 +168,8 @@
                     backToTopButton.classList.remove('show');
                 }
             });
-
-            // Volver arriba con animación suave al hacer clic
             backToTopButton.addEventListener('click', function () {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
     </script>

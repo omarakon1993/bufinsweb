@@ -1726,3 +1726,151 @@ html {
         font-size: 16px;
     }
 }
+
+/* =======================
+   LANGUAGE SWITCHER (NAVBAR + FOOTER)
+   ======================= */
+
+.lang-switcher-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.lang-switcher-wrapper-footer {
+    justify-content: flex-end;
+}
+
+.lang-switcher-icon {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.28);
+    flex-shrink: 0;
+}
+
+.lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(1, 225, 215, 0.18);
+    border-radius: 100px;
+    padding: 3px;
+}
+
+.lang-btn {
+    display: flex;
+    align-items: center;
+    padding: 5px 13px;
+    border-radius: 100px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: all 0.22s ease;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.lang-btn:hover {
+    color: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.06);
+    text-decoration: none;
+}
+
+.lang-btn.active {
+    background: rgba(1, 225, 215, 0.1);
+    color: var(--color-cyan);
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(1, 225, 215, 0.2);
+}
+
+.lang-btn.active:hover {
+    background: rgba(1, 225, 215, 0.15);
+    color: var(--color-cyan);
+    text-decoration: none;
+}
+
+.lang-sep {
+    width: 1px;
+    height: 14px;
+    background: rgba(1, 225, 215, 0.13);
+    flex-shrink: 0;
+    margin: 0 1px;
+    align-self: center;
+}
+
+.lang-switcher-footer {
+    border-color: rgba(1, 225, 215, 0.13);
+}
+
+/* =======================
+   FLOATING LANGUAGE BUTTON
+   ======================= */
+
+.lang-float-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(22, 9, 51, 0.88);
+    border: 1px solid rgba(1, 225, 215, 0.22);
+    border-radius: 100px;
+    padding: 9px 16px 9px 13px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(1, 225, 215, 0.04);
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.lang-float-btn:hover {
+    background: var(--color-purple);
+    border-color: rgba(1, 225, 215, 0.45);
+    color: var(--color-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4), 0 0 24px rgba(1, 225, 215, 0.1);
+    text-decoration: none;
+}
+
+.lang-float-globe {
+    font-size: 0.78rem;
+    color: var(--color-cyan);
+    opacity: 0.6;
+    transition: opacity 0.22s ease;
+    flex-shrink: 0;
+}
+
+.lang-float-btn:hover .lang-float-globe {
+    opacity: 1;
+}
+
+.lang-float-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+@media (max-width: 768px) {
+    .lang-float-btn {
+        bottom: 20px;
+        left: 20px;
+        padding: 10px;
+        gap: 0;
+        width: 40px;
+        height: 40px;
+        justify-content: center;
+    }
+
+    .lang-float-label {
+        display: none;
+    }
+
+    .lang-float-globe {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+}

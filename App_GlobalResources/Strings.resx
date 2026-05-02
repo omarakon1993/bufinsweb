@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- NAVEGACIÓN Y FOOTER -->
+  <data name="Nav_Home" xml:space="preserve"><value>Inicio</value></data>
+  <data name="Nav_Contact" xml:space="preserve"><value>Contacto</value></data>
+  <data name="Nav_Portal" xml:space="preserve"><value>Portal Clientes</value></data>
+  <data name="Footer_Slogan" xml:space="preserve"><value>Transforme sus cifras en mejores decisiones de negocio.</value></data>
+  <data name="Footer_LinksTitle" xml:space="preserve"><value>Enlaces Rápidos</value></data>
+  <data name="Footer_ContactTitle" xml:space="preserve"><value>Contacto</value></data>
+  <data name="Footer_LocationTitle" xml:space="preserve"><value>Ubicación</value></data>
+  <data name="Footer_EmailLabel" xml:space="preserve"><value>Correo electrónico</value></data>
+  <data name="Footer_PhoneLabel" xml:space="preserve"><value>Teléfono</value></data>
+  <data name="Footer_AddressLabel" xml:space="preserve"><value>Ubicación</value></data>
+  <data name="Footer_AllRights" xml:space="preserve"><value>Todos los derechos reservados</value></data>
+  <data name="Meta_Description" xml:space="preserve"><value>Bufins - Business. Finance. Always. Everywhere. Transforme sus cifras en mejores decisiones de negocio.</value></data>
+  <data name="LangSwitch_Label" xml:space="preserve"><value>Idioma</value></data>
+  <data name="LangSwitch_ToEnglish" xml:space="preserve"><value>Switch to English</value></data>
+  <data name="LangSwitch_ToSpanish" xml:space="preserve"><value>Cambiar a Español</value></data>
+
+  <!-- INDEX - HERO -->
+  <data name="Index_Title" xml:space="preserve"><value>Bufins - BUSINESS FINANCE ALWAYS EVERYWHERE</value></data>
+  <data name="Index_HeroPart1" xml:space="preserve"><value>Tu empresa está</value></data>
+  <data name="Index_HeroEmphasis" xml:space="preserve"><value>perdiendo dinero</value></data>
+  <data name="Index_HeroPart2" xml:space="preserve"><value>sin darse cuenta.</value></data>
+  <data name="Index_HeroSubtitle" xml:space="preserve"><value>convierte tus cifras financieras en decisiones que generan valor.</value></data>
+  <data name="Index_HeroDesc" xml:space="preserve"><value>Sistema 100% web, visual y fácil de usar.</value></data>
+  <data name="Index_HeroCTA" xml:space="preserve"><value>Quiero una demo</value></data>
+
+  <!-- INDEX - PROBLEMAS -->
+  <data name="Index_ProbTitle" xml:space="preserve"><value>La falta de información financiera clara es el mayor enemigo de tu caja.</value></data>
+  <data name="Index_ProbDesc1" xml:space="preserve"><value>La mayoría de las empresas se enfocan en vender, pero no en comprender cómo se mueve su dinero.</value></data>
+  <data name="Index_ProbDesc2" xml:space="preserve"><value>El resultado: gastos invisibles, decisiones tardías y poca rentabilidad.</value></data>
+  <data name="Index_ProbQuestion" xml:space="preserve"><value>¿Tu empresa está pasando o ha pasado por esto alguna vez?</value></data>
+  <data name="Index_Prob1" xml:space="preserve"><value>No hay plata para la nómina</value></data>
+  <data name="Index_Prob2" xml:space="preserve"><value>Un proveedor no despacha porque no le pago</value></data>
+  <data name="Index_Prob3" xml:space="preserve"><value>Equipos que no funcionan porque necesita mantenimiento</value></data>
+  <data name="Index_Prob4" xml:space="preserve"><value>No puedo retener mi mejor talento</value></data>
+  <data name="Index_Prob5" xml:space="preserve"><value>El banco me hizo un embargo</value></data>
+  <data name="Index_Prob6" xml:space="preserve"><value>La DIAN me embargó</value></data>
+  <data name="Index_Prob7" xml:space="preserve"><value>Cerrado por quiebra</value></data>
+  <data name="Index_Prob8" xml:space="preserve"><value>EBITDA Negativo</value></data>
+  <data name="Index_Prob9" xml:space="preserve"><value>Valor de empresa negativo</value></data>
+  <data name="Index_Prob10" xml:space="preserve"><value>Flujo de caja negativo</value></data>
+  <data name="Index_BufinsChanges" xml:space="preserve"><value>Bufins cambia eso.</value></data>
+
+  <!-- INDEX - QUÉ ES BUFINS -->
+  <data name="Index_WhatIsLabel" xml:space="preserve"><value>¿Qué es</value></data>
+  <data name="Index_WhatIsDesc1" xml:space="preserve"><value>Una plataforma de información financiera que te muestra lo que tu empresa necesita saber.</value></data>
+  <data name="Index_WhatIsDesc2" xml:space="preserve"><value>transforma los datos financieros de tu empresa en tableros visuales, indicadores clave y reportes estratégicos, accesibles desde cualquier dispositivo.</value></data>
+  <data name="Index_HelpsTitle" xml:space="preserve"><value>Te ayuda a:</value></data>
+  <data name="Index_Benefit1" xml:space="preserve"><value>Saber si tus ingresos realmente generan utilidad.</value></data>
+  <data name="Index_Benefit2" xml:space="preserve"><value>Identificar qué gastos consumen caja sin retorno.</value></data>
+  <data name="Index_Benefit3" xml:space="preserve"><value>Tener visibilidad completa de tu flujo de dinero.</value></data>
+  <data name="Index_Benefit4" xml:space="preserve"><value>Anticiparte con proyecciones y planes de acción.</value></data>
+  <data name="Index_Benefit5" xml:space="preserve"><value>Estimar con claridad el valor de tu empresa.</value></data>
+  <data name="Index_Benefit6" xml:space="preserve"><value>Tomar decisiones con base en información real.</value></data>
+  <data name="Index_WhatIsCTA" xml:space="preserve"><value>Quiero una demo</value></data>
+
+  <!-- INDEX - FEATURES -->
+  <data name="Index_FeatTitle" xml:space="preserve"><value>He probado consultores financieros y ya no sé qué funciona</value></data>
+  <data name="Index_FeatDesc1" xml:space="preserve"><value>Los consultores se dedican a hacer diagnósticos,</value></data>
+  <data name="Index_FeatDesc2" xml:space="preserve"><value>no diagnostica, conoce los problemas y transforma la realidad de las empresas.</value></data>
+  <data name="Index_Feat1Title" xml:space="preserve"><value>El punto final al desorden.</value></data>
+  <data name="Index_Feat1Desc" xml:space="preserve"><value>Ponga fin al manejo inadecuado y la falta de homogeneidad en su información financiera con bases de datos online estandarizadas y seguras.</value></data>
+  <data name="Index_Feat2Title" xml:space="preserve"><value>Números sí. Fácil también.</value></data>
+  <data name="Index_Feat2Desc" xml:space="preserve"><value>Es extraordinario cómo nuestros dashboards le facilitarán la lectura de la información numérica de su negocio. Consulte sus cifras de forma confiable y oportuna, siempre.</value></data>
+  <data name="Index_Feat3Title" xml:space="preserve"><value>Menos carga. Más decisiones.</value></data>
+  <data name="Index_Feat3Desc" xml:space="preserve"><value>Preparar la información financiera para comités y juntas colapsa la operación y entorpece la gestión; permita que Bufins asuma esa carga operativa optimizando su tiempo para la toma de decisiones.</value></data>
+  <data name="Index_Feat4Title" xml:space="preserve"><value>Su equipo más financiero.</value></data>
+  <data name="Index_Feat4Desc" xml:space="preserve"><value>Provea a su equipo de trabajo conocimientos e instrumentos financieros para que entiendan el valor de la información y conozcan las formas correctas de manejarla.</value></data>
+  <data name="Index_FeaturesEnd" xml:space="preserve"><value>Deja de operar a ciegas. Toma el control con</value></data>
+
+  <!-- INDEX - VENTAJAS -->
+  <data name="Index_AdvTitle" xml:space="preserve"><value>Ventajas de operar con</value></data>
+  <data name="Index_Adv1" xml:space="preserve"><value>Tener un panorama claro de tu flujo de caja.</value></data>
+  <data name="Index_Adv2" xml:space="preserve"><value>Detectar y corregir decisiones que destruyen liquidez.</value></data>
+  <data name="Index_Adv3" xml:space="preserve"><value>Crear planes de choque para evitar crisis financieras.</value></data>
+  <data name="Index_Adv4" xml:space="preserve"><value>Proyectar escenarios futuros con mayor precisión.</value></data>
+  <data name="Index_Adv5" xml:space="preserve"><value>Valorar tu empresa con datos concretos.</value></data>
+  <data name="Index_Adv6" xml:space="preserve"><value>Presentarte ante inversionistas, juntas o socios.</value></data>
+  <data name="Index_Adv7" xml:space="preserve"><value>Adaptar el software a las necesidades específicas de tu negocio.</value></data>
+
+  <!-- INDEX - CÓMO FUNCIONA -->
+  <data name="Index_HowTitle" xml:space="preserve"><value>¿Cómo funciona?</value></data>
+  <data name="Index_HowSubtitle" xml:space="preserve"><value>Simple. Visual. Sin complicaciones.</value></data>
+  <data name="Index_HowDesc" xml:space="preserve"><value>está desarrollado bajo una estructura modular en la nube que permite:</value></data>
+  <data name="Index_Step1" xml:space="preserve"><value>Capturar tu información financiera.</value></data>
+  <data name="Index_Step2" xml:space="preserve"><value>Procesarla automáticamente.</value></data>
+  <data name="Index_Step3" xml:space="preserve"><value>Mostrarte indicadores clave del negocio.</value></data>
+  <data name="Index_Step4" xml:space="preserve"><value>Ayudarte a tomar decisiones con claridad.</value></data>
+  <data name="Index_ModulesTitle" xml:space="preserve"><value>Incluye módulos como:</value></data>
+  <data name="Index_Mod1" xml:space="preserve"><value>Estados de resultados</value></data>
+  <data name="Index_Mod2" xml:space="preserve"><value>Balance</value></data>
+  <data name="Index_Mod3" xml:space="preserve"><value>EBITDA</value></data>
+  <data name="Index_Mod4" xml:space="preserve"><value>Flujo de caja</value></data>
+  <data name="Index_Mod5" xml:space="preserve"><value>Tesorería</value></data>
+  <data name="Index_Mod6" xml:space="preserve"><value>Indicadores financieros</value></data>
+  <data name="Index_Mod7" xml:space="preserve"><value>Control presupuestal</value></data>
+  <data name="Index_Mod8" xml:space="preserve"><value>Forecast de cierre</value></data>
+  <data name="Index_Mod9" xml:space="preserve"><value>Planes de choque</value></data>
+  <data name="Index_ModFooterPart1" xml:space="preserve"><value>Además, podrá tener</value></data>
+  <data name="Index_ModFooterEmphasis" xml:space="preserve"><value>indicadores financieros especializados</value></data>
+  <data name="Index_ModFooterPart2" xml:space="preserve"><value>para su industria.</value></data>
+  <data name="Index_HowCTA" xml:space="preserve"><value>Quiero una demo</value></data>
+
+  <!-- INDEX - TESTIMONIOS -->
+  <data name="Index_TestTitle" xml:space="preserve"><value>Lo que otros líderes están diciendo</value></data>
+  <data name="Index_Test1" xml:space="preserve"><value>"Antes tomábamos decisiones con corazonadas. Hoy lo hacemos con Bufins y eso cambió todo."</value></data>
+  <data name="Index_Test1Author" xml:space="preserve"><value>— Gerente general, empresa manufacturera</value></data>
+  <data name="Index_Test2" xml:space="preserve"><value>"Lo más valioso: saber hacia dónde va mi caja sin tener que preguntar a nadie."</value></data>
+  <data name="Index_Test2Author" xml:space="preserve"><value>— Socio fundador, agencia de servicios</value></data>
+  <data name="Index_TestFooterPart1" xml:space="preserve"><value>Desde el primer momento que use</value></data>
+  <data name="Index_TestFooterPart2" xml:space="preserve"><value>, será una herramienta indispensable para sus asambleas, juntas, equipos de trabajo y comités.</value></data>
+
+  <!-- INDEX - PARA QUIÉN -->
+  <data name="Index_TargetTitle" xml:space="preserve"><value>¿Para quién es</value></data>
+  <data name="Index_TargetSubtitle" xml:space="preserve"><value>Si tomas decisiones financieras en tu empresa, esto es para ti.</value></data>
+  <data name="Index_Target1" xml:space="preserve"><value>Gerentes generales</value></data>
+  <data name="Index_Target2" xml:space="preserve"><value>Equipos financieros</value></data>
+  <data name="Index_Target3" xml:space="preserve"><value>Directores de junta</value></data>
+  <data name="Index_Target4" xml:space="preserve"><value>Socios e inversionistas</value></data>
+  <data name="Index_Target5" xml:space="preserve"><value>Empresas medianas con grandes proyecciones</value></data>
+
+  <!-- INDEX - CULTURA FINANCIERA -->
+  <data name="Index_CultureTitle" xml:space="preserve"><value>Cultura Financiera</value></data>
+  <data name="Index_CultureDesc1Part1" xml:space="preserve"><value>Creemos en el impacto que genera desarrollar una</value></data>
+  <data name="Index_CultureEmphasis1" xml:space="preserve"><value>cultura financiera</value></data>
+  <data name="Index_CultureDesc1Part2" xml:space="preserve"><value>en las organizaciones.</value></data>
+  <data name="Index_CultureDesc2Part1" xml:space="preserve"><value>Al usar</value></data>
+  <data name="Index_CultureDesc2Part2" xml:space="preserve"><value>en el día a día de su negocio, sus equipos de trabajo construyen una cultura donde las</value></data>
+  <data name="Index_CultureEmphasis2" xml:space="preserve"><value>cifras y los indicadores</value></data>
+  <data name="Index_CultureDesc2Part3" xml:space="preserve"><value>son el insumo más importante para la medición de desempeño y la toma de decisiones.</value></data>
+
+  <!-- INDEX - CTA FINAL -->
+  <data name="Index_CtaPart1" xml:space="preserve"><value>Estás a una decisión de</value></data>
+  <data name="Index_CtaEmphasis" xml:space="preserve"><value>transformar todas tus decisiones.</value></data>
+  <data name="Index_CtaDesc1" xml:space="preserve"><value>Si sigues sin claridad financiera, cada decisión puede salirte cara.</value></data>
+  <data name="Index_CtaDesc2" xml:space="preserve"><value>Bufins te da el control. Te da dirección. Te da valor.</value></data>
+  <data name="Index_CtaCTA" xml:space="preserve"><value>Quiero una demo</value></data>
+
+  <!-- ABOUT PAGE -->
+  <data name="About_Title" xml:space="preserve"><value>Servicios - Bufins</value></data>
+  <data name="About_HeroWord1" xml:space="preserve"><value>Ahora</value></data>
+  <data name="About_HeroWord2" xml:space="preserve"><value>gerencie</value></data>
+  <data name="About_HeroWord3" xml:space="preserve"><value>con</value></data>
+  <data name="About_HeroDescPart1" xml:space="preserve"><value>Un experto financiero llevará a cabo con su equipo de trabajo el</value></data>
+  <data name="About_HeroDescEmphasis" xml:space="preserve"><value>comité financiero mensual</value></data>
+  <data name="About_HeroDescPart2" xml:space="preserve"><value>con los siguientes objetivos:</value></data>
+  <data name="About_Obj1" xml:space="preserve"><value>1. Acompañamiento en la ejecución financiera de las estrategias de crecimiento.</value></data>
+  <data name="About_Obj2" xml:space="preserve"><value>2. Control del presupuesto.</value></data>
+  <data name="About_Obj3" xml:space="preserve"><value>3. Seguimiento de los indicadores financieros de mayor impacto en la generación de valor.</value></data>
+  <data name="About_Obj4" xml:space="preserve"><value>4. Análisis de resultados y recomendaciones.</value></data>
+  <data name="About_GenTitle" xml:space="preserve"><value>Generalidades</value></data>
+  <data name="About_Gen1" xml:space="preserve"><value>La primera fase de estructuración de la base de datos necesaria, para preparar el modelo financiero, se cobra por separado y equivale a un mes de honorarios. La base de datos son dos años históricos mensuales y el año corriente mensual.</value></data>
+  <data name="About_Gen2" xml:space="preserve"><value>La empresa debe suministrar el presupuesto del año en curso en PYG, si tiene balance proyectado se incluye en el modelo, pero si no lo tiene se proyecta con la metodología.</value></data>
+  <data name="About_Gen3" xml:space="preserve"><value>El modelo de preparación del comité no se entrega, por tratarse del Know How del servicio.</value></data>
+  <data name="About_Gen4" xml:space="preserve"><value>El comité se prepara durante los tres días siguientes a la entrega de la información del cierre del mes.</value></data>
+  <data name="About_Gen5" xml:space="preserve"><value>Los resultados del comité se publican en la WEB en la estructura de PowerBi.</value></data>
+  <data name="About_Gen6" xml:space="preserve"><value>Para la implementación de la metodología financiera se requiere de la participación de la organización, que deberá tener un líder interno con capacidad de decisión.</value></data>
+  <data name="About_Gen7" xml:space="preserve"><value>La metodología de recopilación de la información estará siempre disponible para el cliente, en Excel.</value></data>
+  <data name="About_Gen8" xml:space="preserve"><value>Usamos Office 365 para mayor seguridad y confidencialidad de la información.</value></data>
+  <data name="About_Gen9" xml:space="preserve"><value>Los honorarios previamente cotizados deberán pagarse dentro de los 5 días primeros días del mes.</value></data>
+  <data name="About_Gen10" xml:space="preserve"><value>El contrato para la implementación del comité debe firmarse por un año.</value></data>
+  <data name="About_ConsultantTitle" xml:space="preserve"><value>Consultor Líder</value></data>
+  <data name="About_BackgroundTitle" xml:space="preserve"><value>Background</value></data>
+  <data name="About_Edu1Degree" xml:space="preserve"><value>Estadístico</value></data>
+  <data name="About_Edu2Degree" xml:space="preserve"><value>MBA con especialización en finanzas</value></data>
+  <data name="About_Edu3Degree" xml:space="preserve"><value>Diplomada en Consultoría Empresarial</value></data>
+  <data name="About_Edu3School" xml:space="preserve"><value>Cámara de Comercio de Bogotá</value></data>
+  <data name="About_Edu4Degree" xml:space="preserve"><value>Diplomada en NIIF</value></data>
+  <data name="About_ExpertiseTitle" xml:space="preserve"><value>Expertise</value></data>
+  <data name="About_Exp1" xml:space="preserve"><value>Más de 20 años como gerente</value></data>
+  <data name="About_Exp2" xml:space="preserve"><value>25 años de dedicación al asesoramiento estratégico y financiero</value></data>
+  <data name="About_Exp3" xml:space="preserve"><value>Valoración, reestructuración y negociación de compañías por más de COP2 Billones de pesos</value></data>
+  <data name="About_SectorsTitle" xml:space="preserve"><value>Sectores</value></data>
+  <data name="About_SectorsText" xml:space="preserve"><value>Construcción – Financiero – Servicios – Salud – Tecnología – Comercio – Hotelería – Restaurantes – Agrícola – Farmacéutico – Textil – Cooperativo – Turismo – Industria en general.</value></data>
+  <data name="About_CtaTitle" xml:space="preserve"><value>Desde el primer momento que use Bufins será una herramienta indispensable</value></data>
+  <data name="About_CtaSubtitle" xml:space="preserve"><value>para sus asambleas, juntas, equipos de trabajo y comités.</value></data>
+  <data name="About_CtaBtn" xml:space="preserve"><value>Agendar una reunión</value></data>
+
+  <!-- CONTACT PAGE -->
+  <data name="Contact_Title" xml:space="preserve"><value>Contacto - Bufins</value></data>
+  <data name="Contact_HeroTitle" xml:space="preserve"><value>¿Empezamos?</value></data>
+  <data name="Contact_HeroSubtitle" xml:space="preserve"><value>Creemos en el impacto que genera desarrollar una cultura financiera en las organizaciones</value></data>
+  <data name="Contact_FormTitle" xml:space="preserve"><value>Contáctenos</value></data>
+  <data name="Contact_LabelName" xml:space="preserve"><value>Nombre completo</value></data>
+  <data name="Contact_PlaceholderName" xml:space="preserve"><value>Ingrese su nombre completo</value></data>
+  <data name="Contact_LabelCompany" xml:space="preserve"><value>Empresa</value></data>
+  <data name="Contact_PlaceholderCompany" xml:space="preserve"><value>Nombre de su empresa</value></data>
+  <data name="Contact_LabelEmail" xml:space="preserve"><value>Correo electrónico</value></data>
+  <data name="Contact_PlaceholderEmail" xml:space="preserve"><value>correo@ejemplo.com</value></data>
+  <data name="Contact_LabelPhone" xml:space="preserve"><value>Teléfono</value></data>
+  <data name="Contact_PlaceholderPhone" xml:space="preserve"><value>+57 300 123 4567</value></data>
+  <data name="Contact_LabelMessage" xml:space="preserve"><value>Mensaje</value></data>
+  <data name="Contact_PlaceholderMessage" xml:space="preserve"><value>Cuéntenos sobre su negocio y cómo podemos ayudarle...</value></data>
+  <data name="Contact_BtnSubmit" xml:space="preserve"><value>Enviar mensaje</value></data>
+  <data name="Contact_BtnSending" xml:space="preserve"><value>Enviando...</value></data>
+  <data name="Contact_InfoTitle" xml:space="preserve"><value>Información de contacto</value></data>
+  <data name="Contact_EmailLabel" xml:space="preserve"><value>Correo electrónico</value></data>
+  <data name="Contact_PhoneLabel" xml:space="preserve"><value>Teléfono</value></data>
+  <data name="Contact_LocationLabel" xml:space="preserve"><value>Ubicación</value></data>
+  <data name="Contact_LocationValue" xml:space="preserve"><value>Colombia</value></data>
+  <data name="Contact_ProcessTitle" xml:space="preserve"><value>Proceso de inicio</value></data>
+  <data name="Contact_ProcessDesc" xml:space="preserve"><value>Al contactarnos, seguiremos estos pasos para empezar:</value></data>
+  <data name="Contact_Step1Title" xml:space="preserve"><value>MEETUP</value></data>
+  <data name="Contact_Step1Desc" xml:space="preserve"><value>Agendamos reunión para conocer su negocio</value></data>
+  <data name="Contact_Step2Title" xml:space="preserve"><value>PROPOSAL</value></data>
+  <data name="Contact_Step2Desc" xml:space="preserve"><value>Presentamos propuesta y tiempos</value></data>
+  <data name="Contact_Step3Title" xml:space="preserve"><value>PLANNING</value></data>
+  <data name="Contact_Step3Desc" xml:space="preserve"><value>Definimos variables de su modelo</value></data>
+  <data name="Contact_Step4Title" xml:space="preserve"><value>START</value></data>
+  <data name="Contact_Step4Desc" xml:space="preserve"><value>Comenzamos a trabajar juntos</value></data>
+  <data name="Contact_SuccessMsg" xml:space="preserve"><value>¡Gracias por contactarnos! Hemos recibido tu mensaje y te responderemos pronto.</value></data>
+  <data name="Contact_ErrorGeneral" xml:space="preserve"><value>Ha ocurrido un error al enviar el mensaje. Por favor, inténtelo más tarde.</value></data>
+  <data name="Contact_ErrorValidation" xml:space="preserve"><value>Por favor, corrija los errores en el formulario.</value></data>
+</root>

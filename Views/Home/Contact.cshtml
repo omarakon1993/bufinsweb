@@ -1,5 +1,8 @@
 @{
-    ViewBag.Title = "Contacto - Bufins";
+    ViewBag.Title = Resources.Strings.Contact_Title;
+    string jsBtnSending = Resources.Strings.Contact_BtnSending;
+    string jsSuccessMsg = Resources.Strings.Contact_SuccessMsg;
+    string jsErrorGeneral = Resources.Strings.Contact_ErrorGeneral;
 }
 
 <!-- Contact Section -->
@@ -8,38 +11,38 @@
         <div class="row align-items-center min-vh-100">
             <div class="col-lg-10 mx-auto">
                 <div class="text-center mb-5 contact-header" data-aos="fade-up">
-                    <h1 class="contact-title mb-4">¿Empezamos?</h1>
-                    <p class="contact-subtitle">Creemos en el impacto que genera desarrollar una cultura financiera en las organizaciones</p>
+                    <h1 class="contact-title mb-4">@Resources.Strings.Contact_HeroTitle</h1>
+                    <p class="contact-subtitle">@Resources.Strings.Contact_HeroSubtitle</p>
                 </div>
 
                 <div class="row g-4">
                     <div class="col-lg-6" data-aos="fade-right">
                         <div class="contact-form">
-                            <h3 class="mb-4 text-purple">Contáctenos</h3>
+                            <h3 class="mb-4 text-purple">@Resources.Strings.Contact_FormTitle</h3>
                             <form id="contactForm">
                                 @Html.AntiForgeryToken()
                                 <div id="alertContainer"></div>
                                 <div class="mb-3">
-                                    <label for="nombre" class="form-label">Nombre completo</label>
-                                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre completo" required>
+                                    <label for="nombre" class="form-label">@Resources.Strings.Contact_LabelName</label>
+                                    <input type="text" class="form-control" id="nombre" placeholder="@Resources.Strings.Contact_PlaceholderName" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="empresa" class="form-label">Empresa</label>
-                                    <input type="text" class="form-control" id="empresa" placeholder="Nombre de su empresa">
+                                    <label for="empresa" class="form-label">@Resources.Strings.Contact_LabelCompany</label>
+                                    <input type="text" class="form-control" id="empresa" placeholder="@Resources.Strings.Contact_PlaceholderCompany">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="email" class="form-label">Correo electrónico</label>
-                                    <input type="email" class="form-control" id="email" placeholder="correo@ejemplo.com" required>
+                                    <label for="email" class="form-label">@Resources.Strings.Contact_LabelEmail</label>
+                                    <input type="email" class="form-control" id="email" placeholder="@Resources.Strings.Contact_PlaceholderEmail" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="telefono" class="form-label">Teléfono</label>
-                                    <input type="tel" class="form-control" id="telefono" placeholder="+57 300 123 4567">
+                                    <label for="telefono" class="form-label">@Resources.Strings.Contact_LabelPhone</label>
+                                    <input type="tel" class="form-control" id="telefono" placeholder="@Resources.Strings.Contact_PlaceholderPhone">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="mensaje" class="form-label">Mensaje</label>
-                                    <textarea class="form-control" id="mensaje" rows="5" placeholder="Cuéntenos sobre su negocio y cómo podemos ayudarle..." required></textarea>
+                                    <label for="mensaje" class="form-label">@Resources.Strings.Contact_LabelMessage</label>
+                                    <textarea class="form-control" id="mensaje" rows="5" placeholder="@Resources.Strings.Contact_PlaceholderMessage" required></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Enviar mensaje</button>
+                                <button type="submit" class="btn btn-primary w-100">@Resources.Strings.Contact_BtnSubmit</button>
                             </form>
                         </div>
                     </div>
@@ -47,14 +50,14 @@
                     <div class="col-lg-6" data-aos="fade-left">
                         <div class="contact-form h-100 d-flex flex-column justify-content-between">
                             <div>
-                                <h3 class="mb-4 text-purple">Información de contacto</h3>
+                                <h3 class="mb-4 text-purple">@Resources.Strings.Contact_InfoTitle</h3>
                                 <div class="mb-4">
                                     <div class="d-flex align-items-start mb-3">
                                         <div class="feature-icon me-3" style="font-size: 2rem;">
                                             <i class="fas fa-envelope"></i>
                                         </div>
                                         <div>
-                                            <h5 class="mb-1">Correo electrónico</h5>
+                                            <h5 class="mb-1">@Resources.Strings.Contact_EmailLabel</h5>
                                             <p class="text-muted mb-0">admin@bufins.com</p>
                                         </div>
                                     </div>
@@ -63,7 +66,7 @@
                                             <i class="fas fa-phone"></i>
                                         </div>
                                         <div>
-                                            <h5 class="mb-1">Teléfono</h5>
+                                            <h5 class="mb-1">@Resources.Strings.Contact_PhoneLabel</h5>
                                             <p class="text-muted mb-0">+57 312 478 1486</p>
                                         </div>
                                     </div>
@@ -72,8 +75,8 @@
                                             <i class="fas fa-map-marker-alt"></i>
                                         </div>
                                         <div>
-                                            <h5 class="mb-1">Ubicación</h5>
-                                            <p class="text-muted mb-0">Colombia</p>
+                                            <h5 class="mb-1">@Resources.Strings.Contact_LocationLabel</h5>
+                                            <p class="text-muted mb-0">@Resources.Strings.Contact_LocationValue</p>
                                         </div>
                                     </div>
                                 </div>
@@ -84,35 +87,35 @@
                 <div class="row mt-5">
                     <div class="col-lg-12" data-aos="fade-up">
                         <div class="contact-form text-center">
-                            <h4 class="mb-3 text-purple">Proceso de inicio</h4>
-                            <p class="lead mb-4">Al contactarnos, seguiremos estos pasos para empezar:</p>
+                            <h4 class="mb-3 text-purple">@Resources.Strings.Contact_ProcessTitle</h4>
+                            <p class="lead mb-4">@Resources.Strings.Contact_ProcessDesc</p>
                             <div class="row g-3">
                                 <div class="col-md-3">
                                     <div class="p-3">
                                         <div class="text-cyan mb-2" style="font-size: 2.5rem; font-weight: 800;">01</div>
-                                        <h6 class="text-purple">MEETUP</h6>
-                                        <p class="small mb-0">Agendamos reunión para conocer su negocio</p>
+                                        <h6 class="text-purple">@Resources.Strings.Contact_Step1Title</h6>
+                                        <p class="small mb-0">@Resources.Strings.Contact_Step1Desc</p>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="p-3">
                                         <div class="text-cyan mb-2" style="font-size: 2.5rem; font-weight: 800;">02</div>
-                                        <h6 class="text-purple">PROPOSAL</h6>
-                                        <p class="small mb-0">Presentamos propuesta y tiempos</p>
+                                        <h6 class="text-purple">@Resources.Strings.Contact_Step2Title</h6>
+                                        <p class="small mb-0">@Resources.Strings.Contact_Step2Desc</p>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="p-3">
                                         <div class="text-cyan mb-2" style="font-size: 2.5rem; font-weight: 800;">03</div>
-                                        <h6 class="text-purple">PLANNING</h6>
-                                        <p class="small mb-0">Definimos variables de su modelo</p>
+                                        <h6 class="text-purple">@Resources.Strings.Contact_Step3Title</h6>
+                                        <p class="small mb-0">@Resources.Strings.Contact_Step3Desc</p>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="p-3">
                                         <div class="text-cyan mb-2" style="font-size: 2.5rem; font-weight: 800;">04</div>
-                                        <h6 class="text-purple">START</h6>
-                                        <p class="small mb-0">Comenzamos a trabajar juntos</p>
+                                        <h6 class="text-purple">@Resources.Strings.Contact_Step4Title</h6>
+                                        <p class="small mb-0">@Resources.Strings.Contact_Step4Desc</p>
                                     </div>
                                 </div>
                             </div>
@@ -132,23 +135,22 @@
         once: true
     });
 
-    // Form submission handler
+    var MSG_SENDING = '@Html.Raw(HttpUtility.JavaScriptStringEncode(jsBtnSending))';
+    var MSG_SUCCESS = '@Html.Raw(HttpUtility.JavaScriptStringEncode(jsSuccessMsg))';
+    var MSG_ERROR   = '@Html.Raw(HttpUtility.JavaScriptStringEncode(jsErrorGeneral))';
+
     document.getElementById('contactForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Get alert container
         var alertContainer = document.getElementById('alertContainer');
         var submitButton = this.querySelector('button[type="submit"]');
 
-        // Clear previous alerts
         alertContainer.innerHTML = '';
 
-        // Disable submit button and show loading state
         submitButton.disabled = true;
         var originalText = submitButton.textContent;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Enviando...';
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>' + MSG_SENDING;
 
-        // Get form values
         var formData = {
             Nombre: document.getElementById('nombre').value,
             Empresa: document.getElementById('empresa').value,
@@ -158,7 +160,6 @@
             __RequestVerificationToken: document.querySelector('input[name="__RequestVerificationToken"]').value
         };
 
-        // Send AJAX request
         fetch('@Url.Action("Contact", "Home")', {
             method: 'POST',
             headers: {
@@ -169,20 +170,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Show success message
                 alertContainer.innerHTML =
                     '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                    '<i class="fas fa-check-circle me-2"></i>' + data.message +
+                    '<i class="fas fa-check-circle me-2"></i>' + MSG_SUCCESS +
                     '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                     '</div>';
 
-                // Reset form
                 document.getElementById('contactForm').reset();
-
-                // Scroll to alert
                 alertContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } else {
-                // Show error message
                 var errorMessage = data.message;
 
                 if (data.errors && data.errors.length > 0) {
@@ -199,24 +195,19 @@
                     '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                     '</div>';
 
-                // Scroll to alert
                 alertContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         })
-        .catch(error => {
-            // Show error message
+        .catch(function() {
             alertContainer.innerHTML =
                 '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                '<i class="fas fa-exclamation-circle me-2"></i>' +
-                'Ha ocurrido un error al enviar el mensaje. Por favor, inténtelo más tarde.' +
+                '<i class="fas fa-exclamation-circle me-2"></i>' + MSG_ERROR +
                 '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                 '</div>';
 
-            // Scroll to alert
             alertContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         })
-        .finally(() => {
-            // Re-enable submit button
+        .finally(function() {
             submitButton.disabled = false;
             submitButton.textContent = originalText;
         });

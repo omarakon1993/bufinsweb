@@ -1,5 +1,5 @@
 @{
-    ViewBag.Title = "Bufins - BUSINESS FINANCE ALWAYS EVERYWHERE";
+    ViewBag.Title = Resources.Strings.Index_Title;
 }
 
 <!-- Hero Section -->
@@ -8,14 +8,14 @@
         <div class="row align-items-center min-vh-100">
             <div class="col-lg-10 mx-auto text-center" data-aos="fade-up" data-aos-duration="1200">
                 <h1 class="hero-title mb-4">
-                    Tu empresa está <span class="text-italic">perdiendo dinero</span><br />
-                    sin darse cuenta.
+                    @Resources.Strings.Index_HeroPart1 <span class="text-italic">@Resources.Strings.Index_HeroEmphasis</span><br />
+                    @Resources.Strings.Index_HeroPart2
                 </h1>
                 <p class="hero-subtitle mb-4">
-                    <strong>Bufins</strong> convierte tus cifras financieras en decisiones que generan valor.
+                    <strong>Bufins</strong> @Resources.Strings.Index_HeroSubtitle
                 </p>
-                <p class="hero-description mb-5">Sistema 100% web, visual y fácil de usar.</p>
-                <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg">Quiero una demo</a>
+                <p class="hero-description mb-5">@Resources.Strings.Index_HeroDesc</p>
+                <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg">@Resources.Strings.Index_HeroCTA</a>
             </div>
         </div>
     </div>
@@ -29,56 +29,36 @@
                 <div class="problem-header-left">
                     <i class="fas fa-exclamation-triangle problem-header-icon mb-3"></i>
                     <h2 class="problem-main-title mb-3">
-                        La falta de información financiera clara es el mayor enemigo de tu caja.
+                        @Resources.Strings.Index_ProbTitle
                     </h2>
                     <div class="problem-divider mb-3"></div>
                     <p class="problem-description mb-3">
-                        La mayoría de las empresas se enfocan en vender, pero no en comprender cómo se mueve su dinero.
+                        @Resources.Strings.Index_ProbDesc1
                     </p>
                     <p class="problem-description mb-4">
-                        El resultado: gastos invisibles, decisiones tardías y poca rentabilidad.
+                        @Resources.Strings.Index_ProbDesc2
                     </p>
-                    <h4 class="problem-question-title-left mb-3">¿Tu empresa está pasando o ha pasado por esto alguna vez?</h4>
+                    <h4 class="problem-question-title-left mb-3">@Resources.Strings.Index_ProbQuestion</h4>
                 </div>
             </div>
             <div class="col-lg-7" data-aos="fade-left">
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="problem-item">No hay plata para la nómina</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">Un proveedor no despacha porque no le pago</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">Equipos que no funcionan porque necesita mantenimiento</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">No puedo retener mi mejor talento</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">El banco me hizo un embargo</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">La DIAN me embargó</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">Cerrado por quiebra</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">EBITDA Negativo</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">Valor de empresa negativo</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="problem-item">Flujo de caja negativo</div>
-                    </div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob1</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob2</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob3</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob4</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob5</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob6</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob7</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob8</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob9</div></div>
+                    <div class="col-md-6"><div class="problem-item">@Resources.Strings.Index_Prob10</div></div>
                 </div>
             </div>
         </div>
         <div class="text-center mt-5" data-aos="fade-up">
             <i class="fas fa-bolt bufins-changes-icon mb-3"></i>
-            <h3 class="bufins-changes-title">Bufins cambia eso.</h3>
+            <h3 class="bufins-changes-title">@Resources.Strings.Index_BufinsChanges</h3>
         </div>
     </div>
 </section>
@@ -93,54 +73,42 @@
                 </div>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
-                <h2 class="section-title mb-4">¿Qué es <span class="text-purple">Bufins</span>?</h2>
+                <h2 class="section-title mb-4">@Resources.Strings.Index_WhatIsLabel <span class="text-purple">Bufins</span>?</h2>
                 <p class="lead mb-4">
-                    Una plataforma de información financiera que te muestra lo que tu empresa necesita saber.
+                    @Resources.Strings.Index_WhatIsDesc1
                 </p>
                 <p class="mb-4">
-                    Bufins transforma los datos financieros de tu empresa en tableros visuales, indicadores clave y reportes estratégicos, accesibles desde cualquier dispositivo.
+                    <strong>Bufins</strong> @Resources.Strings.Index_WhatIsDesc2
                 </p>
             </div>
         </div>
         <div class="row justify-content-center mt-5">
             <div class="col-lg-10">
-                <h4 class="text-center mb-4" data-aos="fade-up">Te ayuda a:</h4>
+                <h4 class="text-center mb-4" data-aos="fade-up">@Resources.Strings.Index_HelpsTitle</h4>
                 <div class="row g-4">
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                        <div class="benefit-card">
-                            <p>Saber si tus ingresos realmente generan utilidad.</p>
-                        </div>
+                        <div class="benefit-card"><p>@Resources.Strings.Index_Benefit1</p></div>
                     </div>
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
-                        <div class="benefit-card">
-                            <p>Identificar qué gastos consumen caja sin retorno.</p>
-                        </div>
+                        <div class="benefit-card"><p>@Resources.Strings.Index_Benefit2</p></div>
                     </div>
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
-                        <div class="benefit-card">
-                            <p>Tener visibilidad completa de tu flujo de dinero.</p>
-                        </div>
+                        <div class="benefit-card"><p>@Resources.Strings.Index_Benefit3</p></div>
                     </div>
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
-                        <div class="benefit-card">
-                            <p>Anticiparte con proyecciones y planes de acción.</p>
-                        </div>
+                        <div class="benefit-card"><p>@Resources.Strings.Index_Benefit4</p></div>
                     </div>
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
-                        <div class="benefit-card">
-                            <p>Estimar con claridad el valor de tu empresa.</p>
-                        </div>
+                        <div class="benefit-card"><p>@Resources.Strings.Index_Benefit5</p></div>
                     </div>
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
-                        <div class="benefit-card">
-                            <p>Tomar decisiones con base en información real.</p>
-                        </div>
+                        <div class="benefit-card"><p>@Resources.Strings.Index_Benefit6</p></div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="text-center mt-5" data-aos="fade-up">
-            <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg">Quiero una demo</a>
+            <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg">@Resources.Strings.Index_WhatIsCTA</a>
         </div>
     </div>
 </section>
@@ -149,43 +117,43 @@
 <section class="features-section py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title mb-4 features-italic-title">He probado consultores financieros y ya no sé qué funciona</h2>
+            <h2 class="section-title mb-4 features-italic-title">@Resources.Strings.Index_FeatTitle</h2>
             <p class="lead mb-4">
-                Los consultores se dedican a hacer diagnósticos, <strong>Bufins</strong> no diagnostica, conoce los problemas y transforma la realidad de las empresas.
+                @Resources.Strings.Index_FeatDesc1 <strong>Bufins</strong> @Resources.Strings.Index_FeatDesc2
             </p>
         </div>
         <div class="row g-4">
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
                 <div class="feature-card text-center">
                     <i class="fas fa-check-double feature-icon-custom"></i>
-                    <h4>El punto final al desorden.</h4>
-                    <p>Ponga fin al manejo inadecuado y la falta de homogeneidad en su información financiera con bases de datos online estandarizadas y seguras.</p>
+                    <h4>@Resources.Strings.Index_Feat1Title</h4>
+                    <p>@Resources.Strings.Index_Feat1Desc</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
                 <div class="feature-card text-center">
                     <i class="fas fa-calculator feature-icon-custom"></i>
-                    <h4>Números sí. Fácil también.</h4>
-                    <p>Es extraordinario cómo nuestros dashboards le facilitarán la lectura de la información numérica de su negocio. Consulte sus cifras de forma confiable y oportuna, siempre.</p>
+                    <h4>@Resources.Strings.Index_Feat2Title</h4>
+                    <p>@Resources.Strings.Index_Feat2Desc</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
                 <div class="feature-card text-center">
                     <i class="fas fa-lightbulb feature-icon-custom"></i>
-                    <h4>Menos carga. Más decisiones.</h4>
-                    <p>Preparar la información financiera para comités y juntas colapsa la operación y entorpece la gestión; permita que Bufins asuma esa carga operativa optimizando su tiempo para la toma de decisiones.</p>
+                    <h4>@Resources.Strings.Index_Feat3Title</h4>
+                    <p>@Resources.Strings.Index_Feat3Desc</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
                 <div class="feature-card text-center">
                     <i class="fas fa-users feature-icon-custom"></i>
-                    <h4>Su equipo más financiero.</h4>
-                    <p>Provea a su equipo de trabajo conocimientos e instrumentos financieros para que entiendan el valor de la información y conozcan las formas correctas de manejarla.</p>
+                    <h4>@Resources.Strings.Index_Feat4Title</h4>
+                    <p>@Resources.Strings.Index_Feat4Desc</p>
                 </div>
             </div>
         </div>
         <div class="text-center mt-5" data-aos="fade-up">
-            <h3 class="mb-4 control-title">Deja de operar a ciegas. Toma el control con <span class="text-purple">Bufins</span>.</h3>
+            <h3 class="mb-4 control-title">@Resources.Strings.Index_FeaturesEnd <span class="text-purple">Bufins</span>.</h3>
         </div>
     </div>
 </section>
@@ -194,7 +162,7 @@
 <section class="advantages-section py-5">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title mb-4">Ventajas de operar con <span class="text-purple">Bufins</span></h2>
+            <h2 class="section-title mb-4">@Resources.Strings.Index_AdvTitle <span class="text-purple">Bufins</span></h2>
         </div>
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
@@ -204,13 +172,13 @@
             </div>
             <div class="col-lg-6" data-aos="fade-left">
                 <ul class="advantages-list-styled">
-                    <li>Tener un panorama claro de tu flujo de caja.</li>
-                    <li>Detectar y corregir decisiones que destruyen liquidez.</li>
-                    <li>Crear planes de choque para evitar crisis financieras.</li>
-                    <li>Proyectar escenarios futuros con mayor precisión.</li>
-                    <li>Valorar tu empresa con datos concretos.</li>
-                    <li>Presentarte ante inversionistas, juntas o socios.</li>
-                    <li>Adaptar el software a las necesidades específicas de tu negocio.</li>
+                    <li>@Resources.Strings.Index_Adv1</li>
+                    <li>@Resources.Strings.Index_Adv2</li>
+                    <li>@Resources.Strings.Index_Adv3</li>
+                    <li>@Resources.Strings.Index_Adv4</li>
+                    <li>@Resources.Strings.Index_Adv5</li>
+                    <li>@Resources.Strings.Index_Adv6</li>
+                    <li>@Resources.Strings.Index_Adv7</li>
                 </ul>
             </div>
         </div>
@@ -221,104 +189,79 @@
 <section class="how-it-works-section py-5">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title mb-4">¿Cómo funciona?</h2>
-            <p class="lead mb-4">Simple. Visual. Sin complicaciones.</p>
-            <p class="mb-4">Bufins está desarrollado bajo una estructura modular en la nube que permite:</p>
+            <h2 class="section-title mb-4">@Resources.Strings.Index_HowTitle</h2>
+            <p class="lead mb-4">@Resources.Strings.Index_HowSubtitle</p>
+            <p class="mb-4"><strong>Bufins</strong> @Resources.Strings.Index_HowDesc</p>
         </div>
         <div class="row g-4 mb-5">
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
                 <div class="process-step-card">
                     <i class="fas fa-database step-icon"></i>
                     <div class="step-number">1</div>
-                    <p>Capturar tu información financiera.</p>
+                    <p>@Resources.Strings.Index_Step1</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
                 <div class="process-step-card">
                     <i class="fas fa-cogs step-icon"></i>
                     <div class="step-number">2</div>
-                    <p>Procesarla automáticamente.</p>
+                    <p>@Resources.Strings.Index_Step2</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
                 <div class="process-step-card">
                     <i class="fas fa-chart-line step-icon"></i>
                     <div class="step-number">3</div>
-                    <p>Mostrarte indicadores clave del negocio.</p>
+                    <p>@Resources.Strings.Index_Step3</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
                 <div class="process-step-card">
                     <i class="fas fa-lightbulb step-icon"></i>
                     <div class="step-number">4</div>
-                    <p>Ayudarte a tomar decisiones con claridad.</p>
+                    <p>@Resources.Strings.Index_Step4</p>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-10 mx-auto" data-aos="fade-up">
-                <h4 class="text-center mb-5">Incluye módulos como:</h4>
+                <h4 class="text-center mb-5">@Resources.Strings.Index_ModulesTitle</h4>
                 <div class="row g-3">
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-file-invoice-dollar module-icon"></i>
-                            <span>Estados de resultados</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-file-invoice-dollar module-icon"></i><span>@Resources.Strings.Index_Mod1</span></div>
                     </div>
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-balance-scale module-icon"></i>
-                            <span>Balance</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-balance-scale module-icon"></i><span>@Resources.Strings.Index_Mod2</span></div>
                     </div>
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-chart-bar module-icon"></i>
-                            <span>EBITDA</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-chart-bar module-icon"></i><span>@Resources.Strings.Index_Mod3</span></div>
                     </div>
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-coins module-icon"></i>
-                            <span>Flujo de caja</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-coins module-icon"></i><span>@Resources.Strings.Index_Mod4</span></div>
                     </div>
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-money-bill-wave module-icon"></i>
-                            <span>Tesorería</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-money-bill-wave module-icon"></i><span>@Resources.Strings.Index_Mod5</span></div>
                     </div>
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-tachometer-alt module-icon"></i>
-                            <span>Indicadores financieros</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-tachometer-alt module-icon"></i><span>@Resources.Strings.Index_Mod6</span></div>
                     </div>
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-clipboard-check module-icon"></i>
-                            <span>Control presupuestal</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-clipboard-check module-icon"></i><span>@Resources.Strings.Index_Mod7</span></div>
                     </div>
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-calendar-check module-icon"></i>
-                            <span>Forecast de cierre</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-calendar-check module-icon"></i><span>@Resources.Strings.Index_Mod8</span></div>
                     </div>
                     <div class="col-md-6 col-lg-4">
-                        <div class="module-item">
-                            <i class="fas fa-shield-alt module-icon"></i>
-                            <span>Planes de choque</span>
-                        </div>
+                        <div class="module-item"><i class="fas fa-shield-alt module-icon"></i><span>@Resources.Strings.Index_Mod9</span></div>
                     </div>
                 </div>
-                <p class="text-center mt-4 module-footer-note">Además, podrá tener <strong style="color: #160933;">indicadores financieros especializados</strong> para su industria.</p>
+                <p class="text-center mt-4 module-footer-note">
+                    @Resources.Strings.Index_ModFooterPart1 <strong style="color: #160933;">@Resources.Strings.Index_ModFooterEmphasis</strong> @Resources.Strings.Index_ModFooterPart2
+                </p>
             </div>
         </div>
         <div class="text-center mt-5" data-aos="fade-up">
-            <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg">Quiero una demo</a>
+            <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg">@Resources.Strings.Index_HowCTA</a>
         </div>
     </div>
 </section>
@@ -328,25 +271,25 @@
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
             <i class="fas fa-star testimonial-header-icon mb-3"></i>
-            <h2 class="section-title mb-4">Lo que otros líderes están diciendo</h2>
+            <h2 class="section-title mb-4">@Resources.Strings.Index_TestTitle</h2>
         </div>
         <div class="row g-4">
             <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Antes tomábamos decisiones con corazonadas. Hoy lo hacemos con Bufins y eso cambió todo."</p>
-                    <p class="testimonial-author">— Gerente general, empresa manufacturera</p>
+                    <p class="testimonial-text">@Resources.Strings.Index_Test1</p>
+                    <p class="testimonial-author">@Resources.Strings.Index_Test1Author</p>
                 </div>
             </div>
             <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"Lo más valioso: saber hacia dónde va mi caja sin tener que preguntar a nadie."</p>
-                    <p class="testimonial-author">— Socio fundador, agencia de servicios</p>
+                    <p class="testimonial-text">@Resources.Strings.Index_Test2</p>
+                    <p class="testimonial-author">@Resources.Strings.Index_Test2Author</p>
                 </div>
             </div>
         </div>
         <div class="text-center mt-5" data-aos="fade-up">
             <p class="lead testimonial-footer-lead">
-                Desde el primer momento que use <strong>Bufins</strong>, será una herramienta indispensable para sus asambleas, juntas, equipos de trabajo y comités.
+                @Resources.Strings.Index_TestFooterPart1 <strong>Bufins</strong>@Resources.Strings.Index_TestFooterPart2
             </p>
         </div>
     </div>
@@ -356,8 +299,8 @@
 <section class="target-section py-5">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title mb-4">¿Para quién es <span class="text-purple">Bufins</span>?</h2>
-            <p class="lead">Si tomas decisiones financieras en tu empresa, esto es para ti.</p>
+            <h2 class="section-title mb-4">@Resources.Strings.Index_TargetTitle <span class="text-purple">Bufins</span>?</h2>
+            <p class="lead">@Resources.Strings.Index_TargetSubtitle</p>
         </div>
         <div class="row align-items-center">
             <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0" data-aos="fade-left">
@@ -367,11 +310,11 @@
             </div>
             <div class="col-lg-6 order-lg-1" data-aos="fade-right">
                 <ul class="target-list">
-                    <li>Gerentes generales</li>
-                    <li>Equipos financieros</li>
-                    <li>Directores de junta</li>
-                    <li>Socios e inversionistas</li>
-                    <li>Empresas medianas con grandes proyecciones</li>
+                    <li>@Resources.Strings.Index_Target1</li>
+                    <li>@Resources.Strings.Index_Target2</li>
+                    <li>@Resources.Strings.Index_Target3</li>
+                    <li>@Resources.Strings.Index_Target4</li>
+                    <li>@Resources.Strings.Index_Target5</li>
                 </ul>
             </div>
         </div>
@@ -385,14 +328,12 @@
             <div class="col-lg-10 mx-auto text-center">
                 <div class="culture-content">
                     <i class="fas fa-graduation-cap culture-header-icon mb-3"></i>
-                    <h2 class="culture-title mb-4">
-                        Cultura Financiera
-                    </h2>
+                    <h2 class="culture-title mb-4">@Resources.Strings.Index_CultureTitle</h2>
                     <p class="culture-text mb-4">
-                        Creemos en el impacto que genera desarrollar una <strong>cultura financiera</strong> en las organizaciones.
+                        @Resources.Strings.Index_CultureDesc1Part1 <strong>@Resources.Strings.Index_CultureEmphasis1</strong> @Resources.Strings.Index_CultureDesc1Part2
                     </p>
                     <p class="culture-text">
-                        Al usar <strong>Bufins</strong> en el día a día de su negocio, sus equipos de trabajo construyen una cultura donde las <strong>cifras y los indicadores</strong> son el insumo más importante para la medición de desempeño y la toma de decisiones.
+                        @Resources.Strings.Index_CultureDesc2Part1 <strong>Bufins</strong> @Resources.Strings.Index_CultureDesc2Part2 <strong>@Resources.Strings.Index_CultureEmphasis2</strong> @Resources.Strings.Index_CultureDesc2Part3
                     </p>
                 </div>
             </div>
@@ -407,18 +348,14 @@
             <div class="col-lg-10">
                 <div class="cta-card">
                     <h2 class="cta-main-title mb-4">
-                        Estás a una decisión de <span class="transform-text">transformar todas tus decisiones.</span>
+                        @Resources.Strings.Index_CtaPart1 <span class="transform-text">@Resources.Strings.Index_CtaEmphasis</span>
                     </h2>
                     <div class="cta-divider"></div>
-                    <p class="cta-text-intro">
-                        Si sigues sin claridad financiera, cada decisión puede salirte cara.
-                    </p>
-                    <p class="cta-text-emphasis">
-                        Bufins te da el control. Te da dirección. Te da valor.
-                    </p>
+                    <p class="cta-text-intro">@Resources.Strings.Index_CtaDesc1</p>
+                    <p class="cta-text-emphasis">@Resources.Strings.Index_CtaDesc2</p>
                     <div class="mt-4">
                         <a href="@Url.Action("Contact", "Home")" class="btn btn-cta-custom btn-lg">
-                            Quiero una demo
+                            @Resources.Strings.Index_CtaCTA
                         </a>
                     </div>
                 </div>
@@ -429,10 +366,5 @@
 
 @section scripts {
 <script src="~/Assets/js/aos.js"></script>
-<script>
-    AOS.init({
-        duration: 1000,
-        once: true
-    });
-</script>
+<script>AOS.init({ duration: 1000, once: true });</script>
 }

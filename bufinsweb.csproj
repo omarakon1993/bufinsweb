@@ -197,6 +197,8 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="App_GlobalResources\Strings.resx" />
+    <Content Include="App_GlobalResources\Strings.en-US.resx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

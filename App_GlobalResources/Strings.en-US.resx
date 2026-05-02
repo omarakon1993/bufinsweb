@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- NAV & FOOTER -->
+  <data name="Nav_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Nav_Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Nav_Portal" xml:space="preserve"><value>Client Portal</value></data>
+  <data name="Footer_Slogan" xml:space="preserve"><value>Transform your numbers into better business decisions.</value></data>
+  <data name="Footer_LinksTitle" xml:space="preserve"><value>Quick Links</value></data>
+  <data name="Footer_ContactTitle" xml:space="preserve"><value>Contact</value></data>
+  <data name="Footer_LocationTitle" xml:space="preserve"><value>Location</value></data>
+  <data name="Footer_EmailLabel" xml:space="preserve"><value>Email</value></data>
+  <data name="Footer_PhoneLabel" xml:space="preserve"><value>Phone</value></data>
+  <data name="Footer_AddressLabel" xml:space="preserve"><value>Location</value></data>
+  <data name="Footer_AllRights" xml:space="preserve"><value>All rights reserved</value></data>
+  <data name="Meta_Description" xml:space="preserve"><value>Bufins - Business. Finance. Always. Everywhere. Transform your numbers into better business decisions.</value></data>
+  <data name="LangSwitch_Label" xml:space="preserve"><value>Language</value></data>
+  <data name="LangSwitch_ToEnglish" xml:space="preserve"><value>Switch to English</value></data>
+  <data name="LangSwitch_ToSpanish" xml:space="preserve"><value>Cambiar a Español</value></data>
+
+  <!-- INDEX - HERO -->
+  <data name="Index_Title" xml:space="preserve"><value>Bufins - BUSINESS FINANCE ALWAYS EVERYWHERE</value></data>
+  <data name="Index_HeroPart1" xml:space="preserve"><value>Your company is</value></data>
+  <data name="Index_HeroEmphasis" xml:space="preserve"><value>losing money</value></data>
+  <data name="Index_HeroPart2" xml:space="preserve"><value>without realizing it.</value></data>
+  <data name="Index_HeroSubtitle" xml:space="preserve"><value>turns your financial data into decisions that generate value.</value></data>
+  <data name="Index_HeroDesc" xml:space="preserve"><value>100% web-based, visual and easy to use.</value></data>
+  <data name="Index_HeroCTA" xml:space="preserve"><value>I want a demo</value></data>
+
+  <!-- INDEX - PROBLEMS -->
+  <data name="Index_ProbTitle" xml:space="preserve"><value>The lack of clear financial information is the greatest enemy of your cash flow.</value></data>
+  <data name="Index_ProbDesc1" xml:space="preserve"><value>Most companies focus on selling, but not on understanding how their money moves.</value></data>
+  <data name="Index_ProbDesc2" xml:space="preserve"><value>The result: invisible expenses, late decisions, and poor profitability.</value></data>
+  <data name="Index_ProbQuestion" xml:space="preserve"><value>Has your company ever faced any of these?</value></data>
+  <data name="Index_Prob1" xml:space="preserve"><value>No money for payroll</value></data>
+  <data name="Index_Prob2" xml:space="preserve"><value>A supplier won't ship due to unpaid invoices</value></data>
+  <data name="Index_Prob3" xml:space="preserve"><value>Equipment failing due to lack of maintenance</value></data>
+  <data name="Index_Prob4" xml:space="preserve"><value>Unable to retain top talent</value></data>
+  <data name="Index_Prob5" xml:space="preserve"><value>Bank asset seizure</value></data>
+  <data name="Index_Prob6" xml:space="preserve"><value>Tax authority asset seizure</value></data>
+  <data name="Index_Prob7" xml:space="preserve"><value>Closed due to bankruptcy</value></data>
+  <data name="Index_Prob8" xml:space="preserve"><value>Negative EBITDA</value></data>
+  <data name="Index_Prob9" xml:space="preserve"><value>Negative company value</value></data>
+  <data name="Index_Prob10" xml:space="preserve"><value>Negative cash flow</value></data>
+  <data name="Index_BufinsChanges" xml:space="preserve"><value>Bufins changes that.</value></data>
+
+  <!-- INDEX - WHAT IS BUFINS -->
+  <data name="Index_WhatIsLabel" xml:space="preserve"><value>What is</value></data>
+  <data name="Index_WhatIsDesc1" xml:space="preserve"><value>A financial information platform that shows your company what it needs to know.</value></data>
+  <data name="Index_WhatIsDesc2" xml:space="preserve"><value>transforms your company's financial data into visual dashboards, key indicators, and strategic reports, accessible from any device.</value></data>
+  <data name="Index_HelpsTitle" xml:space="preserve"><value>It helps you:</value></data>
+  <data name="Index_Benefit1" xml:space="preserve"><value>Know if your revenue is truly generating profit.</value></data>
+  <data name="Index_Benefit2" xml:space="preserve"><value>Identify which expenses drain cash without return.</value></data>
+  <data name="Index_Benefit3" xml:space="preserve"><value>Have complete visibility of your cash flow.</value></data>
+  <data name="Index_Benefit4" xml:space="preserve"><value>Stay ahead with projections and action plans.</value></data>
+  <data name="Index_Benefit5" xml:space="preserve"><value>Clearly estimate the value of your company.</value></data>
+  <data name="Index_Benefit6" xml:space="preserve"><value>Make decisions based on real data.</value></data>
+  <data name="Index_WhatIsCTA" xml:space="preserve"><value>I want a demo</value></data>
+
+  <!-- INDEX - FEATURES -->
+  <data name="Index_FeatTitle" xml:space="preserve"><value>I've tried financial consultants and I no longer know what works</value></data>
+  <data name="Index_FeatDesc1" xml:space="preserve"><value>Consultants focus on making diagnoses —</value></data>
+  <data name="Index_FeatDesc2" xml:space="preserve"><value>doesn't diagnose; it knows the problems and transforms the reality of companies.</value></data>
+  <data name="Index_Feat1Title" xml:space="preserve"><value>Put an end to the chaos.</value></data>
+  <data name="Index_Feat1Desc" xml:space="preserve"><value>End improper management and lack of uniformity in your financial information with standardized and secure online databases.</value></data>
+  <data name="Index_Feat2Title" xml:space="preserve"><value>Numbers, yes. Easy too.</value></data>
+  <data name="Index_Feat2Desc" xml:space="preserve"><value>It's extraordinary how our dashboards will make reading your business's financial data easier. Access your figures reliably and on time, always.</value></data>
+  <data name="Index_Feat3Title" xml:space="preserve"><value>Less burden. More decisions.</value></data>
+  <data name="Index_Feat3Desc" xml:space="preserve"><value>Preparing financial information for committees and boards collapses operations and hinders management — let Bufins take on that operational burden, freeing your time for decision-making.</value></data>
+  <data name="Index_Feat4Title" xml:space="preserve"><value>A more financially savvy team.</value></data>
+  <data name="Index_Feat4Desc" xml:space="preserve"><value>Provide your team with financial knowledge and tools so they understand the value of information and how to handle it correctly.</value></data>
+  <data name="Index_FeaturesEnd" xml:space="preserve"><value>Stop operating blindly. Take control with</value></data>
+
+  <!-- INDEX - ADVANTAGES -->
+  <data name="Index_AdvTitle" xml:space="preserve"><value>Benefits of operating with</value></data>
+  <data name="Index_Adv1" xml:space="preserve"><value>Get a clear picture of your cash flow.</value></data>
+  <data name="Index_Adv2" xml:space="preserve"><value>Detect and correct decisions that destroy liquidity.</value></data>
+  <data name="Index_Adv3" xml:space="preserve"><value>Create contingency plans to avoid financial crises.</value></data>
+  <data name="Index_Adv4" xml:space="preserve"><value>Project future scenarios with greater precision.</value></data>
+  <data name="Index_Adv5" xml:space="preserve"><value>Value your company with concrete data.</value></data>
+  <data name="Index_Adv6" xml:space="preserve"><value>Present yourself to investors, boards, or partners.</value></data>
+  <data name="Index_Adv7" xml:space="preserve"><value>Adapt the software to your business's specific needs.</value></data>
+
+  <!-- INDEX - HOW IT WORKS -->
+  <data name="Index_HowTitle" xml:space="preserve"><value>How does it work?</value></data>
+  <data name="Index_HowSubtitle" xml:space="preserve"><value>Simple. Visual. No complications.</value></data>
+  <data name="Index_HowDesc" xml:space="preserve"><value>is built on a modular cloud structure that allows:</value></data>
+  <data name="Index_Step1" xml:space="preserve"><value>Capture your financial information.</value></data>
+  <data name="Index_Step2" xml:space="preserve"><value>Process it automatically.</value></data>
+  <data name="Index_Step3" xml:space="preserve"><value>Show you key business indicators.</value></data>
+  <data name="Index_Step4" xml:space="preserve"><value>Help you make decisions with clarity.</value></data>
+  <data name="Index_ModulesTitle" xml:space="preserve"><value>Includes modules such as:</value></data>
+  <data name="Index_Mod1" xml:space="preserve"><value>Income Statements</value></data>
+  <data name="Index_Mod2" xml:space="preserve"><value>Balance Sheet</value></data>
+  <data name="Index_Mod3" xml:space="preserve"><value>EBITDA</value></data>
+  <data name="Index_Mod4" xml:space="preserve"><value>Cash Flow</value></data>
+  <data name="Index_Mod5" xml:space="preserve"><value>Treasury</value></data>
+  <data name="Index_Mod6" xml:space="preserve"><value>Financial Indicators</value></data>
+  <data name="Index_Mod7" xml:space="preserve"><value>Budget Control</value></data>
+  <data name="Index_Mod8" xml:space="preserve"><value>Closing Forecast</value></data>
+  <data name="Index_Mod9" xml:space="preserve"><value>Contingency Plans</value></data>
+  <data name="Index_ModFooterPart1" xml:space="preserve"><value>Additionally, you can have</value></data>
+  <data name="Index_ModFooterEmphasis" xml:space="preserve"><value>specialized financial indicators</value></data>
+  <data name="Index_ModFooterPart2" xml:space="preserve"><value>for your industry.</value></data>
+  <data name="Index_HowCTA" xml:space="preserve"><value>I want a demo</value></data>
+
+  <!-- INDEX - TESTIMONIALS -->
+  <data name="Index_TestTitle" xml:space="preserve"><value>What other leaders are saying</value></data>
+  <data name="Index_Test1" xml:space="preserve"><value>"Before, we made decisions based on gut feelings. Today we do it with Bufins, and that changed everything."</value></data>
+  <data name="Index_Test1Author" xml:space="preserve"><value>— CEO, manufacturing company</value></data>
+  <data name="Index_Test2" xml:space="preserve"><value>"The most valuable thing: knowing where my cash is going without having to ask anyone."</value></data>
+  <data name="Index_Test2Author" xml:space="preserve"><value>— Founding partner, services agency</value></data>
+  <data name="Index_TestFooterPart1" xml:space="preserve"><value>From the first moment you use</value></data>
+  <data name="Index_TestFooterPart2" xml:space="preserve"><value>, it will be an indispensable tool for your assemblies, boards, work teams, and committees.</value></data>
+
+  <!-- INDEX - FOR WHOM -->
+  <data name="Index_TargetTitle" xml:space="preserve"><value>Who is</value></data>
+  <data name="Index_TargetSubtitle" xml:space="preserve"><value>If you make financial decisions in your company, this is for you.</value></data>
+  <data name="Index_Target1" xml:space="preserve"><value>General Managers</value></data>
+  <data name="Index_Target2" xml:space="preserve"><value>Finance Teams</value></data>
+  <data name="Index_Target3" xml:space="preserve"><value>Board Directors</value></data>
+  <data name="Index_Target4" xml:space="preserve"><value>Partners and Investors</value></data>
+  <data name="Index_Target5" xml:space="preserve"><value>Mid-sized companies with big ambitions</value></data>
+
+  <!-- INDEX - FINANCIAL CULTURE -->
+  <data name="Index_CultureTitle" xml:space="preserve"><value>Financial Culture</value></data>
+  <data name="Index_CultureDesc1Part1" xml:space="preserve"><value>We believe in the impact of developing a</value></data>
+  <data name="Index_CultureEmphasis1" xml:space="preserve"><value>financial culture</value></data>
+  <data name="Index_CultureDesc1Part2" xml:space="preserve"><value>within organizations.</value></data>
+  <data name="Index_CultureDesc2Part1" xml:space="preserve"><value>By using</value></data>
+  <data name="Index_CultureDesc2Part2" xml:space="preserve"><value>in your daily business operations, your teams build a culture where</value></data>
+  <data name="Index_CultureEmphasis2" xml:space="preserve"><value>numbers and indicators</value></data>
+  <data name="Index_CultureDesc2Part3" xml:space="preserve"><value>are the most important input for performance measurement and decision-making.</value></data>
+
+  <!-- INDEX - FINAL CTA -->
+  <data name="Index_CtaPart1" xml:space="preserve"><value>You're one decision away from</value></data>
+  <data name="Index_CtaEmphasis" xml:space="preserve"><value>transforming all your decisions.</value></data>
+  <data name="Index_CtaDesc1" xml:space="preserve"><value>If you continue without financial clarity, every decision could cost you.</value></data>
+  <data name="Index_CtaDesc2" xml:space="preserve"><value>Bufins gives you control. Gives you direction. Gives you value.</value></data>
+  <data name="Index_CtaCTA" xml:space="preserve"><value>I want a demo</value></data>
+
+  <!-- ABOUT PAGE -->
+  <data name="About_Title" xml:space="preserve"><value>Services - Bufins</value></data>
+  <data name="About_HeroWord1" xml:space="preserve"><value>Now</value></data>
+  <data name="About_HeroWord2" xml:space="preserve"><value>manage</value></data>
+  <data name="About_HeroWord3" xml:space="preserve"><value>with</value></data>
+  <data name="About_HeroDescPart1" xml:space="preserve"><value>A financial expert will work with your team to conduct the</value></data>
+  <data name="About_HeroDescEmphasis" xml:space="preserve"><value>monthly financial committee</value></data>
+  <data name="About_HeroDescPart2" xml:space="preserve"><value>with the following objectives:</value></data>
+  <data name="About_Obj1" xml:space="preserve"><value>1. Support in the financial execution of growth strategies.</value></data>
+  <data name="About_Obj2" xml:space="preserve"><value>2. Budget control.</value></data>
+  <data name="About_Obj3" xml:space="preserve"><value>3. Monitoring of the financial indicators with the greatest impact on value creation.</value></data>
+  <data name="About_Obj4" xml:space="preserve"><value>4. Results analysis and recommendations.</value></data>
+  <data name="About_GenTitle" xml:space="preserve"><value>General Terms</value></data>
+  <data name="About_Gen1" xml:space="preserve"><value>The first database structuring phase required to prepare the financial model is charged separately and equals one month's fee. The database covers two historical monthly years and the current monthly year.</value></data>
+  <data name="About_Gen2" xml:space="preserve"><value>The company must provide the current year's budget in P&amp;L format. If a projected balance sheet is available, it is included in the model; otherwise, it is projected using our methodology.</value></data>
+  <data name="About_Gen3" xml:space="preserve"><value>The committee preparation model is not delivered, as it constitutes the service's proprietary know-how.</value></data>
+  <data name="About_Gen4" xml:space="preserve"><value>The committee is prepared during the three days following the delivery of the month-end closing information.</value></data>
+  <data name="About_Gen5" xml:space="preserve"><value>The committee results are published on the web in a Power BI structure.</value></data>
+  <data name="About_Gen6" xml:space="preserve"><value>Implementation of the financial methodology requires the organization's participation, which must have an internal leader with decision-making authority.</value></data>
+  <data name="About_Gen7" xml:space="preserve"><value>The information gathering methodology will always be available to the client in Excel format.</value></data>
+  <data name="About_Gen8" xml:space="preserve"><value>We use Office 365 for greater security and confidentiality of information.</value></data>
+  <data name="About_Gen9" xml:space="preserve"><value>Previously quoted fees must be paid within the first 5 days of the month.</value></data>
+  <data name="About_Gen10" xml:space="preserve"><value>The committee implementation contract must be signed for one year.</value></data>
+  <data name="About_ConsultantTitle" xml:space="preserve"><value>Lead Consultant</value></data>
+  <data name="About_BackgroundTitle" xml:space="preserve"><value>Background</value></data>
+  <data name="About_Edu1Degree" xml:space="preserve"><value>Statistician</value></data>
+  <data name="About_Edu2Degree" xml:space="preserve"><value>MBA with specialization in Finance</value></data>
+  <data name="About_Edu3Degree" xml:space="preserve"><value>Diploma in Business Consulting</value></data>
+  <data name="About_Edu3School" xml:space="preserve"><value>Bogotá Chamber of Commerce</value></data>
+  <data name="About_Edu4Degree" xml:space="preserve"><value>Diploma in IFRS</value></data>
+  <data name="About_ExpertiseTitle" xml:space="preserve"><value>Expertise</value></data>
+  <data name="About_Exp1" xml:space="preserve"><value>More than 20 years as a manager</value></data>
+  <data name="About_Exp2" xml:space="preserve"><value>25 years dedicated to strategic and financial advisory</value></data>
+  <data name="About_Exp3" xml:space="preserve"><value>Company valuation, restructuring and negotiation for over COP 2 trillion pesos</value></data>
+  <data name="About_SectorsTitle" xml:space="preserve"><value>Sectors</value></data>
+  <data name="About_SectorsText" xml:space="preserve"><value>Construction – Financial – Services – Healthcare – Technology – Commerce – Hospitality – Restaurants – Agriculture – Pharmaceutical – Textile – Cooperative – Tourism – General Industry.</value></data>
+  <data name="About_CtaTitle" xml:space="preserve"><value>From the first moment you use Bufins it will be an indispensable tool</value></data>
+  <data name="About_CtaSubtitle" xml:space="preserve"><value>for your assemblies, boards, work teams, and committees.</value></data>
+  <data name="About_CtaBtn" xml:space="preserve"><value>Schedule a meeting</value></data>
+
+  <!-- CONTACT PAGE -->
+  <data name="Contact_Title" xml:space="preserve"><value>Contact - Bufins</value></data>
+  <data name="Contact_HeroTitle" xml:space="preserve"><value>Shall we begin?</value></data>
+  <data name="Contact_HeroSubtitle" xml:space="preserve"><value>We believe in the impact of developing a financial culture within organizations</value></data>
+  <data name="Contact_FormTitle" xml:space="preserve"><value>Contact Us</value></data>
+  <data name="Contact_LabelName" xml:space="preserve"><value>Full Name</value></data>
+  <data name="Contact_PlaceholderName" xml:space="preserve"><value>Enter your full name</value></data>
+  <data name="Contact_LabelCompany" xml:space="preserve"><value>Company</value></data>
+  <data name="Contact_PlaceholderCompany" xml:space="preserve"><value>Your company name</value></data>
+  <data name="Contact_LabelEmail" xml:space="preserve"><value>Email address</value></data>
+  <data name="Contact_PlaceholderEmail" xml:space="preserve"><value>email@example.com</value></data>
+  <data name="Contact_LabelPhone" xml:space="preserve"><value>Phone</value></data>
+  <data name="Contact_PlaceholderPhone" xml:space="preserve"><value>+1 555 123 4567</value></data>
+  <data name="Contact_LabelMessage" xml:space="preserve"><value>Message</value></data>
+  <data name="Contact_PlaceholderMessage" xml:space="preserve"><value>Tell us about your business and how we can help you...</value></data>
+  <data name="Contact_BtnSubmit" xml:space="preserve"><value>Send message</value></data>
+  <data name="Contact_BtnSending" xml:space="preserve"><value>Sending...</value></data>
+  <data name="Contact_InfoTitle" xml:space="preserve"><value>Contact Information</value></data>
+  <data name="Contact_EmailLabel" xml:space="preserve"><value>Email</value></data>
+  <data name="Contact_PhoneLabel" xml:space="preserve"><value>Phone</value></data>
+  <data name="Contact_LocationLabel" xml:space="preserve"><value>Location</value></data>
+  <data name="Contact_LocationValue" xml:space="preserve"><value>Colombia</value></data>
+  <data name="Contact_ProcessTitle" xml:space="preserve"><value>Getting Started</value></data>
+  <data name="Contact_ProcessDesc" xml:space="preserve"><value>When you contact us, we'll follow these steps to get started:</value></data>
+  <data name="Contact_Step1Title" xml:space="preserve"><value>MEETUP</value></data>
+  <data name="Contact_Step1Desc" xml:space="preserve"><value>We schedule a meeting to learn about your business</value></data>
+  <data name="Contact_Step2Title" xml:space="preserve"><value>PROPOSAL</value></data>
+  <data name="Contact_Step2Desc" xml:space="preserve"><value>We present a proposal and timeline</value></data>
+  <data name="Contact_Step3Title" xml:space="preserve"><value>PLANNING</value></data>
+  <data name="Contact_Step3Desc" xml:space="preserve"><value>We define the variables of your model</value></data>
+  <data name="Contact_Step4Title" xml:space="preserve"><value>START</value></data>
+  <data name="Contact_Step4Desc" xml:space="preserve"><value>We start working together</value></data>
+  <data name="Contact_SuccessMsg" xml:space="preserve"><value>Thank you for contacting us! We've received your message and will get back to you soon.</value></data>
+  <data name="Contact_ErrorGeneral" xml:space="preserve"><value>An error occurred while sending your message. Please try again later.</value></data>
+  <data name="Contact_ErrorValidation" xml:space="preserve"><value>Please correct the errors in the form.</value></data>
+</root>
