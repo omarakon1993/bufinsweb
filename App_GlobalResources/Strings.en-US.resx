@@ -50,6 +50,7 @@
 
   <!-- INDEX - WHAT IS BUFINS -->
   <data name="Index_WhatIsLabel" xml:space="preserve"><value>What is</value></data>
+  <data name="Index_WhatIsCategory" xml:space="preserve"><value>Corporate Performance Management with emphasis on Financial Planning &amp; Analysis</value></data>
   <data name="Index_WhatIsDesc1" xml:space="preserve"><value>A financial information platform that shows your company what it needs to know.</value></data>
   <data name="Index_WhatIsDesc2" xml:space="preserve"><value>transforms your company's financial data into visual dashboards, key indicators, and strategic reports, accessible from any device.</value></data>
   <data name="Index_HelpsTitle" xml:space="preserve"><value>It helps you:</value></data>
