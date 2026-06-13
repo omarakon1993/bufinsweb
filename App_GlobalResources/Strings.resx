@@ -205,6 +205,7 @@
   <data name="Contact_EmailLabel" xml:space="preserve"><value>Correo electrónico</value></data>
   <data name="Contact_PhoneLabel" xml:space="preserve"><value>Teléfono</value></data>
   <data name="Contact_LocationLabel" xml:space="preserve"><value>Ubicación</value></data>
+  <data name="Contact_SocialLabel" xml:space="preserve"><value>Redes sociales</value></data>
   <data name="Contact_LocationValue" xml:space="preserve"><value>Colombia</value></data>
   <data name="Contact_ProcessTitle" xml:space="preserve"><value>Proceso de inicio</value></data>
   <data name="Contact_ProcessDesc" xml:space="preserve"><value>Al contactarnos, seguiremos estos pasos para empezar:</value></data>
