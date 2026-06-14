@@ -17,13 +17,13 @@
   <data name="Footer_PhoneLabel" xml:space="preserve"><value>Teléfono</value></data>
   <data name="Footer_AddressLabel" xml:space="preserve"><value>Ubicación</value></data>
   <data name="Footer_AllRights" xml:space="preserve"><value>Todos los derechos reservados</value></data>
-  <data name="Meta_Description" xml:space="preserve"><value>Bufins - Business. Finance. Always. Everywhere. Transforme sus cifras en mejores decisiones de negocio.</value></data>
+  <data name="Meta_Description" xml:space="preserve"><value>Plataforma CPM/FP&amp;A con IA. Dashboards automáticos, modelos de información y forecast en tiempo real: flujo de caja, EBITDA y tesorería para tu empresa.</value></data>
   <data name="LangSwitch_Label" xml:space="preserve"><value>Idioma</value></data>
   <data name="LangSwitch_ToEnglish" xml:space="preserve"><value>Switch to English</value></data>
   <data name="LangSwitch_ToSpanish" xml:space="preserve"><value>Cambiar a Español</value></data>
 
   <!-- INDEX - HERO -->
-  <data name="Index_Title" xml:space="preserve"><value>Bufins - BUSINESS FINANCE ALWAYS EVERYWHERE</value></data>
+  <data name="Index_Title" xml:space="preserve"><value>Bufins | Plataforma CPM/FP&amp;A para Empresas</value></data>
   <data name="Index_HeroPart1" xml:space="preserve"><value>Tu empresa está</value></data>
   <data name="Index_HeroEmphasis" xml:space="preserve"><value>perdiendo dinero</value></data>
   <data name="Index_HeroPart2" xml:space="preserve"><value>sin darse cuenta.</value></data>
