@@ -20,7 +20,9 @@
       "Bash(Find-Item -Path \"C:\\\\Users\\\\omara\\\\OneDrive\\\\Omar Akon Personal\\\\Proyectos OAG\\\\Bufins Web\\\\Bufins principal web\\\\bufinsweb\" -Filter \"EnvironmentHelper.cs\" -Recurse)",
       "Bash(Select-Object -ExpandProperty FullName)",
       "WebFetch(domain:github.com)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(sed -n '381p' \"Common/Documentacion BUFINS/Tecnica/portada-opciones.html\")",
+      "Bash(wc -c /tmp_line381.txt)"
     ],
     "deny": [],
     "ask": []

@@ -3,7 +3,7 @@
 }
 
 <!-- Hero Section -->
-<section class="hero-section" style="background-image: linear-gradient(135deg, rgba(22, 9, 51, 0.75) 0%, rgba(22, 9, 51, 0.65) 50%, rgba(88, 58, 255, 0.6) 100%), url('@Url.Content("~/Assets/images/FondoIndex.jpg")')">
+<section class="hero-section" style="background-image: linear-gradient(135deg, rgba(22, 9, 51, 0.85) 0%, rgba(22, 9, 51, 0.78) 50%, rgba(88, 58, 255, 0.6) 100%), url('@Url.Content("~/Assets/images/PortadaDirectivo.jpg")')">
     <div class="container">
         <div class="row align-items-center min-vh-100">
             <div class="col-lg-10 mx-auto text-center" data-aos="fade-up" data-aos-duration="1200">
@@ -17,11 +17,38 @@
                 <p class="hero-subtitle mb-5">
                     <strong class="hero-brand">Bufins</strong> @Resources.Strings.Index_HeroSubtitle
                 </p>
-                <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg">@Resources.Strings.Index_HeroCTA</a>
+                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#heroCtaModal">@Resources.Strings.Index_HeroCTA</button>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Hero CTA Modal -->
+<div class="modal fade hero-cta-modal" id="heroCtaModal" tabindex="-1" aria-labelledby="heroCtaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close btn-close-white hero-cta-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <h5 class="modal-title" id="heroCtaModalLabel">@Resources.Strings.Index_HeroModalTitle</h5>
+            </div>
+            <div class="modal-body">
+                <div id="heroCtaChoices" class="d-flex flex-column gap-2">
+                    <button type="button" id="heroCtaShowVideo" class="modal-choice-btn primary">
+                        <i class="fas fa-play"></i>
+                        <span>@Resources.Strings.Index_HeroModalVideoCTA</span>
+                    </button>
+                    <a href="@Url.Action("Contact", "Home")" class="modal-choice-btn outline">
+                        <i class="fas fa-user-tie"></i>
+                        <span>@Resources.Strings.Index_HeroModalSalesCTA</span>
+                    </a>
+                </div>
+                <div id="heroCtaVideoWrap" class="ratio ratio-16x9 d-none mt-3">
+                    <iframe id="heroVideoFrame" src="" title="@Resources.Strings.Index_HeroModalVideoCTA" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Problem Section -->
 <section class="problem-section py-5">
@@ -373,4 +400,27 @@
 @section scripts {
 <script src="~/Assets/js/aos.js"></script>
 <script>AOS.init({ duration: 1000, once: true });</script>
+<script>
+    (function () {
+        var modal = document.getElementById('heroCtaModal');
+        var choices = document.getElementById('heroCtaChoices');
+        var videoWrap = document.getElementById('heroCtaVideoWrap');
+        var videoFrame = document.getElementById('heroVideoFrame');
+        var showVideoBtn = document.getElementById('heroCtaShowVideo');
+        // TODO: reemplazar por la URL embed del video de venta real (YouTube/Vimeo/archivo propio)
+        var videoUrl = 'https://www.youtube.com/embed/VIDEO_ID_AQUI?autoplay=1&rel=0';
+
+        showVideoBtn.addEventListener('click', function () {
+            choices.classList.add('d-none');
+            videoWrap.classList.remove('d-none');
+            videoFrame.src = videoUrl;
+        });
+
+        modal.addEventListener('hidden.bs.modal', function () {
+            videoFrame.src = '';
+            videoWrap.classList.add('d-none');
+            choices.classList.remove('d-none');
+        });
+    })();
+</script>
 }

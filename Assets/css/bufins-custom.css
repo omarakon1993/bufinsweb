@@ -554,6 +554,94 @@ body {
     box-shadow: 0 15px 40px rgba(88, 58, 255, 0.35);
 }
 
+/* Hero CTA Modal */
+.hero-cta-modal .modal-dialog {
+    max-width: 400px;
+}
+
+.hero-cta-modal .modal-content {
+    background: var(--color-light-gray);
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(22, 9, 51, 0.35);
+}
+
+.hero-cta-modal .modal-header {
+    position: relative;
+    background: var(--color-dark-purple);
+    padding: 1.6rem 1.75rem;
+    justify-content: center;
+}
+
+.hero-cta-modal-close {
+    position: absolute;
+    top: 1.15rem;
+    right: 1.15rem;
+    z-index: 1;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.hero-cta-modal-close:hover {
+    opacity: 1;
+}
+
+.hero-cta-modal .modal-title {
+    width: 100%;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+}
+
+.hero-cta-modal .modal-body {
+    padding: 1.75rem;
+}
+
+.modal-choice-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.modal-choice-btn i {
+    font-size: 0.85rem;
+    width: 1em;
+    text-align: center;
+}
+
+.modal-choice-btn.primary {
+    background: linear-gradient(135deg, var(--color-secondary-1) 0%, var(--color-secondary-2) 100%);
+    border: 1px solid transparent;
+    color: white !important;
+}
+
+.modal-choice-btn.primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.modal-choice-btn.outline {
+    background: white;
+    border: 1px solid var(--color-medium-gray);
+    color: var(--color-text-dark) !important;
+}
+
+.modal-choice-btn.outline:hover {
+    border-color: var(--color-secondary-1);
+    color: var(--color-secondary-1) !important;
+    background: rgba(88, 58, 255, 0.04);
+}
+
 /* Footer */
 footer {
     background: linear-gradient(135deg, var(--color-dark-purple) 0%, #0a0621 100%);

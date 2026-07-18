@@ -27,9 +27,12 @@
   <data name="Index_HeroBadge" xml:space="preserve"><value>CPM / FP&amp;A Platform</value></data>
   <data name="Index_HeroPart1" xml:space="preserve"><value>Financial management</value></data>
   <data name="Index_HeroEmphasis" xml:space="preserve"><value>that drives growth</value></data>
-  <data name="Index_HeroPart2" xml:space="preserve"><value>and value for your business.</value></data>
-  <data name="Index_HeroSubtitle" xml:space="preserve"><value>optimizes your company's financial information in a system that's 100% visual and easy to use.</value></data>
-  <data name="Index_HeroCTA" xml:space="preserve"><value>See how it works</value></data>
+  <data name="Index_HeroPart2" xml:space="preserve"><value>and value for your business</value></data>
+  <data name="Index_HeroSubtitle" xml:space="preserve"><value>optimizes your company's financial information in a system that's 100% visual and easy to use</value></data>
+  <data name="Index_HeroCTA" xml:space="preserve"><value>See Bufins in action</value></data>
+  <data name="Index_HeroModalTitle" xml:space="preserve"><value>What would you like to do?</value></data>
+  <data name="Index_HeroModalVideoCTA" xml:space="preserve"><value>Watch video</value></data>
+  <data name="Index_HeroModalSalesCTA" xml:space="preserve"><value>Contact a sales agent</value></data>
 
   <!-- INDEX - PROBLEMS -->
   <data name="Index_ProbTitle" xml:space="preserve"><value>The lack of clear financial information is the greatest enemy of your cash flow.</value></data>
