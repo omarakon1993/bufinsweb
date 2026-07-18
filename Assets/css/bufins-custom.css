@@ -793,6 +793,13 @@ html {
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+.hero-subtitle .hero-brand {
+    color: var(--color-secondary-2);
+    font-size: 1.15em;
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(1, 225, 215, 0.4);
+}
+
 .hero-description {
     font-size: clamp(1rem, 1.5vw, 1.15rem);
     color: rgba(255, 255, 255, 0.95);

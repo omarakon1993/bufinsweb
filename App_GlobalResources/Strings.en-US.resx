@@ -24,12 +24,12 @@
 
   <!-- INDEX - HERO -->
   <data name="Index_Title" xml:space="preserve"><value>Bufins | CPM/FP&amp;A Platform for Businesses</value></data>
-  <data name="Index_HeroPart1" xml:space="preserve"><value>Your company is</value></data>
-  <data name="Index_HeroEmphasis" xml:space="preserve"><value>losing money</value></data>
-  <data name="Index_HeroPart2" xml:space="preserve"><value>without realizing it.</value></data>
-  <data name="Index_HeroSubtitle" xml:space="preserve"><value>turns your financial data into decisions that generate value.</value></data>
-  <data name="Index_HeroDesc" xml:space="preserve"><value>100% web-based, visual and easy to use.</value></data>
-  <data name="Index_HeroCTA" xml:space="preserve"><value>I want a demo</value></data>
+  <data name="Index_HeroBadge" xml:space="preserve"><value>CPM / FP&amp;A Platform</value></data>
+  <data name="Index_HeroPart1" xml:space="preserve"><value>Financial management</value></data>
+  <data name="Index_HeroEmphasis" xml:space="preserve"><value>that drives growth</value></data>
+  <data name="Index_HeroPart2" xml:space="preserve"><value>and value for your business.</value></data>
+  <data name="Index_HeroSubtitle" xml:space="preserve"><value>optimizes your company's financial information in a system that's 100% visual and easy to use.</value></data>
+  <data name="Index_HeroCTA" xml:space="preserve"><value>See how it works</value></data>
 
   <!-- INDEX - PROBLEMS -->
   <data name="Index_ProbTitle" xml:space="preserve"><value>The lack of clear financial information is the greatest enemy of your cash flow.</value></data>

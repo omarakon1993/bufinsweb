@@ -24,12 +24,12 @@
 
   <!-- INDEX - HERO -->
   <data name="Index_Title" xml:space="preserve"><value>Bufins | Plataforma CPM/FP&amp;A para Empresas</value></data>
-  <data name="Index_HeroPart1" xml:space="preserve"><value>Tu empresa está</value></data>
-  <data name="Index_HeroEmphasis" xml:space="preserve"><value>perdiendo dinero</value></data>
-  <data name="Index_HeroPart2" xml:space="preserve"><value>sin darse cuenta.</value></data>
-  <data name="Index_HeroSubtitle" xml:space="preserve"><value>convierte tus cifras financieras en decisiones que generan valor.</value></data>
-  <data name="Index_HeroDesc" xml:space="preserve"><value>Sistema 100% web, visual y fácil de usar.</value></data>
-  <data name="Index_HeroCTA" xml:space="preserve"><value>Quiero una demo</value></data>
+  <data name="Index_HeroBadge" xml:space="preserve"><value>Plataforma CPM / FP&amp;A</value></data>
+  <data name="Index_HeroPart1" xml:space="preserve"><value>La gestión financiera</value></data>
+  <data name="Index_HeroEmphasis" xml:space="preserve"><value>que impulsa el crecimiento</value></data>
+  <data name="Index_HeroPart2" xml:space="preserve"><value>y el valor de tu empresa.</value></data>
+  <data name="Index_HeroSubtitle" xml:space="preserve"><value>optimiza la información financiera de tu empresa en un sistema 100% visual y fácil de usar.</value></data>
+  <data name="Index_HeroCTA" xml:space="preserve"><value>Ver cómo funciona</value></data>
 
   <!-- INDEX - PROBLEMAS -->
   <data name="Index_ProbTitle" xml:space="preserve"><value>La falta de información financiera clara es el mayor enemigo de tu caja.</value></data>
