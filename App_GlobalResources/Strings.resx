@@ -32,7 +32,9 @@
   <data name="Index_HeroCTA" xml:space="preserve"><value>Ver Bufins en acción</value></data>
   <data name="Index_HeroModalTitle" xml:space="preserve"><value>¿Qué te gustaría hacer?</value></data>
   <data name="Index_HeroModalVideoCTA" xml:space="preserve"><value>Ver video</value></data>
+  <data name="Index_HeroModalVideoSubCTA" xml:space="preserve"><value>Descubre Bufins en 2 minutos</value></data>
   <data name="Index_HeroModalSalesCTA" xml:space="preserve"><value>Contactar agente de ventas</value></data>
+  <data name="Index_HeroModalSalesSubCTA" xml:space="preserve"><value>Habla con nuestro equipo</value></data>
 
   <!-- INDEX - PROBLEMAS -->
   <data name="Index_ProbTitle" xml:space="preserve"><value>La falta de información financiera clara es el mayor enemigo de tu caja.</value></data>

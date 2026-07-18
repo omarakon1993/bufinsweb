@@ -32,7 +32,9 @@
   <data name="Index_HeroCTA" xml:space="preserve"><value>See Bufins in action</value></data>
   <data name="Index_HeroModalTitle" xml:space="preserve"><value>What would you like to do?</value></data>
   <data name="Index_HeroModalVideoCTA" xml:space="preserve"><value>Watch video</value></data>
+  <data name="Index_HeroModalVideoSubCTA" xml:space="preserve"><value>Discover Bufins in 2 minutes</value></data>
   <data name="Index_HeroModalSalesCTA" xml:space="preserve"><value>Contact a sales agent</value></data>
+  <data name="Index_HeroModalSalesSubCTA" xml:space="preserve"><value>Talk to our team</value></data>
 
   <!-- INDEX - PROBLEMS -->
   <data name="Index_ProbTitle" xml:space="preserve"><value>The lack of clear financial information is the greatest enemy of your cash flow.</value></data>

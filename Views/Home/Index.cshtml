@@ -27,19 +27,32 @@
 <div class="modal fade hero-cta-modal" id="heroCtaModal" tabindex="-1" aria-labelledby="heroCtaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header border-0">
-                <button type="button" class="btn-close btn-close-white hero-cta-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                <h5 class="modal-title" id="heroCtaModalLabel">@Resources.Strings.Index_HeroModalTitle</h5>
+            <div class="mhead">
+                <div class="titles">
+                    <span class="kicker">Bufins</span>
+                    <h2 class="modal-title" id="heroCtaModalLabel">@Resources.Strings.Index_HeroModalTitle</h2>
+                </div>
+                <button type="button" class="mclose" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <div class="modal-body">
+            <div class="mbody">
                 <div id="heroCtaChoices" class="d-flex flex-column gap-2">
-                    <button type="button" id="heroCtaShowVideo" class="modal-choice-btn primary">
-                        <i class="fas fa-play"></i>
-                        <span>@Resources.Strings.Index_HeroModalVideoCTA</span>
+                    <button type="button" id="heroCtaShowVideo" class="opt primary">
+                        <div class="ic"><i class="fa-solid fa-play"></i></div>
+                        <div class="txt">
+                            <span class="t">@Resources.Strings.Index_HeroModalVideoCTA</span>
+                            <span class="s">@Resources.Strings.Index_HeroModalVideoSubCTA</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right go"></i>
                     </button>
-                    <a href="@Url.Action("Contact", "Home")" class="modal-choice-btn outline">
-                        <i class="fas fa-user-tie"></i>
-                        <span>@Resources.Strings.Index_HeroModalSalesCTA</span>
+                    <a href="@Url.Action("Contact", "Home")" class="opt secondary">
+                        <div class="ic"><i class="fa-solid fa-headset"></i></div>
+                        <div class="txt">
+                            <span class="t">@Resources.Strings.Index_HeroModalSalesCTA</span>
+                            <span class="s">@Resources.Strings.Index_HeroModalSalesSubCTA</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right go"></i>
                     </a>
                 </div>
                 <div id="heroCtaVideoWrap" class="ratio ratio-16x9 d-none mt-3">
@@ -414,12 +427,14 @@
             choices.classList.add('d-none');
             videoWrap.classList.remove('d-none');
             videoFrame.src = videoUrl;
+            modal.classList.add('is-video');
         });
 
         modal.addEventListener('hidden.bs.modal', function () {
             videoFrame.src = '';
             videoWrap.classList.add('d-none');
             choices.classList.remove('d-none');
+            modal.classList.remove('is-video');
         });
     })();
 </script>
