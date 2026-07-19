@@ -1757,6 +1757,10 @@ html {
 
     .hero-section {
         padding: 6rem 0 3rem;
+        /* background-attachment: fixed no es soportado de forma fiable en
+           navegadores móviles (iOS Safari, Chrome Android) y puede hacer
+           que la imagen de fondo no se pinte */
+        background-attachment: scroll;
     }
 
     .feature-card {
