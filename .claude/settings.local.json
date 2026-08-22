@@ -22,7 +22,15 @@
       "WebFetch(domain:github.com)",
       "WebSearch",
       "Bash(sed -n '381p' \"Common/Documentacion BUFINS/Tecnica/portada-opciones.html\")",
-      "Bash(wc -c /tmp_line381.txt)"
+      "Bash(wc -c /tmp_line381.txt)",
+      "Bash(mkdir -p '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/bufins-web-html/Assets')",
+      "Bash(cp -r Assets/css Assets/js Assets/images Assets/fonts Assets/webfonts '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/bufins-web-html/Assets/')",
+      "Read(//c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/bufins-web-html/**)",
+      "Bash(start *)",
+      "Bash(mkdir -p '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/bufins-customers-html/Assets')",
+      "Bash(cp -r '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/Bufins principal web/bufinscustomers/Assets/.' '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/bufins-customers-html/Assets/')",
+      "Bash(cp '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/Bufins principal web/bufinscustomers/favicon.ico' '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/bufins-customers-html/favicon.ico')",
+      "Bash(cp '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/Bufins principal web/bufinscustomers/Bufins_Favicon_Ink.ico' '/c/Users/omara_/OneDrive/OmarAkon Personal/Proyectos OAG/Bufins Web/bufins-customers-html/')"
     ],
     "deny": [],
     "ask": []
