@@ -65,7 +65,7 @@
   <data name="Index_Benefit4" xml:space="preserve"><value>Anticiparte con proyecciones y planes de acción.</value></data>
   <data name="Index_Benefit5" xml:space="preserve"><value>Estimar con claridad el valor de tu empresa.</value></data>
   <data name="Index_Benefit6" xml:space="preserve"><value>Tomar decisiones con base en información real.</value></data>
-  <data name="Index_WhatIsCTA" xml:space="preserve"><value>Quiero una demo</value></data>
+  <data name="Index_WhatIsCTA" xml:space="preserve"><value>Agendar presentación</value></data>
 
   <!-- INDEX - FEATURES -->
   <data name="Index_FeatTitle" xml:space="preserve"><value>He probado consultores financieros y ya no sé qué funciona</value></data>
@@ -112,7 +112,7 @@
   <data name="Index_ModFooterPart1" xml:space="preserve"><value>Además, podrá tener</value></data>
   <data name="Index_ModFooterEmphasis" xml:space="preserve"><value>indicadores financieros especializados</value></data>
   <data name="Index_ModFooterPart2" xml:space="preserve"><value>para su industria.</value></data>
-  <data name="Index_HowCTA" xml:space="preserve"><value>Quiero una demo</value></data>
+  <data name="Index_HowCTA" xml:space="preserve"><value>Agendar presentación</value></data>
 
   <!-- INDEX - TESTIMONIOS -->
   <data name="Index_TestTitle" xml:space="preserve"><value>Lo que otros líderes están diciendo</value></data>
@@ -147,7 +147,7 @@
   <data name="Index_CtaEmphasis" xml:space="preserve"><value>transformar todas tus decisiones.</value></data>
   <data name="Index_CtaDesc1" xml:space="preserve"><value>Si sigues sin claridad financiera, cada decisión puede salirte cara.</value></data>
   <data name="Index_CtaDesc2" xml:space="preserve"><value>Bufins te da el control. Te da dirección. Te da valor.</value></data>
-  <data name="Index_CtaCTA" xml:space="preserve"><value>Quiero una demo</value></data>
+  <data name="Index_CtaCTA" xml:space="preserve"><value>Agendar presentación</value></data>
 
   <!-- ABOUT PAGE -->
   <data name="About_Title" xml:space="preserve"><value>Servicios - Bufins</value></data>

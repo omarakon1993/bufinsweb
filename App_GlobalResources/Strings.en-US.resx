@@ -65,7 +65,7 @@
   <data name="Index_Benefit4" xml:space="preserve"><value>Stay ahead with projections and action plans.</value></data>
   <data name="Index_Benefit5" xml:space="preserve"><value>Clearly estimate the value of your company.</value></data>
   <data name="Index_Benefit6" xml:space="preserve"><value>Make decisions based on real data.</value></data>
-  <data name="Index_WhatIsCTA" xml:space="preserve"><value>I want a demo</value></data>
+  <data name="Index_WhatIsCTA" xml:space="preserve"><value>Schedule a presentation</value></data>
 
   <!-- INDEX - FEATURES -->
   <data name="Index_FeatTitle" xml:space="preserve"><value>I've tried financial consultants and I no longer know what works</value></data>
@@ -112,7 +112,7 @@
   <data name="Index_ModFooterPart1" xml:space="preserve"><value>Additionally, you can have</value></data>
   <data name="Index_ModFooterEmphasis" xml:space="preserve"><value>specialized financial indicators</value></data>
   <data name="Index_ModFooterPart2" xml:space="preserve"><value>for your industry.</value></data>
-  <data name="Index_HowCTA" xml:space="preserve"><value>I want a demo</value></data>
+  <data name="Index_HowCTA" xml:space="preserve"><value>Schedule a presentation</value></data>
 
   <!-- INDEX - TESTIMONIALS -->
   <data name="Index_TestTitle" xml:space="preserve"><value>What other leaders are saying</value></data>
@@ -147,7 +147,7 @@
   <data name="Index_CtaEmphasis" xml:space="preserve"><value>transforming all your decisions.</value></data>
   <data name="Index_CtaDesc1" xml:space="preserve"><value>If you continue without financial clarity, every decision could cost you.</value></data>
   <data name="Index_CtaDesc2" xml:space="preserve"><value>Bufins gives you control. Gives you direction. Gives you value.</value></data>
-  <data name="Index_CtaCTA" xml:space="preserve"><value>I want a demo</value></data>
+  <data name="Index_CtaCTA" xml:space="preserve"><value>Schedule a presentation</value></data>
 
   <!-- ABOUT PAGE -->
   <data name="About_Title" xml:space="preserve"><value>Services - Bufins</value></data>
