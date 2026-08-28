@@ -31,6 +31,7 @@
   <data name="Index_HeroSubtitle" xml:space="preserve"><value>optimizes your company's financial information in a system that's 100% visual and easy to use</value></data>
   <data name="Index_HeroCTA" xml:space="preserve"><value>See Bufins in action</value></data>
   <data name="Index_HeroModalTitle" xml:space="preserve"><value>What would you like to do?</value></data>
+  <data name="Index_HeroModalVideoActiveTitle" xml:space="preserve"><value>Bufins in action</value></data>
   <data name="Index_HeroModalVideoCTA" xml:space="preserve"><value>Watch video</value></data>
   <data name="Index_HeroModalVideoSubCTA" xml:space="preserve"><value>Discover Bufins in 2 minutes</value></data>
   <data name="Index_HeroModalSalesCTA" xml:space="preserve"><value>Contact a sales agent</value></data>
