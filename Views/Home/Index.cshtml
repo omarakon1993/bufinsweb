@@ -429,7 +429,7 @@
             videoWrap.classList.remove('d-none');
             videoFrame.src = videoUrl;
             modal.classList.add('is-video');
-            modalTitle.textContent = '@Resources.Strings.Index_HeroModalVideoActiveTitle';
+            modalTitle.textContent = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Resources.Strings.Index_HeroModalVideoActiveTitle))';
         });
 
         modal.addEventListener('hidden.bs.modal', function () {
