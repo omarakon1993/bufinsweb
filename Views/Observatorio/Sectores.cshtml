@@ -1,0 +1,193 @@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Observatorio
+@{
+    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    ViewBag.ObsActive = "sectores";
+    ViewBag.Title = T("Análisis por sector económico en Colombia: benchmark financiero | Bufins", "Sector analysis in Colombia: financial benchmark | Bufins");
+    ViewBag.MetaDescription = T("Compara sectores y actividades CIIU de Colombia: ingresos, EBITDA, capital de trabajo, deuda y márgenes de miles de empresas, año a año y por tamaño, ciudad y estado.", "Compare Colombian sectors and ISIC activities: revenue, EBITDA, working capital, debt and margins of thousands of companies, year by year and by size, region and status.");
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/sectores";
+}
+@section head {
+    <link rel="canonical" href="@canonical" />
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:description" content="@ViewBag.MetaDescription" />
+    <link href="~/Assets/css/observatorio.css" rel="stylesheet">
+}
+
+<section class="obs-hero obs-hero-sm">
+    <div class="container">
+        <nav class="obs-crumbs" aria-label="breadcrumb"><a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i> <span>@T("Análisis por sector", "Sector analysis")</span></nav>
+        <h1 class="obs-title">@T("Análisis por sector", "Sector analysis")</h1>
+        <p class="obs-lead">@T("Elige una o varias actividades económicas (CIIU) y compara su desempeño frente al mercado: tamaño, rentabilidad, endeudamiento y capital de trabajo, año a año.", "Pick one or more economic activities (ISIC) and benchmark their performance against the market: size, profitability, leverage and working capital, year by year.")</p>
+    </div>
+</section>
+
+@Html.Partial("_ObsNav")
+
+<section class="obs-main" id="obs-app" data-empresa-url="/observatorio/empresa/">
+    <div class="container-xl">
+        <div class="d-lg-none mb-3">
+            <button class="btn obs-btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#obsFilters">
+                <i class="fas fa-sliders-h me-2"></i>@T("Filtros", "Filters") <span class="obs-count-badge" id="obsActiveCount" hidden>0</span>
+            </button>
+        </div>
+
+        <div class="row g-4">
+            <!-- ============ FILTROS ============ -->
+            <aside class="col-lg-3">
+                <div class="offcanvas-lg offcanvas-start obs-filters" tabindex="-1" id="obsFilters">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title">@T("Filtros", "Filters")</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#obsFilters"></button>
+                    </div>
+                    <div class="offcanvas-body d-block">
+                        <div class="obs-filters-head d-none d-lg-flex">
+                            <h2><i class="fas fa-sliders-h me-2"></i>@T("Filtros", "Filters")</h2>
+                            <button type="button" class="obs-link" id="obsReset">@T("Limpiar", "Clear")</button>
+                        </div>
+
+                        <div class="obs-field">
+                            <label for="fAnio">@T("Año", "Year")</label>
+                            <select id="fAnio" class="form-select"></select>
+                        </div>
+
+                        <div class="obs-field">
+                            <label>@T("Tamaño de empresa (por ingresos)", "Company size (by revenue)")</label>
+                            <div class="obs-sizes" id="fTam">
+                                <button type="button" data-t="S" title="@T("Menos de $20.000 millones", "Under COP 20,000 M")"><b>S</b><small>&lt; 20 mil M</small></button>
+                                <button type="button" data-t="M" title="@T("Entre $20.000 y $100.000 millones", "COP 20,000 – 100,000 M")"><b>M</b><small>20–100 mil M</small></button>
+                                <button type="button" data-t="L" title="@T("Entre $100.000 millones y 1 billón", "COP 100,000 M – 1 T")"><b>L</b><small>100 mil M–1 B</small></button>
+                                <button type="button" data-t="XL" title="@T("Más de 1 billón", "Over COP 1 T")"><b>XL</b><small>&gt; 1 B</small></button>
+                            </div>
+                        </div>
+
+                        <div class="obs-field">
+                            <label>@T("Actividad económica (CIIU)", "Economic activity (ISIC)")</label>
+                            <div class="obs-input-icon mb-2"><i class="fas fa-search"></i><input id="fCiiuQ" type="search" class="form-control" placeholder="@T("Buscar código o actividad…", "Search code or activity…")" /></div>
+                            <div id="fCiiuSel" class="obs-selected"></div>
+                            <div id="fCiiuTree" class="obs-tree" role="tree"></div>
+                        </div>
+
+                        <div class="obs-field">
+                            <label for="fQ">@T("Buscar empresa dentro del filtro", "Search company within filter")</label>
+                            <div class="obs-input-icon"><i class="fas fa-search"></i><input id="fQ" type="search" class="form-control" placeholder="@T("Nombre o NIT", "Name or tax ID")" autocomplete="off" /></div>
+                        </div>
+
+                        <div class="obs-field">
+                            <label for="fDepto">@T("Departamento", "Department")</label>
+                            <select id="fDepto" class="form-select"></select>
+                        </div>
+
+                        <div class="obs-field">
+                            <label for="fEstado">@T("Estado de la sociedad", "Company status")</label>
+                            <select id="fEstado" class="form-select"></select>
+                        </div>
+
+                        <div class="obs-field">
+                            <label>@T("Ingresos (millones COP)", "Revenue (COP millions)")</label>
+                            <div class="obs-range">
+                                <input id="fIMin" type="number" min="0" class="form-control" placeholder="@T("Mín", "Min")" />
+                                <span>–</span>
+                                <input id="fIMax" type="number" min="0" class="form-control" placeholder="@T("Máx", "Max")" />
+                            </div>
+                        </div>
+
+                        <div class="obs-field">
+                            <label>@T("Resultado del ejercicio", "Net result")</label>
+                            <div class="obs-seg" id="fRes">
+                                <button type="button" data-v="" class="active">@T("Todas", "All")</button>
+                                <button type="button" data-v="utilidad">@T("Utilidad", "Profit")</button>
+                                <button type="button" data-v="perdida">@T("Pérdida", "Loss")</button>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn obs-btn-ghost w-100 d-lg-none mt-2" id="obsResetMobile">@T("Limpiar filtros", "Clear filters")</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ============ CONTENIDO ============ -->
+            <div class="col-lg-9">
+                <div class="obs-chips" id="obsChips" aria-live="polite"></div>
+                <div class="obs-kpis" id="obsKpis"></div>
+
+                <ul class="nav obs-tabs" role="tablist">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabResumen" type="button"><i class="fas fa-chart-line me-2"></i>@T("Resumen", "Summary")</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabEmpresas" type="button"><i class="fas fa-table me-2"></i>@T("Empresas", "Companies")</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabDist" type="button"><i class="fas fa-chart-pie me-2"></i>@T("Distribución", "Distribution")</button></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tabResumen">
+                        <div class="obs-medians" id="obsMedians"></div>
+                        <div class="row g-4">
+                            <div class="col-xl-4 col-md-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Ingresos", "Revenue")</h3></div><div class="obs-chart"><canvas id="chIng"></canvas></div></div></div>
+                            <div class="col-xl-4 col-md-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Utilidad bruta", "Gross profit")</h3></div><div class="obs-chart"><canvas id="chUb"></canvas></div></div></div>
+                            <div class="col-xl-4 col-md-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Gastos operacionales", "Operating expenses")</h3></div><div class="obs-chart"><canvas id="chGop"></canvas></div></div></div>
+                            <div class="col-xl-4 col-md-6"><div class="obs-card"><div class="obs-card-head"><h3>EBITDA</h3></div><div class="obs-chart"><canvas id="chEbitda"></canvas></div></div></div>
+                            <div class="col-xl-4 col-md-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Capital de trabajo neto", "Net working capital")</h3></div><div class="obs-chart"><canvas id="chKtn"></canvas></div></div></div>
+                            <div class="col-xl-4 col-md-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Deuda financiera", "Financial debt")</h3></div><div class="obs-chart"><canvas id="chDeuda"></canvas></div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabEmpresas">
+                        <div class="obs-card">
+                            <div class="obs-card-head">
+                                <h3><span id="obsTotal">—</span> @T("empresas", "companies")</h3>
+                                <div class="obs-actions">
+                                    <a class="btn obs-btn-primary btn-sm" id="obsCompare" href="/observatorio/comparar" hidden><i class="fas fa-balance-scale me-2"></i><span>@T("Comparar", "Compare")</span></a>
+                                    <a class="btn obs-btn-ghost btn-sm" id="obsExport" href="#"><i class="fas fa-file-csv me-2"></i>@T("Exportar CSV", "Export CSV")</a>
+                                    <a class="btn obs-btn-ghost btn-sm" id="obsShare" href="#"><i class="fas fa-link me-2"></i>@T("Copiar enlace", "Copy link")</a>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table obs-table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th data-o="nombre">@T("Empresa", "Company")</th>
+                                            <th data-o="ing" class="text-end">@T("Ingresos", "Revenue")</th>
+                                            <th data-o="crec" class="text-end">@T("Crec.", "Growth")</th>
+                                            <th data-o="uop" class="text-end">@T("U. operativa", "Op. profit")</th>
+                                            <th data-o="ebitda" class="text-end">EBITDA</th>
+                                            <th data-o="deuda" class="text-end">@T("Deuda", "Debt")</th>
+                                            <th data-o="mbruto" class="text-end">@T("Mg bruto", "Gross mg")</th>
+                                            <th data-o="moper" class="text-end">@T("Mg operativo", "Op. mg")</th>
+                                            <th data-o="mebitda" class="text-end">@T("Mg EBITDA", "EBITDA mg")</th>
+                                            <th data-o="deudaebitda" class="text-end">@T("Deuda/EBITDA", "Debt/EBITDA")</th>
+                                            <th data-o="ktingresos" class="text-end">@T("KT/Ingresos", "WC/Rev.")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="obsRows"></tbody>
+                                </table>
+                            </div>
+                            <nav class="obs-pager" id="obsPager"></nav>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabDist">
+                        <div class="row g-4">
+                            <div class="col-md-5"><div class="obs-card"><div class="obs-card-head"><h3>@T("Empresas por tamaño", "Companies by size")</h3></div><div class="obs-chart"><canvas id="chTam"></canvas></div></div></div>
+                            <div class="col-md-7"><div class="obs-card"><div class="obs-card-head"><h3>@T("Ingresos por departamento", "Revenue by department")</h3><span class="obs-hint">@T("Clic para filtrar", "Click to filter")</span></div><div class="obs-chart"><canvas id="chDepto"></canvas></div></div></div>
+                            <div class="col-12"><div class="obs-card"><div class="obs-card-head"><h3>@T("Actividades con más ingresos", "Top activities by revenue")</h3><span class="obs-hint">@T("Clic para filtrar", "Click to filter")</span></div><div class="obs-chart obs-chart-lg"><canvas id="chDiv"></canvas></div></div></div>
+                            <div class="col-12"><div class="obs-card"><div class="obs-card-head"><h3>@T("Margen EBITDA vs. endeudamiento", "EBITDA margin vs. leverage")</h3><span class="obs-hint">@T("Las 300 mayores · tamaño = activos · clic abre la ficha", "Top 300 · size = assets · click opens profile")</span></div><div class="obs-chart obs-chart-lg"><canvas id="chScatter"></canvas></div></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="obs-source">
+                    <i class="fas fa-info-circle me-2"></i>@T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>.
+                    @T("Sumas sobre las empresas que reportaron cada año; la variación entre años puede reflejar cambios en el conjunto de empresas. Cifras en millones de pesos; indicadores calculados por Bufins con fines informativos.",
+                       "Totals over the companies that reported each year; changes between years may reflect changes in the set of companies. Figures in COP millions; ratios computed by Bufins for information only.")
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script src="~/Assets/js/chart.umd.min.js"></script>
+    <script src="~/Assets/js/obs-common.js"></script>
+    <script src="~/Assets/js/obs-sectores.js"></script>
+}

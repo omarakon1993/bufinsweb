@@ -1,0 +1,193 @@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Observatorio
+@model Empresa
+@{
+    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var cat = CiiuCatalogo.Actual;
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var e = Model;
+    var anios = datos.Meta.Anios.OrderBy(a => a).Where(a => e.En(a, datos.MinAnio) != null).ToList();
+    var anio = anios.Last();
+    var v = e.En(anio, datos.MinAnio);
+    var p = e.En(anio - 1, datos.MinAnio);
+    var actividad = cat.Nombre(e.Ciiu);
+    ViewBag.ObsActive = "empresa";
+    ViewBag.Title = e.Razon + T(" (NIT ", " (Tax ID ") + e.Nit + T("): estados financieros e indicadores | Bufins", "): financial statements and ratios | Bufins");
+    ViewBag.MetaDescription = e.Razon + " — " + actividad + ", " + e.Ciudad + ". " + T("Ingresos ", "Revenue ") + ObservatorioFormat.Moneda(v[M.Ing] / 1000.0) + T(", EBITDA ", ", EBITDA ") + ObservatorioFormat.Moneda(v[M.Ebitda] / 1000.0) + " (" + anio + "). " + T("Análisis de rentabilidad, endeudamiento, liquidez y comparación con su sector.", "Profitability, leverage and liquidity analysis versus its sector.");
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/empresa/" + e.Nit;
+    Func<string, string> js = s => (s ?? "").Replace("\"", "'");
+}
+@section head {
+    <link rel="canonical" href="@canonical" />
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:description" content="@ViewBag.MetaDescription" />
+    <meta property="og:type" content="article" />
+    <link href="~/Assets/css/observatorio.css" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "Organization",
+      "name": "@js(e.Razon)",
+      "taxID": "@e.Nit",
+      "address": { "@@type": "PostalAddress", "addressLocality": "@js(e.Ciudad)", "addressRegion": "@js(e.Depto)", "addressCountry": "CO" },
+      "url": "@canonical"
+    }
+    </script>
+}
+
+<section class="obs-hero obs-hero-sm">
+    <div class="container">
+        <nav class="obs-crumbs" aria-label="breadcrumb">
+            <a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i>
+            @if (e.Seccion.Length > 0) { <a href="/observatorio/sector/seccion-@e.Seccion.ToLowerInvariant()">@cat.Nombre(e.Seccion)</a> <i class="fas fa-chevron-right"></i> }
+            @if (e.Division.Length > 0) { <a href="/observatorio/sector/ciiu-@e.Division">@cat.Nombre(e.Division)</a> }
+        </nav>
+        <h1 class="obs-title obs-title-co">@e.Razon</h1>
+        <p class="obs-lead">NIT @e.Nit · @actividad (CIIU @e.Ciiu) · @e.Ciudad, @e.Depto</p>
+        <div class="obs-hero-meta">
+            <span class="obs-state @(e.Estado == "ACTIVA" ? "ok" : "warn")"><i class="fas fa-circle me-2"></i>@(string.IsNullOrEmpty(e.Estado) ? "—" : e.Estado)</span>
+            <span><i class="fas fa-ruler-combined me-2"></i>@T("Tamaño", "Size") @ObservatorioService_Tam(e.RankIng)</span>
+            <span><i class="fas fa-calendar-alt me-2"></i>@T("Datos", "Data") @anios.First()–@anios.Last()</span>
+        </div>
+    </div>
+</section>
+
+@Html.Partial("_ObsNav")
+
+<section class="obs-main" id="empApp" data-nit="@e.Nit" data-anio="@anio" data-anios="@string.Join(",", anios)" data-razon="@e.Razon">
+    <div class="container-xl">
+        <div class="obs-toolbar">
+            <div class="obs-years" id="empYears" role="group" aria-label="@T("Año", "Year")">
+                @foreach (var a in anios.OrderByDescending(x => x))
+                {
+                    <button type="button" data-y="@a" class="@(a == anio ? "active" : "")">@a</button>
+                }
+            </div>
+            <div class="obs-actions">
+                <a class="btn obs-btn-ghost btn-sm" href="/observatorio/comparar?nits=@e.Nit"><i class="fas fa-balance-scale me-2"></i>@T("Comparar", "Compare")</a>
+                <a class="btn obs-btn-ghost btn-sm" href="/observatorio/api/exportarempresa?nit=@e.Nit"><i class="fas fa-file-csv me-2"></i>@T("Exportar CSV", "Export CSV")</a>
+                <button type="button" class="btn obs-btn-ghost btn-sm" id="empPrint"><i class="fas fa-print me-2"></i>@T("Imprimir / PDF", "Print / PDF")</button>
+                <button type="button" class="btn obs-btn-ghost btn-sm" id="empShare"><i class="fas fa-link me-2"></i>@T("Copiar enlace", "Copy link")</button>
+            </div>
+        </div>
+
+        <ul class="nav obs-tabs" role="tablist" id="empTabs">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabResumen" data-hash="resumen" type="button"><i class="fas fa-th-large me-2"></i>@T("Resumen", "Summary")</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBench" data-hash="sector" type="button"><i class="fas fa-bullseye me-2"></i>@T("Frente al sector", "Vs. sector")</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabEstados" data-hash="estados" type="button"><i class="fas fa-file-invoice-dollar me-2"></i>@T("Estados financieros", "Statements")</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabPerfil" data-hash="perfil" type="button"><i class="fas fa-id-card me-2"></i>@T("Perfil", "Profile")</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabGlosario" data-hash="glosario" type="button"><i class="fas fa-book me-2"></i>@T("Glosario", "Glossary")</button></li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- RESUMEN -->
+            <div class="tab-pane fade show active" id="tabResumen">
+                <div id="empInsights" class="obs-insights"></div>
+                <div class="obs-kpis" id="empKpis">
+                    <div class="obs-kpi"><span>@T("Ingresos operacionales", "Operating revenue") @anio</span><strong>@ObservatorioFormat.Moneda(v[M.Ing] / 1000.0)</strong><em>@(p != null ? ObservatorioFormat.Variacion(v[M.Ing], p[M.Ing]) : "")</em></div>
+                    <div class="obs-kpi"><span>EBITDA</span><strong>@ObservatorioFormat.Moneda(v[M.Ebitda] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(v))</em></div>
+                    <div class="obs-kpi"><span>@T("Utilidad neta", "Net profit")</span><strong class="@(v[M.Un] < 0 ? "obs-neg" : "")">@ObservatorioFormat.Moneda(v[M.Un] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenNeto(v))</em></div>
+                    <div class="obs-kpi"><span>@T("Activos", "Assets")</span><strong>@ObservatorioFormat.Moneda(v[M.Act] / 1000.0)</strong><em>ROA @ObservatorioFormat.Porcentaje(Ratio.Roa(v))</em></div>
+                    <div class="obs-kpi"><span>@T("Deuda financiera", "Financial debt")</span><strong>@ObservatorioFormat.Moneda(v[M.Deuda] / 1000.0)</strong><em>@T("Deuda/EBITDA", "Debt/EBITDA") @(Ratio.DeudaEbitda(v).HasValue ? Ratio.DeudaEbitda(v).Value.ToString("0.0") + "x" : "—")</em></div>
+                </div>
+                <div class="row g-4" id="empCharts">
+                    <div class="col-lg-4"><div class="obs-card"><div class="obs-card-head"><h3>@T("Ingresos", "Revenue")</h3></div><div class="obs-chart"><canvas id="chIng"></canvas></div></div></div>
+                    <div class="col-lg-4"><div class="obs-card"><div class="obs-card-head"><h3>@T("Utilidad bruta", "Gross profit")</h3></div><div class="obs-chart"><canvas id="chUb"></canvas></div></div></div>
+                    <div class="col-lg-4"><div class="obs-card"><div class="obs-card-head"><h3>@T("Gastos operacionales", "Operating expenses")</h3></div><div class="obs-chart"><canvas id="chGop"></canvas></div></div></div>
+                    <div class="col-lg-4"><div class="obs-card"><div class="obs-card-head"><h3>EBITDA</h3></div><div class="obs-chart"><canvas id="chEbitda"></canvas></div></div></div>
+                    <div class="col-lg-4"><div class="obs-card"><div class="obs-card-head"><h3>@T("Capital de trabajo neto", "Net working capital")</h3></div><div class="obs-chart"><canvas id="chKtn"></canvas></div></div></div>
+                    <div class="col-lg-4"><div class="obs-card"><div class="obs-card-head"><h3>@T("Deuda financiera", "Financial debt")</h3></div><div class="obs-chart"><canvas id="chDeuda"></canvas></div></div></div>
+                </div>
+            </div>
+
+            <!-- FRENTE AL SECTOR -->
+            <div class="tab-pane fade" id="tabBench">
+                <div class="obs-card">
+                    <div class="obs-card-head"><h3>@T("Posición frente a su sector", "Position versus its sector")</h3><span class="obs-hint" id="benchWho"></span></div>
+                    <div class="table-responsive"><table class="table obs-table align-middle" id="benchTable"></table></div>
+                    <p class="obs-hint mt-2">@T("La barra muestra el rango entre el percentil 25 y 75 de las empresas comparables; el punto es la empresa y la línea, la mediana. «Mejor que» indica el % de empresas comparables con peor indicador.", "The bar spans the 25th–75th percentile of comparable companies; the dot is the company and the line the median. “Better than” is the % of comparable companies with a worse ratio.")</p>
+                </div>
+            </div>
+
+            <!-- ESTADOS -->
+            <div class="tab-pane fade" id="tabEstados">
+                <div class="obs-substate">
+                    <ul class="nav obs-pills" id="stmtTabs">
+                        <li><button type="button" class="active" data-s="pyg">@T("Estado de resultados", "Income statement")</button></li>
+                        <li><button type="button" data-s="kt">@T("Capital de trabajo y activos LP", "Working capital & fixed assets")</button></li>
+                        <li><button type="button" data-s="bal">@T("Balance general", "Balance sheet")</button></li>
+                        <li><button type="button" data-s="flu">@T("Flujo de caja", "Cash flow")</button></li>
+                    </ul>
+                    <div class="obs-seg" id="stmtMode">
+                        <button type="button" data-m="v" class="active">@T("Valores", "Values")</button>
+                        <button type="button" data-m="p">@T("% vertical", "% of base")</button>
+                        <button type="button" data-m="g">@T("Var. anual", "YoY")</button>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-xl-8"><div class="obs-card"><div class="obs-card-head"><h3 id="stmtTitle"></h3><span class="obs-hint">@T("Millones de COP", "COP millions")</span></div><div class="table-responsive"><table class="table obs-table obs-stmt" id="stmtTable"></table></div></div></div>
+                    <div class="col-xl-4"><div class="obs-card"><div class="obs-card-head"><h3 id="stmtChartTitle"></h3></div><div class="obs-chart obs-chart-lg"><canvas id="chStmt"></canvas></div></div></div>
+                </div>
+            </div>
+
+            <!-- PERFIL -->
+            <div class="tab-pane fade" id="tabPerfil">
+                <div class="obs-card"><div class="obs-card-head"><h3>@T("Datos generales", "General information")</h3></div><div id="perfilBody"></div></div>
+            </div>
+
+            <!-- GLOSARIO -->
+            <div class="tab-pane fade" id="tabGlosario">
+                <div class="obs-card"><div class="obs-card-head"><h3>@T("Cómo se calcula cada indicador", "How each metric is computed")</h3></div><dl class="obs-gloss" id="glosBody"></dl></div>
+            </div>
+        </div>
+
+        <!-- Datos clave renderizados en servidor (indexables) -->
+        <div class="obs-card mt-4 obs-ssr">
+            <div class="obs-card-head"><h2 class="obs-h3">@e.Razon: @T("cifras clave por año", "key figures by year")</h2><span class="obs-hint">@T("Millones de COP", "COP millions")</span></div>
+            <div class="table-responsive">
+                <table class="table obs-table">
+                    <thead><tr><th>@T("Año", "Year")</th><th class="text-end">@T("Ingresos", "Revenue")</th><th class="text-end">EBITDA</th><th class="text-end">@T("Utilidad neta", "Net profit")</th><th class="text-end">@T("Activos", "Assets")</th><th class="text-end">@T("Pasivos", "Liabilities")</th><th class="text-end">@T("Patrimonio", "Equity")</th></tr></thead>
+                    <tbody>
+                        @foreach (var a in anios.OrderByDescending(x => x))
+                        {
+                            var y = e.En(a, datos.MinAnio);
+                            <tr>
+                                <td>@a</td>
+                                <td class="text-end">@ObservatorioFormat.Entero(y[M.Ing] / 1000.0)</td>
+                                <td class="text-end">@ObservatorioFormat.Entero(y[M.Ebitda] / 1000.0)</td>
+                                <td class="text-end @(y[M.Un] < 0 ? "obs-neg" : "")">@ObservatorioFormat.Entero(y[M.Un] / 1000.0)</td>
+                                <td class="text-end">@ObservatorioFormat.Entero(y[M.Act] / 1000.0)</td>
+                                <td class="text-end">@ObservatorioFormat.Entero(y[M.Pas] / 1000.0)</td>
+                                <td class="text-end">@ObservatorioFormat.Entero(y[M.Pat] / 1000.0)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <p class="obs-source">
+            <i class="fas fa-info-circle me-2"></i>@T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>.
+            @T("Cifras reportadas por la empresa a la Supersociedades; los indicadores (EBITDA, capital de trabajo, deuda) son cálculos de Bufins. Información pública con fines informativos; no constituye asesoría financiera.",
+               "Figures reported by the company to the Superintendencia de Sociedades; metrics (EBITDA, working capital, debt) are Bufins calculations. Public information, for information only; not financial advice.")
+        </p>
+    </div>
+</section>
+
+<section class="obs-cta">
+    <div class="container text-center">
+        <h2>@T("¿Eres de " + e.Razon + " o de una empresa similar?", "Are you at " + e.Razon + " or a similar company?")</h2>
+        <p>@T("Bufins automatiza tus estados financieros e indicadores en un solo tablero.", "Bufins automates your financial statements and ratios in a single dashboard.")</p>
+        <a class="btn obs-btn-primary btn-lg" href="@Url.Action("Contact", "Home")">@T("Solicitar una demo", "Request a demo")</a>
+    </div>
+</section>
+
+@functions {
+    public static string ObservatorioService_Tam(long ingMiles) { return bufinsweb.Services.ObservatorioService.Tamano(ingMiles); }
+}
+
+@section scripts {
+    <script src="~/Assets/js/chart.umd.min.js"></script>
+    <script src="~/Assets/js/obs-common.js"></script>
+    <script src="~/Assets/js/obs-empresa.js"></script>
+}

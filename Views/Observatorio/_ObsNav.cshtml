@@ -1,0 +1,22 @@
+@using bufinsweb.Helpers
+@{
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var activo = (string)ViewBag.ObsActive ?? "";
+    Func<string, string> cls = k => k == activo ? "active" : "";
+}
+<div class="obs-subnav">
+    <div class="container-xl obs-subnav-in">
+        <nav class="obs-subnav-links" aria-label="Observatorio">
+            <a href="/observatorio" class="@cls("home")"><i class="fas fa-home"></i><span>@T("Inicio", "Home")</span></a>
+            <a href="/observatorio/sectores" class="@cls("sectores")"><i class="fas fa-industry"></i><span>@T("Análisis por sector", "Sector analysis")</span></a>
+            <a href="/observatorio/comparar" class="@cls("comparar")"><i class="fas fa-balance-scale"></i><span>@T("Comparar empresas", "Compare companies")</span></a>
+            <span class="obs-subnav-tag @cls("empresa")"><i class="fas fa-building"></i><span>@T("Análisis individual", "Company profile")</span></span>
+        </nav>
+        <div class="obs-subnav-search">
+            <div class="obs-input-icon">
+                <i class="fas fa-search"></i>
+                <input id="obsGlobalSearch" type="search" class="form-control" placeholder="@T("Buscar empresa por nombre o NIT…", "Search company by name or tax ID…")" aria-label="@T("Buscar empresa", "Search company")" />
+            </div>
+        </div>
+    </div>
+</div>

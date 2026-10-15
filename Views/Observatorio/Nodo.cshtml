@@ -1,0 +1,119 @@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Observatorio
+@using bufinsweb.Services
+@model ObservatorioService.ResumenNodo
+@{
+    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var cat = CiiuCatalogo.Actual;
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var s = Model.Suma;
+    var prev = Model.Prev;
+    ViewBag.ObsActive = "sectores";
+    ViewBag.Title = Model.Titulo + T(" en Colombia: ingresos, EBITDA y empresas líderes | Bufins", " in Colombia: revenue, EBITDA and leading companies | Bufins");
+    ViewBag.MetaDescription = Model.Titulo + " (" + Model.Nivel + " CIIU " + Model.Codigo + "): " + Model.Total.ToString("N0") + T(" empresas, ingresos de ", " companies, revenue of ") + ObservatorioFormat.Moneda(s[M.Ing] / 1000.0) + " (" + Model.Anio + "). " + T("Ranking, márgenes y endeudamiento con datos de la Supersociedades.", "Ranking, margins and leverage from Superintendencia de Sociedades data.");
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/sector/" + Model.Slug;
+    var explorar = "/observatorio/sectores?k=" + Model.Codigo;
+    var seccion = Model.Codigo.Length == 1 ? Model.Codigo : cat.Seccion(Model.Codigo.Substring(0, 2));
+}
+@section head {
+    <link rel="canonical" href="@canonical" />
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:description" content="@ViewBag.MetaDescription" />
+    <meta property="og:type" content="article" />
+    <link href="~/Assets/css/observatorio.css" rel="stylesheet">
+}
+
+<section class="obs-hero obs-hero-sm">
+    <div class="container">
+        <nav class="obs-crumbs" aria-label="breadcrumb">
+            <a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i>
+            @if (seccion.Length > 0 && Model.Codigo != seccion) { <a href="/observatorio/sector/seccion-@seccion.ToLowerInvariant()">@cat.Nombre(seccion)</a> <i class="fas fa-chevron-right"></i> }
+            <span>@Model.Nivel @Model.Codigo</span>
+        </nav>
+        <h1 class="obs-title">@Model.Titulo</h1>
+        <p class="obs-lead">@Model.Total.ToString("N0") @T("empresas que reportaron a la Supersociedades · cifras", "companies reporting to the Superintendencia de Sociedades · figures") @Model.Anio</p>
+    </div>
+</section>
+
+@Html.Partial("_ObsNav")
+
+<section class="obs-main">
+    <div class="container-xl">
+        <div class="obs-kpis">
+            <div class="obs-kpi"><span>@T("Ingresos", "Revenue")</span><strong>@ObservatorioFormat.Moneda(s[M.Ing] / 1000.0)</strong><em>@ObservatorioFormat.Variacion(s[M.Ing], prev[M.Ing]) @T("vs. año anterior", "vs. prior year")</em></div>
+            <div class="obs-kpi"><span>EBITDA</span><strong>@ObservatorioFormat.Moneda(s[M.Ebitda] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(s))</em></div>
+            <div class="obs-kpi"><span>@T("Utilidad neta", "Net profit")</span><strong>@ObservatorioFormat.Moneda(s[M.Un] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenNeto(s))</em></div>
+            <div class="obs-kpi"><span>@T("Deuda financiera", "Financial debt")</span><strong>@ObservatorioFormat.Moneda(s[M.Deuda] / 1000.0)</strong><em>@T("Deuda/EBITDA", "Debt/EBITDA") @(Ratio.DeudaEbitda(s).HasValue ? Ratio.DeudaEbitda(s).Value.ToString("0.0") + "x" : "—")</em></div>
+            <div class="obs-kpi"><span>@T("Endeudamiento", "Leverage")</span><strong>@ObservatorioFormat.Porcentaje(Ratio.Endeudamiento(s))</strong><em>ROA @ObservatorioFormat.Porcentaje(Ratio.Roa(s))</em></div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="obs-card">
+                    <div class="obs-card-head"><h2 class="obs-h3">@T("Evolución del sector", "Sector trend")</h2></div>
+                    <div class="obs-chart obs-chart-lg"><canvas id="chNodo"></canvas></div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="obs-card h-100">
+                    <div class="obs-card-head"><h2 class="obs-h3">@T("Explora con filtros", "Explore with filters")</h2></div>
+                    <p>@T("Cruza este sector con tamaño, departamento, estado y rentabilidad, y compara contra la mediana del mercado.", "Cross this sector with size, department, status and profitability, and benchmark against the market median.")</p>
+                    <a class="btn obs-btn-primary" href="@explorar"><i class="fas fa-sliders-h me-2"></i>@T("Abrir en el análisis por sector", "Open in sector analysis")</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="obs-card mt-4">
+            <div class="obs-card-head"><h2 class="obs-h3">@T("Empresas líderes por ingresos", "Leading companies by revenue") — @Model.Anio</h2></div>
+            <div class="table-responsive">
+                <table class="table obs-table align-middle">
+                    <thead><tr><th>#</th><th>@T("Empresa", "Company")</th><th class="text-end">@T("Ingresos", "Revenue")</th><th class="text-end">EBITDA</th><th class="text-end">@T("Margen EBITDA", "EBITDA margin")</th><th class="text-end">@T("Deuda/EBITDA", "Debt/EBITDA")</th></tr></thead>
+                    <tbody>
+                        @{ var i = 1; }
+                        @foreach (var kv in Model.Top)
+                        {
+                            var d1 = Ratio.DeudaEbitda(kv.Value);
+                            <tr>
+                                <td>@(i++)</td>
+                                <td><a href="/observatorio/empresa/@kv.Key.Nit" class="obs-co">@kv.Key.Razon</a><small>@kv.Key.Ciudad</small></td>
+                                <td class="text-end">@ObservatorioFormat.Moneda(kv.Value[M.Ing] / 1000.0)</td>
+                                <td class="text-end @(kv.Value[M.Ebitda] < 0 ? "obs-neg" : "")">@ObservatorioFormat.Moneda(kv.Value[M.Ebitda] / 1000.0)</td>
+                                <td class="text-end">@ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(kv.Value))</td>
+                                <td class="text-end">@(d1.HasValue ? d1.Value.ToString("0.0") + "x" : "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <p class="obs-source"><i class="fas fa-info-circle me-2"></i>@T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>. @T("Procesado por Bufins.", "Processed by Bufins.")</p>
+    </div>
+</section>
+
+<section class="obs-cta">
+    <div class="container text-center">
+        <h2>@T("Compara tu empresa contra este sector", "Benchmark your company against this sector")</h2>
+        <a class="btn obs-btn-primary btn-lg" href="@Url.Action("Contact", "Home")">@T("Hablar con Bufins", "Talk to Bufins")</a>
+    </div>
+</section>
+
+@section scripts {
+    <script src="~/Assets/js/chart.umd.min.js"></script>
+    <script src="~/Assets/js/obs-common.js"></script>
+    <script>
+    (function () {
+        var anios = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Anios));
+        var ing = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SerieIng));
+        var ebitda = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SerieEbitda));
+        var es = OBS.ES;
+        OBS.chart('chNodo', {
+            type: 'bar',
+            data: { labels: anios, datasets: [
+                { label: es ? 'Ingresos (billones COP)' : 'Revenue (COP trillions)', data: ing, backgroundColor: '#583AFF', borderRadius: 6 },
+                { label: es ? 'EBITDA (billones COP)' : 'EBITDA (COP trillions)', data: ebitda, backgroundColor: '#01E1D7', borderRadius: 6 }
+            ] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+        });
+    })();
+    </script>
+}

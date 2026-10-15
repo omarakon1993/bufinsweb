@@ -1,0 +1,73 @@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Observatorio
+@{
+    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    ViewBag.ObsActive = "comparar";
+    ViewBag.Title = T("Comparar empresas en Colombia: rentabilidad, deuda y liquidez | Bufins", "Compare companies in Colombia: profitability, debt and liquidity | Bufins");
+    ViewBag.MetaDescription = T("Compara hasta 4 empresas colombianas lado a lado con sus estados financieros: ingresos, EBITDA, márgenes, endeudamiento, liquidez y ciclo de caja.", "Compare up to 4 Colombian companies side by side: revenue, EBITDA, margins, leverage, liquidity and cash cycle.");
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/comparar";
+}
+@section head {
+    <link rel="canonical" href="@canonical" />
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:description" content="@ViewBag.MetaDescription" />
+    <link href="~/Assets/css/observatorio.css" rel="stylesheet">
+}
+
+<section class="obs-hero obs-hero-sm">
+    <div class="container">
+        <nav class="obs-crumbs" aria-label="breadcrumb"><a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i> <span>@T("Comparar empresas", "Compare companies")</span></nav>
+        <h1 class="obs-title">@T("Comparar empresas", "Compare companies")</h1>
+        <p class="obs-lead">@T("Evalúa un competidor, un cliente o un proveedor: pon hasta 4 empresas lado a lado y mira quién gana en rentabilidad, endeudamiento, liquidez y ciclo de caja.", "Assess a competitor, customer or supplier: put up to 4 companies side by side and see who wins on profitability, leverage, liquidity and cash cycle.")</p>
+    </div>
+</section>
+
+@Html.Partial("_ObsNav")
+
+<section class="obs-main" id="cmpApp" data-empresa-url="/observatorio/empresa/">
+    <div class="container-xl">
+        <div class="obs-slots" id="cmpSlots"></div>
+
+        <div id="cmpEmpty" class="obs-empty"><i class="fas fa-balance-scale"></i><p>@T("Agrega al menos dos empresas para compararlas.", "Add at least two companies to compare them.")</p></div>
+
+        <div id="cmpBody" hidden>
+            <div class="obs-toolbar">
+                <div class="obs-years" id="cmpYears" role="group" aria-label="@T("Año", "Year")"></div>
+                <div class="obs-actions">
+                    <button type="button" class="btn obs-btn-ghost btn-sm" id="cmpPrint"><i class="fas fa-print me-2"></i>@T("Imprimir / PDF", "Print / PDF")</button>
+                    <button type="button" class="btn obs-btn-ghost btn-sm" id="cmpShare"><i class="fas fa-link me-2"></i>@T("Copiar enlace", "Copy link")</button>
+                </div>
+            </div>
+
+            <div class="obs-wins" id="cmpWins"></div>
+
+            <div class="obs-card mb-4">
+                <div class="obs-card-head"><h3>@T("Comparativo", "Side by side")</h3><span class="obs-hint">@T("Resaltado = mejor valor de la fila · Millones de COP", "Highlight = best value in the row · COP millions")</span></div>
+                <div class="table-responsive"><table class="table obs-table obs-matrix" id="cmpMatrix"></table></div>
+            </div>
+
+            <div class="row g-4" id="cmpCharts">
+                <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Ingresos", "Revenue")</h3></div><div class="obs-chart"><canvas id="chIng"></canvas></div></div></div>
+                <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Crecimiento de ingresos %", "Revenue growth %")</h3></div><div class="obs-chart"><canvas id="chCrec"></canvas></div></div></div>
+                <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Margen EBITDA %", "EBITDA margin %")</h3></div><div class="obs-chart"><canvas id="chMebitda"></canvas></div></div></div>
+                <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Margen neto %", "Net margin %")</h3></div><div class="obs-chart"><canvas id="chMneto"></canvas></div></div></div>
+                <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Deuda / EBITDA (x)", "Debt / EBITDA (x)")</h3></div><div class="obs-chart"><canvas id="chDeuda"></canvas></div></div></div>
+                <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Liquidez corriente (x)", "Current ratio (x)")</h3></div><div class="obs-chart"><canvas id="chLiq"></canvas></div></div></div>
+                <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Ciclo de conversión de efectivo (días)", "Cash conversion cycle (days)")</h3></div><div class="obs-chart"><canvas id="chCiclo"></canvas></div></div></div>
+                <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Endeudamiento % (pasivo/activo)", "Leverage % (liabilities/assets)")</h3></div><div class="obs-chart"><canvas id="chEndeud"></canvas></div></div></div>
+            </div>
+        </div>
+
+        <p class="obs-source">
+            <i class="fas fa-info-circle me-2"></i>@T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>.
+            @T("Compara empresas con distinto tamaño y actividad con cautela: los indicadores dependen del sector. Información con fines informativos; no constituye asesoría financiera.", "Compare companies of different size and activity with care: ratios depend on the sector. For information only; not financial advice.")
+        </p>
+    </div>
+</section>
+
+@section scripts {
+    <script src="~/Assets/js/chart.umd.min.js"></script>
+    <script src="~/Assets/js/obs-common.js"></script>
+    <script src="~/Assets/js/obs-comparar.js"></script>
+}

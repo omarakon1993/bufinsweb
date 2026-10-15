@@ -1,0 +1,131 @@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Observatorio
+@{
+    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var top = (List<KeyValuePair<Empresa, long[]>>)ViewBag.Top;
+    var cat = CiiuCatalogo.Actual;
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    ViewBag.ObsActive = "home";
+    ViewBag.Title = T("Análisis financiero de empresas en Colombia | Bufins", "Financial analysis of Colombian companies | Bufins");
+    ViewBag.MetaDescription = T(
+        "Consulta estados financieros, indicadores y benchmark de más de " + (datos.Meta.Empresas / 1000) + " mil empresas colombianas que reportan a la Supersociedades: ingresos, EBITDA, deuda, capital de trabajo y flujo de caja.",
+        "Financial statements, ratios and benchmarks for over " + (datos.Meta.Empresas / 1000) + " thousand Colombian companies reporting to the Superintendencia de Sociedades.");
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio";
+    var secciones = datos.Empresas.Where(e => e.En(datos.MaxAnio, datos.MinAnio) != null && e.Seccion.Length > 0)
+                         .GroupBy(e => e.Seccion).Select(g => new { cod = g.Key, n = g.Count() }).OrderByDescending(x => x.n).ToList();
+}
+@section head {
+    <link rel="canonical" href="@canonical" />
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:description" content="@ViewBag.MetaDescription" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@canonical" />
+    <link href="~/Assets/css/observatorio.css" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "Dataset",
+      "name": "Estados financieros de empresas en Colombia (NIIF)",
+      "description": "@ViewBag.MetaDescription",
+      "url": "@canonical",
+      "creator": { "@@type": "Organization", "name": "Bufins", "url": "https://bufins.com" },
+      "isBasedOn": "https://www.datos.gov.co/resource/pfdp-zks5",
+      "temporalCoverage": "@datos.MinAnio/@datos.MaxAnio",
+      "inLanguage": "es-CO"
+    }
+    </script>
+}
+
+<section class="obs-hero obs-hero-search">
+    <div class="container">
+        <span class="obs-badge"><i class="fas fa-database me-2"></i>@T("Datos oficiales · Superintendencia de Sociedades", "Official data · Superintendencia de Sociedades")</span>
+        <h1 class="obs-title">@T("Analiza cualquier empresa de Colombia", "Analyze any company in Colombia") <span class="brand-text">@T("en segundos", "in seconds")</span></h1>
+        <p class="obs-lead">@T("Estados financieros, indicadores y comparación contra su sector para más de " + datos.Meta.Empresas.ToString("N0") + " empresas. Escribe el nombre o el NIT.",
+            "Financial statements, ratios and sector benchmarks for over " + datos.Meta.Empresas.ToString("N0") + " companies. Type the name or tax ID.")</p>
+        <div class="obs-bigsearch">
+            <div class="obs-input-icon">
+                <i class="fas fa-search"></i>
+                <input id="obsHeroSearch" type="search" class="form-control form-control-lg" placeholder="@T("Ej: Crepes & Waffles, Ecopetrol, 860076919", "e.g. Crepes & Waffles, Ecopetrol, 860076919")" aria-label="@T("Buscar empresa", "Search company")" autofocus />
+            </div>
+        </div>
+        <div class="obs-hero-meta">
+            <span><i class="fas fa-building me-2"></i>@datos.Meta.Empresas.ToString("N0") @T("empresas", "companies")</span>
+            <span><i class="fas fa-calendar-alt me-2"></i>@datos.MinAnio – @datos.MaxAnio</span>
+            <span><i class="fas fa-sync-alt me-2"></i>@T("Fuente actualizada", "Source updated") @datos.Meta.FuenteActualizado</span>
+        </div>
+    </div>
+</section>
+
+@Html.Partial("_ObsNav")
+
+<section class="obs-main">
+    <div class="container-xl">
+        <div class="obs-modules">
+            <a class="obs-module" href="/observatorio/sectores">
+                <span class="obs-module-ico"><i class="fas fa-industry"></i></span>
+                <h2>@T("Análisis por sector", "Sector analysis")</h2>
+                <p>@T("Elige una o varias actividades CIIU, filtra por tamaño, departamento y estado, y compara el desempeño del sector año a año contra la mediana del mercado.", "Pick one or more ISIC activities, filter by size, region and status, and benchmark the sector year by year against the market median.")</p>
+                <span class="obs-module-cta">@T("Explorar sectores", "Explore sectors") <i class="fas fa-arrow-right"></i></span>
+            </a>
+            <a class="obs-module" href="/observatorio/comparar">
+                <span class="obs-module-ico"><i class="fas fa-balance-scale"></i></span>
+                <h2>@T("Comparar empresas", "Compare companies")</h2>
+                <p>@T("Pon hasta 4 empresas lado a lado: rentabilidad, endeudamiento, liquidez y ciclo de caja. Útil para evaluar competidores, clientes o proveedores.", "Put up to 4 companies side by side: profitability, leverage, liquidity and cash cycle. Great to assess competitors, customers or suppliers.")</p>
+                <span class="obs-module-cta">@T("Comparar", "Compare") <i class="fas fa-arrow-right"></i></span>
+            </a>
+            <div class="obs-module obs-module-search" id="obsModuleSearch">
+                <span class="obs-module-ico"><i class="fas fa-building"></i></span>
+                <h2>@T("Análisis individual", "Company profile")</h2>
+                <p>@T("Resumen, estado de resultados, balance, flujo de caja y capital de trabajo de una empresa, con su posición frente al sector.", "Summary, income statement, balance sheet, cash flow and working capital of a company, with its position versus its sector.")</p>
+                <div class="obs-input-icon"><i class="fas fa-search"></i><input id="obsModuleSearchInput" type="search" class="form-control" placeholder="@T("Nombre o NIT de la empresa", "Company name or tax ID")" aria-label="@T("Buscar empresa", "Search company")" /></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contenido estático indexable -->
+<section class="obs-seo">
+    <div class="container-xl">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <h2 class="obs-h2">@T("Las 10 empresas con mayores ingresos en Colombia", "Colombia's 10 largest companies by revenue") (@datos.MaxAnio)</h2>
+                <ol class="obs-toplist">
+                    @foreach (var kv in top)
+                    {
+                        <li>
+                            <a href="/observatorio/empresa/@kv.Key.Nit">@kv.Key.Razon</a>
+                            <span>@ObservatorioFormat.Moneda(kv.Value[M.Ing] / 1000.0) · @cat.Nombre(kv.Key.Ciiu)</span>
+                        </li>
+                    }
+                </ol>
+            </div>
+            <div class="col-lg-5">
+                <h2 class="obs-h2">@T("Explora por sector económico", "Browse by economic sector")</h2>
+                <div class="obs-sector-links">
+                    @foreach (var s in secciones)
+                    {
+                        <a href="/observatorio/sector/seccion-@s.cod.ToLowerInvariant()"><i class="fas fa-chevron-right me-2"></i>@s.cod · @cat.Nombre(s.cod) <small>(@s.n.ToString("N0"))</small></a>
+                    }
+                </div>
+            </div>
+        </div>
+        <p class="obs-source mt-4"><i class="fas fa-info-circle me-2"></i>@T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>. @T("Cifras reportadas por las empresas; indicadores calculados por Bufins con fines informativos. No constituye asesoría financiera.", "Figures reported by the companies; ratios computed by Bufins for information only. Not financial advice.")</p>
+    </div>
+</section>
+
+<section class="obs-cta">
+    <div class="container text-center">
+        <h2>@T("¿Quieres este análisis sobre TU empresa, en tiempo real?", "Want this analysis on YOUR company, in real time?")</h2>
+        <p>@T("Bufins automatiza tus estados financieros e indicadores y te compara contra tu sector.", "Bufins automates your financial statements and ratios and benchmarks you against your sector.")</p>
+        <a class="btn obs-btn-primary btn-lg" href="@Url.Action("Contact", "Home")">@T("Solicitar una demo", "Request a demo")</a>
+    </div>
+</section>
+
+@section scripts {
+    <script src="~/Assets/js/chart.umd.min.js"></script>
+    <script src="~/Assets/js/obs-common.js"></script>
+    <script>
+        OBS.search(document.getElementById('obsHeroSearch'));
+        OBS.search(document.getElementById('obsModuleSearchInput'));
+    </script>
+}

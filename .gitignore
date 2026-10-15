@@ -373,3 +373,8 @@ secretsSettings.config
 .vsidx
 SemanticSymbols.db-shm
 CodeChunks.db-shm
+
+# Observatorio: datos generados por Tools/ObservatorioEtl (se despliegan como contenido, no se versionan)
+App_Data/observatorio/empresas.json
+App_Data/observatorio/detalle.bin
+App_Data/observatorio/detalle.idx.json

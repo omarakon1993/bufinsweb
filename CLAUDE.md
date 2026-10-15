@@ -56,3 +56,12 @@ Required keys: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FRO
 - **Design palette:** Dark Purple `#160933`, Cyan `#01E1D7`, Purple `#583AFF`, Orange `#FF5500`
 - **Animations:** AOS (Animate On Scroll) library for scroll-triggered animations
 - **No tests, no linter, no CI/CD** — manual deployment via Visual Studio Web Deploy
+
+## Observatorio financiero (`/observatorio`)
+
+Modulo publico de analisis de ~37 mil empresas colombianas (estados financieros NIIF reportados a la Supersociedades, datos.gov.co). No usa base de datos: lee JSON de `App_Data/observatorio/` en memoria.
+
+- Paginas: `Views/Observatorio/` (Index, Sectores, Comparador, Empresa, Nodo). API JSON en `/observatorio/api/{accion}` (`ObservatorioController`). Logica en `Services/ObservatorioService.cs`, indicadores en `Models/Observatorio/ObservatorioModels.cs` (clase `Ratio`), catalogo CIIU en `Helpers/CiiuCatalogo.cs`.
+- Front: `Assets/js/obs-*.js` + Chart.js local; estilos en `Assets/css/observatorio.css`. Textos bilingues inline con `ObservatorioFormat.T(es, en)` (no usan los .resx).
+- Datos: `python Tools/ObservatorioEtl/build_dataset.py` (solo libreria estandar; ~25 min la primera vez, usa cache en `Tools/ObservatorioEtl/.cache`; `--force` reprocesa). Genera `empresas.json`, `detalle.bin`, `detalle.idx.json` (NO se versionan; se publican con Web Deploy como contenido). `ciiu.json` se genera una vez con `build_ciiu.py` desde el PDF del DANE.
+- Refresco recomendado: manual, cuando Supersociedades actualice la fuente (anual); la pagina muestra la fecha de la fuente.
