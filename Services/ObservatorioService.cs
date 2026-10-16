@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Hosting;
 using bufinsweb.Helpers;
 using bufinsweb.Models.Observatorio;
 using Newtonsoft.Json;
@@ -27,10 +28,12 @@ namespace bufinsweb.Services
 
         // Tamaño de empresa por ingresos (millones COP): S < 20.000 · M < 100.000 · L < 1 billón · XL ≥ 1 billón
         public const double LimiteS = 20000, LimiteM = 100000, LimiteL = 1000000;
+        public const int MaxExportar = 10000;   // tope de filas por CSV (evita exportaciones masivas)
 
         // ---------------------------------------------------------------- carga
 
-        private static string Ruta(string archivo) { return HttpContext.Current.Server.MapPath("~/App_Data/observatorio/" + archivo); }
+        // HostingEnvironment (no HttpContext) para poder precargar desde Application_Start en un hilo de fondo
+        private static string Ruta(string archivo) { return HostingEnvironment.MapPath("~/App_Data/observatorio/" + archivo); }
 
         public ObservatorioDatos Datos
         {
@@ -42,8 +45,8 @@ namespace bufinsweb.Services
                 {
                     cached = HttpRuntime.Cache[CacheKey] as ObservatorioDatos;
                     if (cached != null) return cached;
-                    var path = Ruta("empresas.json");
-                    var datos = Cargar(path, Ruta("detalle.idx.json"));
+                    var path = Ruta("empresas.bin");
+                    var datos = Cargar(path, Ruta("meta.json"));
                     CacheBench.Clear();
                     HttpRuntime.Cache.Insert(CacheKey, datos, new CacheDependency(path), Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration);
                     return datos;
@@ -51,58 +54,99 @@ namespace bufinsweb.Services
             }
         }
 
-        private static ObservatorioDatos Cargar(string path, string idxPath)
+        /// <summary>Precarga datos e índices (se llama desde Application_Start para que la primera visita no espere).</summary>
+        public static void Precargar()
         {
-            if (!File.Exists(path))
-                throw new FileNotFoundException("Falta empresas.json. Ejecute Tools/ObservatorioEtl/build_dataset.py");
+            var s = new ObservatorioService();
+            var d = s.Datos;
+            CiiuCatalogo.Cargar();
+        }
 
-            var cat = CiiuCatalogo.Actual;
+        private static ObservatorioDatos Cargar(string path, string metaPath)
+        {
+            if (!File.Exists(path) || !File.Exists(metaPath))
+                throw new FileNotFoundException("Faltan empresas.bin / meta.json. Ejecute Tools/ObservatorioEtl/build_dataset.py");
+
+            var cat = CiiuCatalogo.Cargar();
             var d = new ObservatorioDatos();
-            var ser = new JsonSerializer();
-            using (var sr = new StreamReader(path, Encoding.UTF8))
-            using (var jr = new JsonTextReader(sr))
+            d.Meta = JsonConvert.DeserializeObject<ObservatorioMeta>(File.ReadAllText(metaPath, Encoding.UTF8));
+            d.MinAnio = d.Meta.Anios.Min();
+            d.MaxAnio = d.Meta.Anios.Max();
+            d.Version = File.GetLastWriteTimeUtc(path).Ticks.ToString("x");
+            d.DetalleArchivo = d.Meta.Detalle ?? "detalle.bin";
+            var idxPath = Ruta(d.Meta.Indice ?? "detalle.idx.json");
+            var nAnios = d.MaxAnio - d.MinAnio + 1;
+            var internar = new Dictionary<string, string>();   // ciudad, departamento, estado, tipo: pocos valores distintos
+
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 16))
+            using (var br = new BinaryReader(fs, Encoding.UTF8))
             {
-                while (jr.Read())
+                if (new string(br.ReadChars(4)) != "BOBS") throw new InvalidDataException("empresas.bin no es un archivo válido.");
+                br.ReadInt32();                                   // versión
+                var nA = br.ReadInt32(); var nM = br.ReadInt32(); var nE = br.ReadInt32();
+                var anios = new int[nA];
+                for (var i = 0; i < nA; i++) anios[i] = br.ReadInt32();
+                if (nM != M.Count) throw new InvalidDataException("El archivo de datos no coincide con las métricas esperadas; regenere con build_dataset.py");
+                d.Empresas.Capacity = nE;
+
+                Func<string> leer = () => { var n = br.ReadUInt16(); return n == 0 ? "" : Encoding.UTF8.GetString(br.ReadBytes(n)); };
+                Func<string, string> intern = v => { string r; if (!internar.TryGetValue(v, out r)) { internar[v] = v; r = v; } return r; };
+
+                for (var k = 0; k < nE; k++)
                 {
-                    if (jr.TokenType != JsonToken.PropertyName) continue;
-                    var nombre = (string)jr.Value;
-                    if (nombre == "meta")
+                    var e = new Empresa { Nit = leer(), Razon = leer() };
+                    e.Ciiu = CiiuCatalogo.Clase(leer());
+                    e.Ciudad = intern(leer()); e.Depto = intern(leer()); e.Estado = intern(leer());
+                    e.FConst = leer(); e.Tipo = intern(leer()); e.Grupo = intern(leer());
+                    e.Busqueda = Normalizar(e.Razon);
+                    e.Division = CiiuCatalogo.Division(e.Ciiu);
+                    e.Seccion = cat.Seccion(e.Division);
+                    e.Y = new long[nAnios][];
+                    var mask = br.ReadUInt16();
+                    for (var i = 0; i < nA; i++)
                     {
-                        jr.Read();
-                        d.Meta = ser.Deserialize<ObservatorioMeta>(jr);
-                        d.MinAnio = d.Meta.Anios.Min();
-                        d.MaxAnio = d.Meta.Anios.Max();
+                        if ((mask >> i & 1) == 0) continue;
+                        var v = new long[nM];
+                        for (var j = 0; j < nM; j++) v[j] = br.ReadInt64();
+                        e.Y[anios[i] - d.MinAnio] = v;
                     }
-                    else if (nombre == "e")
-                    {
-                        jr.Read(); // StartArray
-                        var n = d.MaxAnio - d.MinAnio + 1;
-                        while (jr.Read() && jr.TokenType != JsonToken.EndArray)
-                        {
-                            var r = ser.Deserialize<RawEmpresa>(jr);
-                            var e = new Empresa
-                            {
-                                Nit = r.N, Razon = r.R, Ciiu = CiiuCatalogo.Clase(r.K), Ciudad = r.C, Depto = r.D, Estado = r.S,
-                                FConst = r.F, Tipo = r.T, Grupo = r.G, Busqueda = Normalizar(r.R), Y = new long[n][]
-                            };
-                            e.Division = CiiuCatalogo.Division(e.Ciiu);
-                            e.Seccion = cat.Seccion(e.Division);
-                            foreach (var kv in r.Y)
-                            {
-                                int anio;
-                                if (!int.TryParse(kv.Key, out anio) || anio < d.MinAnio || anio > d.MaxAnio || kv.Value == null || kv.Value.Length < M.Count) continue;
-                                e.Y[anio - d.MinAnio] = kv.Value;
-                            }
-                            for (var i = n - 1; i >= 0; i--) if (e.Y[i] != null) { e.RankIng = e.Y[i][M.Ing]; break; }
-                            d.Empresas.Add(e);
-                            d.PorNit[e.Nit] = e;
-                        }
-                    }
+                    for (var i = nAnios - 1; i >= 0; i--) if (e.Y[i] != null) { e.RankIng = e.Y[i][M.Ing]; break; }
+                    d.Empresas.Add(e);
+                    d.PorNit[e.Nit] = e;
                 }
             }
             if (File.Exists(idxPath))
                 d.Indice = JsonConvert.DeserializeObject<Dictionary<string, long[]>>(File.ReadAllText(idxPath, Encoding.UTF8));
+
+            // Índices precalculados: empresas por clase CIIU y número de empresas por nodo (sección/división/grupo/clase) y año
+            foreach (var e in d.Empresas)
+            {
+                if (e.Ciiu.Length != 4) continue;
+                List<Empresa> lista;
+                if (!d.PorClase.TryGetValue(e.Ciiu, out lista)) d.PorClase[e.Ciiu] = lista = new List<Empresa>();
+                lista.Add(e);
+                var claves = new[] { e.Seccion, e.Division, e.Ciiu.Substring(0, 3), e.Ciiu };
+                for (var i = 0; i < nAnios; i++)
+                {
+                    if (e.Y[i] == null) continue;
+                    foreach (var c in claves)
+                    {
+                        if (string.IsNullOrEmpty(c)) continue;
+                        int[] cnt;
+                        if (!d.ConteoNodo.TryGetValue(c, out cnt)) d.ConteoNodo[c] = cnt = new int[nAnios];
+                        cnt[i]++;
+                    }
+                }
+            }
             return d;
+        }
+
+        /// <summary>Clases CIIU (4 dígitos) que pertenecen a alguno de los nodos dados.</summary>
+        private static HashSet<string> ClasesDe(ObservatorioDatos d, IEnumerable<string> nodos)
+        {
+            var cat = CiiuCatalogo.Actual;
+            var lista = nodos.ToList();
+            return new HashSet<string>(d.PorClase.Keys.Where(c => lista.Any(n => cat.Pertenece(c, n))));
         }
 
         // ---------------------------------------------------------------- utilidades
@@ -130,11 +174,11 @@ namespace bufinsweb.Services
 
         private IEnumerable<Fila> Filtrar(ObservatorioDatos d, FiltroSector f, int anio)
         {
-            var cat = CiiuCatalogo.Actual;
             var q = Normalizar(f.Q ?? "").Trim();
             var qDigitos = new string((f.Q ?? "").Where(char.IsDigit).ToArray());
             var tams = f.Tamanos.Count > 0 ? new HashSet<string>(f.Tamanos) : null;
             var nodos = f.Ciiu.Where(x => !string.IsNullOrEmpty(x)).ToList();
+            var clases = nodos.Count > 0 ? ClasesDe(d, nodos) : null;   // se resuelve una vez, no por empresa
 
             foreach (var e in d.Empresas)
             {
@@ -142,7 +186,7 @@ namespace bufinsweb.Services
                 if (v == null) continue;
                 if (!string.IsNullOrEmpty(f.Departamento) && e.Depto != f.Departamento) continue;
                 if (!string.IsNullOrEmpty(f.Estado) && e.Estado != f.Estado) continue;
-                if (nodos.Count > 0 && !nodos.Any(n => cat.Pertenece(e.Ciiu, n))) continue;
+                if (clases != null && !clases.Contains(e.Ciiu)) continue;
                 if (tams != null && !tams.Contains(Tamano(v[M.Ing]))) continue;
                 if (q.Length > 0)
                 {
@@ -344,7 +388,7 @@ namespace bufinsweb.Services
             var es = CultureInfo.GetCultureInfo("es-CO");
             Func<double?, string> n1 = v => v.HasValue ? v.Value.ToString("0.0", es) : "";
             Func<long, string> mm = v => (v / 1000.0).ToString("0.0", es);
-            return Ordenar(Filtrar(d, f, anio), f.Orden, f.Desc).Take(30000).Select(r => new[]
+            return Ordenar(Filtrar(d, f, anio), f.Orden, f.Desc).Take(MaxExportar).Select(r => new[]
             {
                 r.E.Nit, r.E.Razon, r.E.Ciiu, cat.Nombre(r.E.Ciiu), r.E.Ciudad, r.E.Depto, r.E.Estado, Tamano(r.V[M.Ing]),
                 mm(r.V[M.Ing]), mm(r.V[M.Ub]), mm(r.V[M.Uop]), mm(r.V[M.Ebitda]), mm(r.V[M.Un]), mm(r.V[M.Act]), mm(r.V[M.Pas]), mm(r.V[M.Pat]), mm(r.V[M.Deuda]), mm(r.V[M.Ktn]),
@@ -357,23 +401,39 @@ namespace bufinsweb.Services
 
         private double[][] Cuartiles(ObservatorioDatos d, string nivel, string codigo, int anio, out int n)
         {
+            n = Contar(d, codigo, anio);
             var key = nivel + "|" + codigo + "|" + anio;
+            double[][] hit;
+            if (CacheBench.TryGetValue(key, out hit)) return hit;
+            if (CacheBench.Count > 1500) CacheBench.Clear();   // tope de memoria: ~500 clases x 6 años en el peor caso
+
+            // Solo se recorren las clases del nodo (índice por clase), no las 37 mil empresas
             var cat = CiiuCatalogo.Actual;
-            var miembros = d.Empresas.Where(e => e.En(anio, d.MinAnio) != null && cat.Pertenece(e.Ciiu, codigo)).Select(e => e.En(anio, d.MinAnio)).ToList();
-            n = miembros.Count;
-            return CacheBench.GetOrAdd(key, k => Ratio.Todos.Select(def =>
-                miembros.Select(v => def.F(v)).Where(x => x.HasValue && !double.IsNaN(x.Value) && !double.IsInfinity(x.Value)).Select(x => x.Value).OrderBy(x => x).ToArray()).ToArray());
+            var miembros = (codigo.Length == 0 ? d.Empresas : d.PorClase.Where(kv => cat.Pertenece(kv.Key, codigo)).SelectMany(kv => kv.Value))
+                .Select(e => e.En(anio, d.MinAnio)).Where(v => v != null).ToList();
+            var res = Ratio.Todos.Select(def =>
+                miembros.Select(v => def.F(v)).Where(x => x.HasValue && !double.IsNaN(x.Value) && !double.IsInfinity(x.Value)).Select(x => x.Value).OrderBy(x => x).ToArray()).ToArray();
+            CacheBench[key] = res;
+            return res;
+        }
+
+        /// <summary>Número de empresas de un nodo CIIU en un año (precalculado al cargar).</summary>
+        private static int Contar(ObservatorioDatos d, string codigo, int anio)
+        {
+            if (string.IsNullOrEmpty(codigo)) return d.Empresas.Count(e => e.En(anio, d.MinAnio) != null);
+            int[] cnt;
+            var i = anio - d.MinAnio;
+            return d.ConteoNodo.TryGetValue(codigo, out cnt) && i >= 0 && i < cnt.Length ? cnt[i] : 0;
         }
 
         /// <summary>Elige el grupo de comparación más específico con al menos 15 empresas: clase, grupo, división o sección.</summary>
         private void GrupoComparable(ObservatorioDatos d, Empresa e, int anio, out string nivel, out string codigo)
         {
-            var cat = CiiuCatalogo.Actual;
             var candidatos = new[] { Tuple.Create("clase", e.Ciiu), Tuple.Create("grupo", e.Ciiu.Length == 4 ? e.Ciiu.Substring(0, 3) : ""), Tuple.Create("division", e.Division), Tuple.Create("seccion", e.Seccion) };
             foreach (var c in candidatos)
             {
                 if (string.IsNullOrEmpty(c.Item2)) continue;
-                if (d.Empresas.Count(x => x.En(anio, d.MinAnio) != null && cat.Pertenece(x.Ciiu, c.Item2)) >= 15) { nivel = c.Item1; codigo = c.Item2; return; }
+                if (Contar(d, c.Item2, anio) >= 15) { nivel = c.Item1; codigo = c.Item2; return; }
             }
             nivel = "todas"; codigo = "";
         }
@@ -387,7 +447,7 @@ namespace bufinsweb.Services
             long[] pos;
             if (!d.Indice.TryGetValue(nit, out pos)) return new Dictionary<string, Dictionary<string, long>>();
             var buf = new byte[pos[1]];
-            using (var fs = new FileStream(Ruta("detalle.bin"), FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fs = new FileStream(Ruta(d.DetalleArchivo), FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 fs.Seek(pos[0], SeekOrigin.Begin);
                 var leidos = 0;
@@ -404,8 +464,8 @@ namespace bufinsweb.Services
 
         private class DetalleBloque
         {
-            [JsonProperty("p")] public Dictionary<string, string> P;
-            [JsonProperty("y")] public Dictionary<string, Dictionary<string, long>> Y;
+            [JsonProperty("p")] public Dictionary<string, string> P = null;
+            [JsonProperty("y")] public Dictionary<string, Dictionary<string, long>> Y = null;
         }
 
         public Empresa PorNit(string nit)
@@ -543,7 +603,7 @@ namespace bufinsweb.Services
             else if (slug.StartsWith("ciiu-", StringComparison.Ordinal)) { codigo = slug.Substring(5); nivel = codigo.Length == 2 ? "División" : codigo.Length == 3 ? "Grupo" : "Clase"; }
             else return null;
             if (codigo.Length == 0 || codigo.Length > 4) return null;
-            var miembros = d.Empresas.Where(e => cat.Pertenece(e.Ciiu, codigo)).ToList();
+            var miembros = d.PorClase.Where(kv => cat.Pertenece(kv.Key, codigo)).SelectMany(kv => kv.Value).ToList();
             if (miembros.Count == 0) return null;
 
             var r = new ResumenNodo { Codigo = codigo, Titulo = cat.Nombre(codigo), Nivel = nivel, Slug = slug, Anio = d.MaxAnio };

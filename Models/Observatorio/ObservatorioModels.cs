@@ -84,6 +84,9 @@ namespace bufinsweb.Models.Observatorio
         [JsonProperty("anios")] public List<int> Anios = new List<int>();
         [JsonProperty("empresas")] public int Empresas;
         [JsonProperty("unidad")] public string Unidad;
+        /// <summary>Archivos de detalle versionados (los escribe el ETL); si faltan se usan los nombres antiguos.</summary>
+        [JsonProperty("detalle")] public string Detalle;
+        [JsonProperty("indice")] public string Indice;
     }
 
     public class ObservatorioDatos
@@ -93,26 +96,14 @@ namespace bufinsweb.Models.Observatorio
         public Dictionary<string, Empresa> PorNit = new Dictionary<string, Empresa>();
         public Dictionary<string, long[]> Indice = new Dictionary<string, long[]>();   // NIT -> [offset, longitud] en detalle.bin
         public int MinAnio, MaxAnio;
-    }
-
-    // Formato crudo de empresas.json
-    public class RawArchivo
-    {
-        [JsonProperty("meta")] public ObservatorioMeta Meta;
-    }
-
-    public class RawEmpresa
-    {
-        [JsonProperty("n")] public string N;
-        [JsonProperty("r")] public string R;
-        [JsonProperty("k")] public string K;
-        [JsonProperty("c")] public string C;
-        [JsonProperty("d")] public string D;
-        [JsonProperty("s")] public string S;
-        [JsonProperty("f")] public string F;
-        [JsonProperty("t")] public string T;
-        [JsonProperty("g")] public string G;
-        [JsonProperty("y")] public Dictionary<string, long[]> Y;
+        /// <summary>Identifica la versión de los datos cargados (fecha de escritura del archivo); sirve para versionar las URL de la API en caché.</summary>
+        public string Version;
+        /// <summary>Nombre del archivo de detalle vigente (detalle.{version}.bin).</summary>
+        public string DetalleArchivo = "detalle.bin";
+        /// <summary>Empresas por clase CIIU (4 dígitos): evita recorrer todas las empresas para sectores y benchmarks.</summary>
+        public Dictionary<string, List<Empresa>> PorClase = new Dictionary<string, List<Empresa>>();
+        /// <summary>Empresas por nodo CIIU (sección, división, grupo o clase) y año (índice = año - MinAnio).</summary>
+        public Dictionary<string, int[]> ConteoNodo = new Dictionary<string, int[]>();
     }
 
     public class FiltroSector

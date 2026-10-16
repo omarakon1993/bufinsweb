@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -16,6 +17,13 @@ namespace bufinsweb
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Carga los datos del Observatorio en un hilo de fondo: la primera visita ya los encuentra en memoria
+            Task.Run(() =>
+            {
+                try { bufinsweb.Services.ObservatorioService.Precargar(); }
+                catch (Exception) { /* si faltan los archivos, el error aparecerá al visitar /observatorio */ }
+            });
         }
 
         protected void Application_AcquireRequestState(object sender, EventArgs e)

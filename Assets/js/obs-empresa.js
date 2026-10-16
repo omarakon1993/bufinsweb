@@ -132,10 +132,9 @@
 
     function ix(y) { return D.serie.anios.indexOf(y); }
     function val(row, y) { return row.f ? row.f(y) : g(y, row.k); }
-    function sv(k, y) { var a = D.serie[k]; return a ? a[ix(y)] : null; }
 
     // ---------- resumen ----------
-    function kpi(label, value, sub, cls) { return '<div class="obs-kpi ' + (cls || '') + '"><span>' + label + '</span><strong>' + value + '</strong>' + (sub || '') + '</div>'; }
+    var kpi = O.kpi;
     function renderKpis() {
         var s = D.serie, i = ix(Y), p = i > 0 ? i - 1 : -1;
         function prev(k) { return p >= 0 ? s[k][p] : null; }
@@ -296,13 +295,7 @@
     });
     $('empTabs').addEventListener('click', function (e) { var b = e.target.closest('button[data-hash]'); if (b) history.replaceState(null, '', location.pathname + location.search + '#' + b.getAttribute('data-hash')); });
     $('empPrint').addEventListener('click', function () { window.print(); });
-    $('empShare').addEventListener('click', function () {
-        var self = this, url = location.href;
-        (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () {
-            self.innerHTML = '<i class="fas fa-check me-2"></i>' + L('¡Copiado!', 'Copied!');
-            setTimeout(function () { self.innerHTML = '<i class="fas fa-link me-2"></i>' + L('Copiar enlace', 'Copy link'); }, 1800);
-        }).catch(function () { window.prompt(L('Copia el enlace:', 'Copy the link:'), url); });
-    });
+    O.share($('empShare'));
 
     O.addRecent({ nit: NIT, razon: root.getAttribute('data-razon') });
     O.api('ficha', 'nit=' + encodeURIComponent(NIT)).then(function (d) {

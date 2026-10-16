@@ -6,7 +6,7 @@
     var O = OBS, L = O.L, $ = O.$, esc = O.esc, EMP = root.getAttribute('data-empresa-url');
 
     var DEF = { anio: '', k: [], t: [], d: '', e: '', q: '', imin: '', imax: '', res: '', o: 'ing', asc: false, p: 1, c: [] };
-    var st = JSON.parse(JSON.stringify(DEF)), opc = null, ctrl = null, last = null, names = {};
+    var st = JSON.parse(JSON.stringify(DEF)), opc = null, ctrl = null;
 
     // ---------- estado <-> URL ----------
     function fromUrl() {
@@ -145,12 +145,12 @@
         ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
         root.classList.add('obs-loading');
         O.api('analisis', query(true, false), ctrl ? { signal: ctrl.signal } : {})
-            .then(function (d) { last = d; render(d); root.classList.remove('obs-loading'); })
+            .then(function (d) { render(d); root.classList.remove('obs-loading'); })
             .catch(function (e) { if (e && e.name === 'AbortError') return; root.classList.remove('obs-loading'); $('obsKpis').innerHTML = '<div class="obs-empty w-100"><i class="fas fa-exclamation-triangle"></i><p>' + L('No se pudieron cargar los datos. Intenta de nuevo.', 'Data could not be loaded. Please try again.') + '</p></div>'; });
     }
 
     // ---------- render ----------
-    function kpi(label, value, sub, cls) { return '<div class="obs-kpi ' + (cls || '') + '"><span>' + label + '</span><strong>' + value + '</strong>' + (sub || '') + '</div>'; }
+    var kpi = O.kpi;
     function render(d) {
         renderKpis(d); renderMedians(d); renderCharts(d); renderDist(d); renderTable(d);
         $('obsExport').href = '/observatorio/api/exportar?' + query(false, false);
@@ -243,7 +243,7 @@
         });
         var full = st.c.length >= 4;
         $('obsRows').innerHTML = d.tabla.map(function (r) {
-            var on = st.c.indexOf(r.nit) >= 0; names[r.nit] = r.razon;
+            var on = st.c.indexOf(r.nit) >= 0;
             return '<tr><td><input type="checkbox" class="form-check-input obs-cmp" data-nit="' + esc(r.nit) + '"' + (on ? ' checked' : '') + (full && !on ? ' disabled' : '') + ' aria-label="' + L('Comparar', 'Compare') + '"></td>' +
                 '<td><a href="' + EMP + esc(r.nit) + '" class="obs-co">' + esc(r.razon) + '</a><small>NIT ' + esc(r.nit) + ' · ' + esc(r.ciudad) + ' · <b class="obs-tam">' + r.tam + '</b></small></td>' +
                 '<td class="text-end">' + O.money(r.ing) + '</td>' +
@@ -272,13 +272,7 @@
         b.querySelector('span').textContent = L('Comparar (', 'Compare (') + st.c.length + ')';
     }
 
-    $('obsShare').onclick = function (e) {
-        e.preventDefault(); var url = location.href, self = this;
-        (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () {
-            self.innerHTML = '<i class="fas fa-check me-2"></i>' + L('¡Copiado!', 'Copied!');
-            setTimeout(function () { self.innerHTML = '<i class="fas fa-link me-2"></i>' + L('Copiar enlace', 'Copy link'); }, 1800);
-        }).catch(function () { window.prompt(L('Copia el enlace:', 'Copy the link:'), url); });
-    };
+    O.share($('obsShare'));
 
     fromUrl();
     O.api('opciones').then(function (o) { opc = o; buildFilters(); renderChips(); load(); });

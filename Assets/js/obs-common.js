@@ -43,8 +43,32 @@
     };
     OBS.debounce = function (fn, ms) { var t; return function () { var a = arguments, c = this; clearTimeout(t); t = setTimeout(function () { fn.apply(c, a); }, ms); }; };
 
+    // La versión de los datos (v) va en cada llamada: las respuestas se cachean en el navegador y, al publicar datos nuevos, la URL cambia sola.
+    var META = document.getElementById('obsMeta');
+    var VER = META ? META.getAttribute('data-v') : '';
     OBS.api = function (path, qs, opts) {
-        return fetch('/observatorio/api/' + path + (qs ? '?' + qs : ''), opts || {}).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+        var q = (qs ? qs + '&' : '') + 'v=' + encodeURIComponent(VER);
+        return fetch('/observatorio/api/' + path + '?' + q, opts || {}).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+    };
+
+
+    // Botón «Copiar enlace»: copia la URL actual (con los filtros) y confirma con un cambio de texto temporal
+    OBS.share = function (btn) {
+        if (!btn) return;
+        var html = btn.innerHTML;
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            var url = location.href;
+            (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () {
+                btn.innerHTML = '<i class="fas fa-check me-2"></i>' + OBS.L('¡Copiado!', 'Copied!');
+                setTimeout(function () { btn.innerHTML = html; }, 1800);
+            }).catch(function () { window.prompt(OBS.L('Copia el enlace:', 'Copy the link:'), url); });
+        });
+    };
+
+    // Tarjeta de indicador (KPI)
+    OBS.kpi = function (label, value, sub, cls) {
+        return '<div class="obs-kpi ' + (cls || '') + '"><span>' + label + '</span><strong>' + value + '</strong>' + (sub || '') + '</div>';
     };
 
     // ---------- almacenamiento local seguro ----------

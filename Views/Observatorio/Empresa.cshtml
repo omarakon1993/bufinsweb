@@ -15,14 +15,11 @@
     ViewBag.Title = e.Razon + T(" (NIT ", " (Tax ID ") + e.Nit + T("): estados financieros e indicadores | Bufins", "): financial statements and ratios | Bufins");
     ViewBag.MetaDescription = e.Razon + " — " + actividad + ", " + e.Ciudad + ". " + T("Ingresos ", "Revenue ") + ObservatorioFormat.Moneda(v[M.Ing] / 1000.0) + T(", EBITDA ", ", EBITDA ") + ObservatorioFormat.Moneda(v[M.Ebitda] / 1000.0) + " (" + anio + "). " + T("Análisis de rentabilidad, endeudamiento, liquidez y comparación con su sector.", "Profitability, leverage and liquidity analysis versus its sector.");
     var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/empresa/" + e.Nit;
+    ViewBag.Canonical = canonical; ViewBag.OgType = "article";
     Func<string, string> js = s => (s ?? "").Replace("\"", "'");
 }
 @section head {
-    <link rel="canonical" href="@canonical" />
-    <meta property="og:title" content="@ViewBag.Title" />
-    <meta property="og:description" content="@ViewBag.MetaDescription" />
-    <meta property="og:type" content="article" />
-    <link href="~/Assets/css/observatorio.css" rel="stylesheet">
+    @Html.Partial("_ObsHead")
     <script type="application/ld+json">
     {
       "@@context": "https://schema.org",
@@ -187,7 +184,6 @@
 }
 
 @section scripts {
-    <script src="~/Assets/js/chart.umd.min.js"></script>
-    <script src="~/Assets/js/obs-common.js"></script>
-    <script src="~/Assets/js/obs-empresa.js"></script>
+    @Scripts.Render("~/bundles/obs-chart")
+    @Scripts.Render("~/bundles/obs-empresa")
 }

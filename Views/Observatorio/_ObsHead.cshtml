@@ -1,0 +1,7 @@
+@* Cabecera común de las páginas del Observatorio: canonical, Open Graph y estilos. Requiere ViewBag.Title, MetaDescription, Canonical y OgType. *@
+<link rel="canonical" href="@ViewBag.Canonical" />
+<meta property="og:title" content="@ViewBag.Title" />
+<meta property="og:description" content="@ViewBag.MetaDescription" />
+<meta property="og:type" content="@(ViewBag.OgType ?? "website")" />
+<meta property="og:url" content="@ViewBag.Canonical" />
+@Styles.Render("~/bundles/obs-css")

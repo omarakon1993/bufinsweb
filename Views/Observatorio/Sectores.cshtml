@@ -7,12 +7,10 @@
     ViewBag.Title = T("Análisis por sector económico en Colombia: benchmark financiero | Bufins", "Sector analysis in Colombia: financial benchmark | Bufins");
     ViewBag.MetaDescription = T("Compara sectores y actividades CIIU de Colombia: ingresos, EBITDA, capital de trabajo, deuda y márgenes de miles de empresas, año a año y por tamaño, ciudad y estado.", "Compare Colombian sectors and ISIC activities: revenue, EBITDA, working capital, debt and margins of thousands of companies, year by year and by size, region and status.");
     var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/sectores";
+    ViewBag.Canonical = canonical; ViewBag.OgType = "website";
 }
 @section head {
-    <link rel="canonical" href="@canonical" />
-    <meta property="og:title" content="@ViewBag.Title" />
-    <meta property="og:description" content="@ViewBag.MetaDescription" />
-    <link href="~/Assets/css/observatorio.css" rel="stylesheet">
+    @Html.Partial("_ObsHead")
 }
 
 <section class="obs-hero obs-hero-sm">
@@ -187,7 +185,6 @@
 </section>
 
 @section scripts {
-    <script src="~/Assets/js/chart.umd.min.js"></script>
-    <script src="~/Assets/js/obs-common.js"></script>
-    <script src="~/Assets/js/obs-sectores.js"></script>
+    @Scripts.Render("~/bundles/obs-chart")
+    @Scripts.Render("~/bundles/obs-sectores")
 }

@@ -82,7 +82,7 @@
             var best = -1;
             if (r[4] !== null && r[4] !== undefined) {
                 var cand = vals.map(function (v, i) { return { v: v, i: i }; }).filter(function (x) { return x.v != null && !isNaN(x.v); });
-                if (cand.length >= 2) { cand.sort(function (a, b) { return r[4] ? b.v - a.v : a.v - b.v; }); best = cand[0].i; if (r[5] !== 1 || true) { wins[best]++; total++; } }
+                if (cand.length >= 2) { cand.sort(function (a, b) { return r[4] ? b.v - a.v : a.v - b.v; }); best = cand[0].i; wins[best]++; total++; }
             }
             return '<tr><td>' + L(r[1], r[2]) + '</td>' + vals.map(function (v, i) {
                 return '<td class="text-end' + (i === best ? ' best' : '') + (v != null && v < 0 && (r[3] === O.money) ? ' obs-neg' : '') + '">' + r[3](v) + '</td>';
@@ -119,13 +119,7 @@
 
     $('cmpYears').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; Y = parseInt(b.getAttribute('data-y'), 10); toUrl(); render(); });
     $('cmpPrint').addEventListener('click', function () { window.print(); });
-    $('cmpShare').addEventListener('click', function () {
-        var self = this, url = location.href;
-        (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () {
-            self.innerHTML = '<i class="fas fa-check me-2"></i>' + L('¡Copiado!', 'Copied!');
-            setTimeout(function () { self.innerHTML = '<i class="fas fa-link me-2"></i>' + L('Copiar enlace', 'Copy link'); }, 1800);
-        }).catch(function () { window.prompt(L('Copia el enlace:', 'Copy the link:'), url); });
-    });
+    O.share($('cmpShare'));
 
     fromUrl(); renderSlots(); update();
 })();

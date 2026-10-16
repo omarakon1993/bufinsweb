@@ -4,6 +4,7 @@
     var activo = (string)ViewBag.ObsActive ?? "";
     Func<string, string> cls = k => k == activo ? "active" : "";
 }
+<span id="obsMeta" data-v="@ViewBag.ObsVer" hidden></span>
 <div class="obs-subnav">
     <div class="container-xl obs-subnav-in">
         <nav class="obs-subnav-links" aria-label="Observatorio">

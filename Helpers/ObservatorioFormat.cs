@@ -37,6 +37,5 @@ namespace bufinsweb.Helpers
 
         /// <summary>Texto bilingüe en línea para las vistas del Observatorio.</summary>
         public static string T(string es, string en) { return En ? en : es; }
-        public static bool EsIngles { get { return En; } }
     }
 }

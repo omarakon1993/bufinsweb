@@ -375,6 +375,10 @@ SemanticSymbols.db-shm
 CodeChunks.db-shm
 
 # Observatorio: datos generados por Tools/ObservatorioEtl (se despliegan como contenido, no se versionan)
-App_Data/observatorio/empresas.json
-App_Data/observatorio/detalle.bin
-App_Data/observatorio/detalle.idx.json
+App_Data/observatorio/empresas.bin
+App_Data/observatorio/meta.json
+App_Data/observatorio/detalle.*
+App_Data/observatorio/etl.lock
+App_Data/observatorio/etl_status.json
+Tools/ObservatorioEtl/bin/
+Tools/ObservatorioEtl/obj/

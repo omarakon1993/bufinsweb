@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Hosting;
 using Newtonsoft.Json;
 
 namespace bufinsweb.Helpers
@@ -24,17 +25,17 @@ namespace bufinsweb.Helpers
         [JsonProperty("grupos")] public Dictionary<string, string> Grupos = new Dictionary<string, string>();
         [JsonProperty("clases")] public Dictionary<string, string> Clases = new Dictionary<string, string>();
 
-        public static CiiuCatalogo Actual
+        public static CiiuCatalogo Actual { get { return Cargar(); } }
+
+        /// <summary>Carga (o devuelve de caché) el catálogo; usa HostingEnvironment para poder invocarse desde hilos sin HttpContext.</summary>
+        public static CiiuCatalogo Cargar()
         {
-            get
-            {
-                var c = HttpRuntime.Cache[CacheKey] as CiiuCatalogo;
-                if (c != null) return c;
-                var path = HttpContext.Current.Server.MapPath("~/App_Data/observatorio/ciiu.json");
-                c = File.Exists(path) ? JsonConvert.DeserializeObject<CiiuCatalogo>(File.ReadAllText(path, Encoding.UTF8)) : new CiiuCatalogo();
-                HttpRuntime.Cache.Insert(CacheKey, c, File.Exists(path) ? new CacheDependency(path) : null);
-                return c;
-            }
+            var c = HttpRuntime.Cache[CacheKey] as CiiuCatalogo;
+            if (c != null) return c;
+            var path = HostingEnvironment.MapPath("~/App_Data/observatorio/ciiu.json");
+            c = File.Exists(path) ? JsonConvert.DeserializeObject<CiiuCatalogo>(File.ReadAllText(path, Encoding.UTF8)) : new CiiuCatalogo();
+            HttpRuntime.Cache.Insert(CacheKey, c, File.Exists(path) ? new CacheDependency(path) : null);
+            return c;
         }
 
         /// <summary>CIIU de 4 dígitos (el cero inicial suele perderse en la fuente).</summary>

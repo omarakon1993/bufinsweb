@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using bufinsweb.Filters;
 using bufinsweb.Models.Observatorio;
 using bufinsweb.Services;
 using Newtonsoft.Json;
@@ -20,6 +21,12 @@ namespace bufinsweb.Controllers
         };
 
         private readonly ObservatorioService _svc = new ObservatorioService();
+
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            ViewBag.ObsVer = _svc.Datos.Version;   // versiona las URL de la API: al publicar datos nuevos cambian y no se sirve caché vieja
+            base.OnActionExecuting(filterContext);
+        }
 
         private ContentResult JsonOut(object o)
         {
@@ -70,16 +77,20 @@ namespace bufinsweb.Controllers
 
         // ------------------------------------------------------------ API (GET, solo lectura)
 
-        [OutputCache(Duration = 600, VaryByParam = "*")]
+        [Throttle(Grupo = "obs-opciones", Max = 30)]
+        [OutputCache(Duration = 600, VaryByParam = "v")]
         public ActionResult Opciones() { return JsonOut(_svc.Opciones()); }
 
-        [OutputCache(Duration = 300, VaryByParam = "q;n")]
+        [Throttle(Grupo = "obs-buscar", Max = 120)]
+        [OutputCache(Duration = 300, VaryByParam = "q;n;v")]
         public ActionResult Buscar(string q, int n = 8) { return JsonOut(_svc.Buscar(q, n)); }
 
+        [Throttle(Grupo = "obs-analisis", Max = 60)]
         [OutputCache(Duration = 300, VaryByParam = "*")]
         public ActionResult Analisis() { return JsonOut(_svc.Sector(LeerFiltro())); }
 
-        [OutputCache(Duration = 300, VaryByParam = "nit")]
+        [Throttle(Grupo = "obs-ficha", Max = 90)]
+        [OutputCache(Duration = 300, VaryByParam = "nit;v")]
         public ActionResult Ficha(string nit)
         {
             var o = _svc.Detalle(nit);
@@ -87,13 +98,15 @@ namespace bufinsweb.Controllers
             return JsonOut(o);
         }
 
-        [OutputCache(Duration = 300, VaryByParam = "nits")]
+        [Throttle(Grupo = "obs-series", Max = 60)]
+        [OutputCache(Duration = 300, VaryByParam = "nits;v")]
         public ActionResult Series(string nits)
         {
             var lista = (nits ?? "").Split(new[] { ',', '|' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim());
             return JsonOut(_svc.Comparar(lista));
         }
 
+        [Throttle(Grupo = "obs-exportar", Max = 6)]
         public ActionResult Exportar()
         {
             int anio;
@@ -106,6 +119,7 @@ namespace bufinsweb.Controllers
             return File(ConBom(sb.ToString()), "text/csv", "bufins-sector-" + anio + ".csv");
         }
 
+        [Throttle(Grupo = "obs-exportar-empresa", Max = 15)]
         public ActionResult ExportarEmpresa(string nit)
         {
             var e = _svc.PorNit(nit);

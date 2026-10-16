@@ -43,14 +43,7 @@
 .obs-input-icon input { padding-left: 2.2rem; }
 .obs-filters .form-control, .obs-filters .form-select { border-radius: 10px; border-color: var(--color-medium-gray); font-size: .9rem; }
 .obs-filters .form-control:focus, .obs-filters .form-select:focus { border-color: var(--color-secondary-1); box-shadow: 0 0 0 3px rgba(88, 58, 255, .15); }
-.obs-checks .form-check { margin-bottom: .25rem; font-size: .88rem; }
-.obs-checks .form-check-label small { color: var(--color-text-muted); }
-.obs-checks .form-check-input:checked { background-color: var(--color-secondary-1); border-color: var(--color-secondary-1); }
-.obs-checks-scroll { max-height: 190px; overflow-y: auto; padding-right: .3rem; }
 .obs-range { display: flex; align-items: center; gap: .4rem; }
-.obs-presets { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .5rem; }
-.obs-presets button { border: 1px solid var(--color-medium-gray); background: #fff; border-radius: 999px; font-size: .75rem; padding: .15rem .6rem; color: var(--color-text-dark); }
-.obs-presets button:hover { border-color: var(--color-secondary-1); color: var(--color-secondary-1); }
 .obs-seg { display: flex; border: 1px solid var(--color-medium-gray); border-radius: 10px; overflow: hidden; }
 .obs-seg button { flex: 1; border: 0; background: #fff; padding: .45rem .3rem; font-size: .82rem; color: var(--color-text-dark); }
 .obs-seg button.active { background: var(--color-secondary-1); color: #fff; font-weight: 600; }
@@ -99,7 +92,6 @@
 .obs-card-head h3, .obs-h3 { font-size: 1.05rem; font-weight: 700; color: var(--color-primary); margin: 0; }
 .obs-chart { position: relative; height: 320px; }
 .obs-chart-lg { height: 380px; }
-.obs-axis-note { display: flex; justify-content: space-between; font-size: .76rem; color: var(--color-text-muted); margin-top: .5rem; }
 .obs-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
 .obs-empty { text-align: center; padding: 2.5rem 1rem; color: var(--color-text-muted); }
 .obs-empty i { font-size: 2rem; margin-bottom: .6rem; color: var(--color-secondary-1); opacity: .6; }
@@ -116,7 +108,6 @@
 .obs-co:hover { color: var(--color-secondary-1); text-decoration: underline; }
 .obs-table td small { display: block; color: var(--color-text-muted); font-size: .76rem; }
 .obs-table tbody tr:hover { background: rgba(88, 58, 255, .04); }
-.obs-cmp-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
 
 /* Paginación */
 .obs-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .3rem; margin-top: 1rem; }
@@ -127,9 +118,6 @@
 
 .obs-source { font-size: .8rem; color: var(--color-text-muted); margin-top: 1.5rem; }
 .obs-source a { color: var(--color-secondary-1); }
-.obs-dl { display: grid; grid-template-columns: auto 1fr; gap: .4rem 1rem; font-size: .9rem; }
-.obs-dl dt { color: var(--color-text-muted); font-weight: 600; }
-.obs-dl dd { margin: 0; color: var(--color-primary); }
 
 /* Bloque SEO y CTA */
 .obs-seo { background: #fff; padding: 3rem 0; }
