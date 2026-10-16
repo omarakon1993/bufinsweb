@@ -14,6 +14,8 @@ namespace bufinsweb
             bundles.Add(new ScriptBundle("~/bundles/obs-core").Include("~/Assets/js/obs-common.js"));
             bundles.Add(new ScriptBundle("~/bundles/obs-sectores").Include("~/Assets/js/obs-common.js", "~/Assets/js/obs-sectores.js"));
             bundles.Add(new ScriptBundle("~/bundles/obs-empresa").Include("~/Assets/js/obs-common.js", "~/Assets/js/obs-empresa.js"));
+            bundles.Add(new Bundle("~/bundles/obs-informe-css").Include("~/Assets/css/obs-informe.css"));
+            bundles.Add(new ScriptBundle("~/bundles/obs-informe").Include("~/Assets/js/obs-common.js", "~/Assets/js/obs-informe.js"));
             bundles.Add(new ScriptBundle("~/bundles/obs-comparar").Include("~/Assets/js/obs-common.js", "~/Assets/js/obs-comparar.js"));
         }
     }

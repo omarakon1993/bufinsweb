@@ -5,7 +5,7 @@
     if (!root || typeof Chart === 'undefined' || !window.OBS) return;
     var O = OBS, L = O.L, $ = O.$, esc = O.esc;
     var NIT = root.getAttribute('data-nit');
-    var D = null, Y = parseInt(root.getAttribute('data-anio'), 10), STM = 'pyg', MODE = 'v';
+    var D = null, Y = parseInt(root.getAttribute('data-anio'), 10), STM = 'pyg', MODE = 'v', VIEW = 'evo';
 
     // ---------- definición de indicadores (mismas claves que el servidor) ----------
     var RATIOS = [
@@ -15,6 +15,8 @@
         ['mneto', 'Margen neto', 'Net margin', O.pct, 'Rentabilidad', 'Profitability'],
         ['roa', 'ROA', 'ROA', O.pct, 'Rentabilidad', 'Profitability'],
         ['roe', 'ROE', 'ROE', O.pct, 'Rentabilidad', 'Profitability'],
+        ['rotacion', 'Rotación de activos (ingresos / activos)', 'Asset turnover (revenue / assets)', O.x, 'Rentabilidad', 'Profitability'],
+        ['apalanc', 'Apalancamiento (activos / patrimonio)', 'Equity multiplier (assets / equity)', O.x, 'Endeudamiento', 'Leverage'],
         ['endeud', 'Endeudamiento (pasivo/activo)', 'Leverage (liabilities/assets)', O.pct, 'Endeudamiento', 'Leverage'],
         ['deudaebitda', 'Deuda / EBITDA', 'Debt / EBITDA', O.x, 'Endeudamiento', 'Leverage'],
         ['cobertura', 'Cobertura de intereses (EBITDA / costos fin.)', 'Interest coverage (EBITDA / finance costs)', O.x, 'Endeudamiento', 'Leverage'],
@@ -24,7 +26,9 @@
         ['diascxc', 'Días de cartera', 'Receivable days', O.days, 'Eficiencia', 'Efficiency'],
         ['diasinv', 'Días de inventario', 'Inventory days', O.days, 'Eficiencia', 'Efficiency'],
         ['diascxp', 'Días de proveedores', 'Payable days', O.days, 'Eficiencia', 'Efficiency'],
-        ['ciclo', 'Ciclo de conversión de efectivo (días)', 'Cash conversion cycle (days)', O.days, 'Eficiencia', 'Efficiency']
+        ['ciclo', 'Ciclo de conversión de efectivo (días)', 'Cash conversion cycle (days)', O.days, 'Eficiencia', 'Efficiency'],
+        ['altman', "Altman Z'' (riesgo de quiebra)", "Altman Z'' (distress risk)", function (v) { return v == null ? '—' : O.num(v); }, 'Salud financiera', 'Financial health'],
+        ['score', 'Bufins Score de salud (0–100)', 'Bufins health score (0–100)', function (v) { return v == null ? '—' : O.int(v); }, 'Salud financiera', 'Financial health']
     ];
     var RDEF = {}; RATIOS.forEach(function (r) { RDEF[r[0]] = r; });
 
@@ -151,6 +155,44 @@
             kpi(L('Patrimonio', 'Equity'), O.money(s.pat[i]), '<em>' + L('Pasivo/Activo', 'Liabilities/Assets') + ' ' + O.pct(s.endeud[i]) + '</em>') +
             kpi(L('Liquidez corriente', 'Current ratio'), O.x(s.liquidez[i]), '<em>' + L('Ciclo de caja', 'Cash cycle') + ' ' + O.days(s.ciclo[i]) + ' ' + L('días', 'days') + '</em>');
     }
+    // ---------- Bufins Score, DuPont y cifras en términos reales / dólares ----------
+    var NIVEL = { solida: ['Sólida', 'Strong'], estable: ['Estable', 'Stable'], vigilar: ['A vigilar', 'To watch'], critica: ['Crítica', 'Critical'] };
+    var ZONA = { segura: ['zona segura', 'safe zone'], gris: ['zona gris', 'grey zone'], alerta: ['zona de alerta', 'distress zone'] };
+    function renderScore() {
+        var s = D.salud && D.salud[Y], box = $('empScore');
+        if (!s) { box.innerHTML = ''; return; }
+        var prev = D.salud[Y - 1];
+        var dl = prev ? s.total - prev.total : null;
+        box.innerHTML = '<div class="obs-score obs-score-' + s.nivel + '">' +
+            '<div class="obs-score-main"><strong>' + O.int(s.total) + '</strong><span>/ 100</span>' +
+            '<em>' + L(NIVEL[s.nivel][0], NIVEL[s.nivel][1]) + '</em>' +
+            (dl != null && Math.abs(dl) >= 1 ? '<small class="' + (dl >= 0 ? 'up' : 'down') + '">' + (dl >= 0 ? '▲ ' : '▼ ') + O.int(Math.abs(dl)) + ' pts vs. ' + (Y - 1) + '</small>' : '') + '</div>' +
+            '<div class="obs-score-bars"><h3>' + L('Bufins Score de salud financiera', 'Bufins financial health score') + '</h3>' +
+            s.pilares.map(function (p) {
+                return '<div class="obs-score-row"><span>' + L(p.es, p.en) + '</span><i><b style="width:' + Math.round(p.puntos / p.max * 100) + '%"></b></i><small>' + O.int(p.puntos) + '/' + p.max + '</small></div>';
+            }).join('') +
+            '<p class="obs-hint">' + (s.altman != null ? "Altman Z'': <strong>" + O.num(s.altman) + '</strong> (' + L(ZONA[s.zona][0], ZONA[s.zona][1]) + '). ' : '') +
+            '<a href="#glosario" data-gloss="1">' + L('Cómo se calcula', 'How it is computed') + '</a></p></div></div>';
+    }
+    function renderDupont() {
+        var s = D.serie, i = ix(Y), p = i > 0 ? i - 1 : -1, box = $('empDupont');
+        if (s.mneto[i] == null || s.rotacion[i] == null || s.apalanc[i] == null) { box.innerHTML = '<p class="obs-hint">' + L('No se puede descomponer el ROE (patrimonio no positivo o sin ingresos).', 'ROE cannot be decomposed (non-positive equity or no revenue).') + '</p>'; return; }
+        function chg(k, f) { return p >= 0 && s[k][p] != null ? '<small>' + L('antes ', 'before ') + f(s[k][p]) + '</small>' : ''; }
+        function cell(t, v, f, k, op) { return '<div class="obs-dp"><span>' + t + '</span><strong>' + f(v) + '</strong>' + chg(k, f) + '</div>' + (op ? '<b class="obs-dp-op">' + op + '</b>' : ''); }
+        box.innerHTML = cell(L('Margen neto', 'Net margin'), s.mneto[i], O.pct, 'mneto', '×') + cell(L('Rotación de activos', 'Asset turnover'), s.rotacion[i], O.x, 'rotacion', '×') +
+            cell(L('Apalancamiento', 'Equity multiplier'), s.apalanc[i], O.x, 'apalanc', '=') + cell('ROE', s.roe[i], O.pct, 'roe', '');
+    }
+    function renderMacro() {
+        var box = $('empMacro'), m = D.macro || {}, s = D.serie, i = ix(Y), out = [];
+        var trm = m.trm && m.trm[Y], ipc = m.ipc && m.ipc[Y], cr = s.crec[i];
+        if (cr != null && ipc != null) { var real = ((1 + cr / 100) / (1 + ipc / 100) - 1) * 100; out.push('<div><span>' + L('Crecimiento real de ingresos', 'Real revenue growth') + '</span><strong class="' + (real >= 0 ? 'up' : 'down') + '">' + (real >= 0 ? '+' : '') + O.pct(real) + '</strong><small>' + L('nominal ', 'nominal ') + O.pct(cr) + ' · ' + L('inflación DANE ', 'CPI ') + O.pct(ipc) + '</small></div>'); }
+        if (trm && s.ing[i] != null) {
+            var usd = function (v) { return 'US$ ' + O.money(v / trm.prom, true); };
+            out.push('<div><span>' + L('Ingresos en dólares', 'Revenue in US dollars') + '</span><strong>' + usd(s.ing[i]) + '</strong><small>' + L('TRM promedio ' + Y + ': $ ', 'Average FX rate ' + Y + ': COP ') + O.int(trm.prom) + '</small></div>');
+            out.push('<div><span>' + L('EBITDA en dólares', 'EBITDA in US dollars') + '</span><strong>' + (s.ebitda[i] < 0 ? '−' : '') + usd(Math.abs(s.ebitda[i])) + '</strong><small>' + L('al cambio promedio del año', "at the year's average rate") + '</small></div>');
+        }
+        box.innerHTML = out.join('');
+    }
     function renderCharts() {
         var s = D.serie, a = s.anios;
         var gastosPct = a.map(function (_, i) { return s.ing[i] > 0 ? Math.round(s.gop[i] / s.ing[i] * 1000) / 10 : null; });
@@ -228,9 +270,27 @@
         }).join('');
         $('stmtTable').innerHTML = head + '<tbody>' + body + '</tbody>';
         $('stmtTitle').textContent = L(TITLES[STM][0], TITLES[STM][1]);
+        $('pygView').hidden = STM !== 'pyg';
         renderStmtChart();
     }
+    function renderWaterfall() {
+        var s = D.serie, max = Math.max.apply(null, s.ing.concat(s.act).map(function (v) { return Math.abs(v || 0); }).concat([1])), u = O.unitFor(max);
+        var ing = g(Y, 'ing'), ub = g(Y, 'ub'), uop = g(Y, 'uop'), uai = g(Y, 'uai'), un = g(Y, 'un');
+        var steps = [
+            { l: L('Ingresos', 'Revenue'), v: ing, t: 1 }, { l: L('Costo de ventas', 'Cost of sales'), v: ub - ing },
+            { l: L('Gastos operacionales y otros', 'Operating expenses & other'), v: uop - ub }, { l: L('Resultado financiero y otros', 'Financial result & other'), v: uai - uop },
+            { l: L('Impuestos', 'Income tax'), v: un - uai }, { l: L('Utilidad neta', 'Net profit'), v: un, t: 1 }
+        ], run = 0, data = [], colors = [];
+        steps.forEach(function (st) {
+            if (st.t) { data.push([Math.min(0, st.v) / u.d, Math.max(0, st.v) / u.d]); colors.push('#583AFF'); run = st.v; }
+            else { var a = run, b = run + st.v; data.push([Math.min(a, b) / u.d, Math.max(a, b) / u.d]); run = b; colors.push(st.v >= 0 ? '#01B3AB' : '#FF5500'); }
+        });
+        $('stmtChartTitle').textContent = L('De los ingresos a la utilidad neta', 'From revenue to net profit') + ' ' + Y + ' (' + u.l + ')';
+        O.chart('chStmt', { type: 'bar', data: { labels: steps.map(function (x) { return x.l; }), datasets: [{ data: data, backgroundColor: colors, borderRadius: 4 }] },
+            options: Object.assign({}, O.COMMON, { plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (c) { var st = steps[c.dataIndex]; return (st.v < 0 ? '−' : st.t ? '' : '+') + O.num(Math.abs(st.v) / u.d) + ' ' + u.l; } } } }, scales: { y: { beginAtZero: true } } }) });
+    }
     function renderStmtChart() {
+        if (STM === 'pyg' && VIEW === 'cas') { renderWaterfall(); return; }
         var a = D.serie.anios, s = D.serie, id = 'chStmt', m;
         function ds(label, data, color, type, extra) { return Object.assign({ type: type || 'bar', label: label, data: data, backgroundColor: color, borderColor: color, borderRadius: type === 'line' ? 0 : 5, tension: .3 }, extra || {}); }
         var max = Math.max.apply(null, s.ing.concat(s.act).map(function (v) { return Math.abs(v || 0); }).concat([1])), u = O.unitFor(max);
@@ -256,11 +316,23 @@
             cell(L('Sector', 'Sector'), p.seccion + ' · ' + p.seccionNombre) + cell(L('División', 'Division'), p.division + ' · ' + p.divisionNombre) +
             cell(L('Fecha de constitución', 'Incorporation date'), p.fconst + edad) + cell(L('Estado actual', 'Current status'), p.estado) +
             cell(L('Ciudad / departamento', 'City / department'), p.ciudad + ' · ' + p.depto) + cell(L('Tipo societario', 'Company type'), p.tipo) +
-            cell(L('Marco contable', 'Accounting framework'), p.grupo) + cell(L('Tamaño por ingresos', 'Size by revenue'), D.tamano + ' (S < 20.000 M · M < 100.000 M · L < 1 B)') +
+            cell(L('Marco contable', 'Accounting framework'), p.grupo) + cell(L('La sociedad es', 'The company is'), p.clase) + cell(L('Tamaño por ingresos', 'Size by revenue'), D.tamano + ' (S < 20.000 M · M < 100.000 M · L < 1 B)') +
             cell(L('Revisor fiscal', 'Statutory auditor'), p.rf) + cell(L('Concepto del revisor fiscal', 'Auditor opinion'), p.rfop) + '</div>' +
+            renderContratos() +
             '<div class="obs-info obs-info-wide"><span>' + L('Objeto social principal', 'Main corporate purpose') + '</span><p>' + esc(p.objeto || '—') + '</p></div>';
     }
+    function renderContratos() {
+        var c = D.contratos; if (!c) return '';
+        var desde = (c.desde || '').slice(0, 4);
+        return '<div class="obs-info obs-info-wide"><span>' + L('Contratación con el Estado (SECOP II)', 'Public contracting (SECOP II)') + '</span><p><strong>' + O.int(c.n) + '</strong> ' + L('contratos desde ' + desde, 'contracts since ' + desde) +
+            (c.valor > 0 ? ' · ' + L('valor reportado ', 'reported value ') + O.money(c.valor / 1e6) : '') +
+            '. <span class="obs-hint">' + L('Cifras declaradas por las entidades en datos.gov.co; pueden incluir adiciones o errores de digitación.', 'Figures declared by public entities on datos.gov.co; may include additions or typing errors.') + '</span></p></div>';
+    }
     var GLOS = [
+        ['Bufins Score de salud (0–100)', 'Suma de cuatro pilares de 25 puntos: rentabilidad (margen EBITDA y ROA), liquidez (liquidez corriente y capital de trabajo/ingresos), endeudamiento (deuda/EBITDA y pasivo/activo) y solvencia (cobertura de intereses y Altman). Cada indicador se puntúa en forma lineal entre un piso y un techo. 70 o más: sólida; 50 a 69: estable; 30 a 49: a vigilar; menos de 30: crítica.', 'Sum of four 25-point pillars: profitability (EBITDA margin and ROA), liquidity (current ratio and working capital/revenue), leverage (debt/EBITDA and liabilities/assets) and solvency (interest coverage and Altman). Each ratio is scored linearly between a floor and a ceiling. 70+: strong; 50–69: stable; 30–49: to watch; below 30: critical.'],
+        ["Altman Z'' (riesgo de quiebra)", "Z'' = 3,25 + 6,56·(capital de trabajo/activos) + 3,26·(utilidades retenidas/activos) + 6,72·(utilidad operativa/activos) + 1,05·(patrimonio/pasivos). Versión para mercados emergentes. Mayor a 5,85: zona segura; entre 4,15 y 5,85: zona gris; menor a 4,15: zona de alerta. Es una señal estadística, no una predicción.", "Z'' = 3.25 + 6.56·(working capital/assets) + 3.26·(retained earnings/assets) + 6.72·(operating profit/assets) + 1.05·(equity/liabilities). Emerging-markets version. Above 5.85: safe zone; 4.15 to 5.85: grey zone; below 4.15: distress zone. A statistical signal, not a prediction."],
+        ['DuPont', 'Descompone el ROE: margen neto × rotación de activos (ingresos/activos) × apalancamiento (activos/patrimonio). Muestra si la rentabilidad viene del margen, de la eficiencia o de la deuda.', 'Breaks ROE into net margin × asset turnover (revenue/assets) × equity multiplier (assets/equity). Shows whether returns come from margin, efficiency or debt.'],
+        ['Crecimiento real y dólares', 'Crecimiento real = (1 + crecimiento nominal) / (1 + inflación anual DANE) − 1. Dólares = cifra en pesos / TRM promedio del año (datos.gov.co). La inflación es una tabla que Bufins actualiza una vez al año.', 'Real growth = (1 + nominal growth) / (1 + DANE annual CPI) − 1. US dollars = COP figure / average FX rate of the year (datos.gov.co). CPI is a table Bufins updates once a year.'],
         ['EBITDA', 'Utilidad operativa + depreciación y amortización (flujo de efectivo). Aproxima la caja que genera la operación antes de intereses e impuestos.', 'Operating profit + depreciation & amortization (cash-flow statement). Approximates cash generated by operations before interest and tax.'],
         ['Utilidad bruta', 'Ingresos − costo de ventas (valor reportado).', 'Revenue − cost of sales (as reported).'],
         ['Gastos operacionales', 'Gastos de administración + ventas + distribución + otros gastos operacionales.', 'Administrative + selling + distribution + other operating expenses.'],
@@ -281,7 +353,7 @@
     // ---------- control de año y pestañas ----------
     function renderYear() {
         Array.prototype.forEach.call(document.querySelectorAll('#empYears button'), function (b) { b.classList.toggle('active', parseInt(b.getAttribute('data-y'), 10) === Y); });
-        renderKpis(); renderCharts(); renderInsights(); renderBench(); renderStatement();
+        renderKpis(); renderScore(); renderMacro(); renderCharts(); renderInsights(); renderBench(); renderDupont(); renderStatement();
         var u = new URL(location.href); u.searchParams.set('anio', Y); history.replaceState(null, '', u.pathname + u.search + u.hash);
     }
     $('empYears').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; Y = parseInt(b.getAttribute('data-y'), 10); renderYear(); });
@@ -294,9 +366,17 @@
         Array.prototype.forEach.call($('stmtMode').querySelectorAll('button'), function (x) { x.classList.toggle('active', x === b); }); renderStatement();
     });
     $('empTabs').addEventListener('click', function (e) { var b = e.target.closest('button[data-hash]'); if (b) history.replaceState(null, '', location.pathname + location.search + '#' + b.getAttribute('data-hash')); });
-    $('empPrint').addEventListener('click', function () { window.print(); });
+    $('pygView').addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return; VIEW = b.getAttribute('data-w');
+        Array.prototype.forEach.call($('pygView').querySelectorAll('button'), function (x) { x.classList.toggle('active', x === b); }); renderStmtChart();
+    });
+    root.addEventListener('click', function (e) {
+        var a = e.target.closest('a[data-gloss]'); if (!a) return; e.preventDefault();
+        var btn = document.querySelector('#empTabs [data-hash="glosario"]'); if (btn) new bootstrap.Tab(btn).show();
+    });
     O.share($('empShare'));
 
+    document.addEventListener('obs:unit', function () { if (D) renderYear(); });
     O.addRecent({ nit: NIT, razon: root.getAttribute('data-razon') });
     O.api('ficha', 'nit=' + encodeURIComponent(NIT)).then(function (d) {
         D = d;

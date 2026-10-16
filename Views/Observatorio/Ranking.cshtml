@@ -1,0 +1,112 @@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Observatorio
+@using bufinsweb.Services
+@model ObservatorioService.RankingResultado
+@{
+    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var def = Model.Def;
+    var ambito = Model.Tipo == "nacional" ? T("en Colombia", "in Colombia") : T("en ", "in ") + Model.Titulo;
+    var etiqueta = T(def.Es, def.En);
+    var titulo = T("Empresas con ", "Companies with ") + etiqueta + " " + ambito;
+    var baseRuta = "/observatorio/ranking/";
+    Func<string, string> ruta = m => baseRuta + m + (Model.Tipo == "nacional" ? "" : "/" + Model.Tipo + "/" + Model.Clave);
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + ruta(def.Clave);
+    ViewBag.ObsActive = "ranking";
+    ViewBag.Title = titulo + " " + Model.Anio + " | Bufins";
+    ViewBag.MetaDescription = T("Ranking de las ", "Ranking of the ") + Model.Filas.Count + T(" empresas con ", " companies with ") + etiqueta + " " + ambito + " (" + Model.Anio + T("), de ", "), out of ") + Model.Total.ToString("N0") + T(" que reportaron a la Supersociedades.", " that filed with the Superintendencia de Sociedades.");
+    ViewBag.Canonical = canonical;
+    Func<double, string> fmt = x =>
+    {
+        switch (def.Unidad)
+        {
+            case "mm": return ObservatorioFormat.Moneda(x);
+            case "%": return ObservatorioFormat.Porcentaje(x);
+            case "x": return x.ToString("0.0") + "x";
+            default: return x.ToString("0");
+        }
+    };
+    var aprox = def.MinIngMm > 0 || def.SinAnomalias;
+}
+@section head {
+    @Html.Partial("_ObsHead")
+    @ObservatorioSeo.Breadcrumb(new[] {
+        new KeyValuePair<string, string>("Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/"),
+        new KeyValuePair<string, string>(T("Observatorio", "Observatory"), Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio"),
+        new KeyValuePair<string, string>("Rankings", Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/ranking"),
+        new KeyValuePair<string, string>(titulo, canonical) })
+}
+
+<section class="obs-hero obs-hero-sm">
+    <div class="container">
+        <nav class="obs-crumbs" aria-label="breadcrumb">
+            <a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i>
+            <a href="/observatorio/ranking">Rankings</a>
+        </nav>
+        <h1 class="obs-title">@titulo</h1>
+        <p class="obs-lead">@T("Top ", "Top ")@Model.Filas.Count @T("de ", "of ")@Model.Total.ToString("N0") @T("empresas · cifras ", "companies · figures ")@Model.Anio</p>
+    </div>
+</section>
+
+@Html.Partial("_ObsNav")
+
+<section class="obs-main">
+    <div class="container-xl">
+        <div class="obs-seg obs-seg-wrap" role="navigation" aria-label="@T("Cambiar ranking", "Change ranking")">
+            @foreach (var m in ObservatorioService.Rankings)
+            {
+                <a href="@ruta(m.Clave)" class="@(m.Clave == def.Clave ? "active" : "")">@(char.ToUpper(T(m.Es, m.En)[0]) + T(m.Es, m.En).Substring(1))</a>
+            }
+        </div>
+
+        <div class="obs-card mt-3">
+            <div class="table-responsive">
+                <table class="table obs-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th><th>@T("Empresa", "Company")</th>
+                            <th class="text-end">@(char.ToUpper(etiqueta[0]) + etiqueta.Substring(1))</th>
+                            <th class="text-end d-none d-md-table-cell">@T("Ingresos", "Revenue")</th>
+                            <th class="text-center d-none d-md-table-cell">@T("Tamaño", "Size")</th>
+                            <th class="text-end d-none d-lg-table-cell">@T("Score de salud", "Health score")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var f in Model.Filas)
+                        {
+                            <tr>
+                                <td>@f.Pos</td>
+                                <td><a href="@ObservatorioService.UrlEmpresa(f.E)" class="obs-co">@f.E.Razon</a><small>@f.E.Ciudad · @CiiuCatalogo.Actual.Nombre(f.E.Ciiu)</small></td>
+                                <td class="text-end"><strong>@fmt(f.Valor)</strong></td>
+                                <td class="text-end d-none d-md-table-cell">@ObservatorioFormat.Moneda(f.IngMm)</td>
+                                <td class="text-center d-none d-md-table-cell">@f.Tam</td>
+                                <td class="text-end d-none d-lg-table-cell">@f.Score.ToString("0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <p class="obs-source">
+            <i class="fas fa-info-circle me-2"></i>
+            @if (aprox)
+            {
+                @T("Se excluyen empresas sin ingresos operacionales o con cifras atípicas (utilidad mayor a 3 veces los ingresos)" + (def.MinIngMm > 0 ? " y con ingresos menores a " + def.MinIngMm.ToString("N0") + " millones" : "") + ". ",
+                   "Companies without operating revenue or with outlier figures (profit above 3x revenue) are excluded" + (def.MinIngMm > 0 ? " as well as those with revenue below COP " + def.MinIngMm.ToString("N0") + " million" : "") + ". ")
+            }
+            @T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>. @T("Cálculos de Bufins; información pública con fines informativos.", "Bufins calculations; public information for information only.")
+        </p>
+    </div>
+</section>
+
+<section class="obs-cta">
+    <div class="container text-center">
+        <h2>@T("¿Dónde queda tu empresa en este ranking?", "Where does your company stand in this ranking?")</h2>
+        <a class="btn obs-btn-primary btn-lg" data-track="cta_click" data-key="ranking" href="@Url.Action("Contact", "Home")">@T("Hablar con Bufins", "Talk to Bufins")</a>
+    </div>
+</section>
+
+@section scripts {
+    @Scripts.Render("~/bundles/obs-core")
+}

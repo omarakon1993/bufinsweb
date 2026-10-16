@@ -1,0 +1,102 @@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Observatorio
+@using bufinsweb.Services
+@model Empresa
+@{
+    Layout = null;
+    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var n = (ObservatorioService.Narrativa)ViewBag.Narrativa;
+    var cat = CiiuCatalogo.Actual;
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var e = Model;
+    var anios = datos.Meta.Anios.OrderBy(a => a).Where(a => e.En(a, datos.MinAnio) != null).ToList();
+    var anio = anios.Last();
+    var v = e.En(anio, datos.MinAnio);
+    var p = e.En(anio - 1, datos.MinAnio);
+    var sal = Salud.Calcular(v);
+    var z = Ratio.Altman(v);
+    var nivel = sal.Nivel == "solida" ? T("Sólida", "Strong") : sal.Nivel == "estable" ? T("Estable", "Stable") : sal.Nivel == "vigilar" ? T("A vigilar", "To watch") : T("Crítica", "Critical");
+    var isEn = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "en";
+}
+<!DOCTYPE html>
+<html lang="@(isEn ? "en" : "es")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>@e.Razon — @T("Informe financiero", "Financial report") @anio | Bufins</title>
+    <link rel="icon" type="image/png" href="~/Assets/images/Bufins_Favicon.png?v=2">
+    <link href="~/Assets/css/inter-font.css" rel="stylesheet" />
+    @Styles.Render("~/bundles/obs-informe-css")
+</head>
+<body>
+    <span id="obsMeta" data-v="@ViewBag.ObsVer" hidden></span>
+    <div class="inf-bar no-print">
+        <a href="@ObservatorioService.UrlEmpresa(e)">&larr; @T("Volver a la ficha", "Back to profile")</a>
+        <button type="button" id="infPrint">@T("Guardar como PDF", "Save as PDF")</button>
+        <span>@T("En el cuadro de impresión elige «Guardar como PDF».", "In the print dialog choose “Save as PDF”.")</span>
+    </div>
+
+    <main class="inf" id="infApp" data-nit="@e.Nit" data-anio="@anio">
+        <header class="inf-head">
+            <img src="~/Assets/images/Bufins_Logofinal.png" alt="Bufins" class="inf-logo" />
+            <div><strong>@T("Observatorio financiero", "Financial observatory")</strong><br />bufins.com/observatorio</div>
+        </header>
+
+        <h1>@e.Razon</h1>
+        <p class="inf-sub">NIT @e.Nit · @cat.Nombre(e.Ciiu) (CIIU @e.Ciiu) · @e.Ciudad, @e.Depto · @T("Tamaño", "Size") @ObservatorioService.Tamano(v[M.Ing])</p>
+
+        <div class="inf-kpis">
+            <div><span>@T("Ingresos", "Revenue") @anio</span><strong>@ObservatorioFormat.Moneda(v[M.Ing] / 1000.0)</strong><em>@(p != null ? ObservatorioFormat.Variacion(v[M.Ing], p[M.Ing]) : "")</em></div>
+            <div><span>EBITDA</span><strong>@ObservatorioFormat.Moneda(v[M.Ebitda] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(v))</em></div>
+            <div><span>@T("Utilidad neta", "Net profit")</span><strong>@ObservatorioFormat.Moneda(v[M.Un] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenNeto(v))</em></div>
+            <div><span>@T("Activos", "Assets")</span><strong>@ObservatorioFormat.Moneda(v[M.Act] / 1000.0)</strong><em>ROA @ObservatorioFormat.Porcentaje(Ratio.Roa(v))</em></div>
+            <div><span>@T("Deuda financiera", "Financial debt")</span><strong>@ObservatorioFormat.Moneda(v[M.Deuda] / 1000.0)</strong><em>@T("Deuda/EBITDA", "Debt/EBITDA") @(Ratio.DeudaEbitda(v).HasValue ? Ratio.DeudaEbitda(v).Value.ToString("0.0") + "x" : "—")</em></div>
+        </div>
+
+        <section class="inf-score">
+            <div class="inf-score-n"><strong>@sal.Total.ToString("0")</strong><span>/ 100</span><em>@nivel</em></div>
+            <div class="inf-score-bars">
+                @foreach (var pl in sal.Pilares)
+                {
+                    <div><span>@T(pl.Es, pl.En)</span><i><b style="width:@((pl.Puntos / pl.Max * 100).ToString("0", System.Globalization.CultureInfo.InvariantCulture))%"></b></i><small>@pl.Puntos.ToString("0")/@pl.Max.ToString("0")</small></div>
+                }
+                @if (z.HasValue)
+                {
+                    <p>Altman Z'': <strong>@z.Value.ToString("0.0")</strong> (@(Ratio.ZonaAltman(z.Value) == "segura" ? T("zona segura", "safe zone") : Ratio.ZonaAltman(z.Value) == "gris" ? T("zona gris", "grey zone") : T("zona de alerta", "distress zone")))</p>
+                }
+            </div>
+        </section>
+
+        <h2>@T("En palabras", "In plain words")</h2>
+        @foreach (var par in n.Parrafos) { <p>@par</p> }
+
+        <h2>@T("Evolución", "Trend")</h2>
+        <div class="inf-chart"><canvas id="infChart"></canvas></div>
+
+        <h2>@T("Cifras clave por año", "Key figures by year") <small>(@T("millones de COP", "COP millions"))</small></h2>
+        <table class="inf-table">
+            <thead><tr><th>@T("Año", "Year")</th><th>@T("Ingresos", "Revenue")</th><th>EBITDA</th><th>@T("Utilidad neta", "Net profit")</th><th>@T("Activos", "Assets")</th><th>@T("Pasivos", "Liabilities")</th><th>@T("Patrimonio", "Equity")</th></tr></thead>
+            <tbody>
+                @foreach (var a in anios.OrderByDescending(x => x))
+                {
+                    var y = e.En(a, datos.MinAnio);
+                    <tr><td>@a</td><td>@ObservatorioFormat.Entero(y[M.Ing] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Ebitda] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Un] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Act] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Pas] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Pat] / 1000.0)</td></tr>
+                }
+            </tbody>
+        </table>
+
+        <h2>@T("Frente a su sector", "Versus its sector") <small id="infWho"></small></h2>
+        <table class="inf-table" id="infBench"><tbody><tr><td>@T("Cargando…", "Loading…")</td></tr></tbody></table>
+
+        <footer class="inf-foot">
+            @T("Fuente: ", "Source: ")@datos.Meta.Fuente @T("(datos.gov.co). Cifras reportadas por la empresa a la Supersociedades; los indicadores son cálculos de Bufins. Información pública con fines informativos; no constituye asesoría financiera.",
+               "(datos.gov.co). Figures reported by the company to the Superintendencia de Sociedades; ratios are Bufins calculations. Public information for information only; not financial advice.")
+            · @T("Generado el ", "Generated on ")@DateTime.Now.ToString("yyyy-MM-dd")
+        </footer>
+    </main>
+
+    @Scripts.Render("~/bundles/obs-chart")
+    @Scripts.Render("~/bundles/obs-informe")
+</body>
+</html>

@@ -68,6 +68,7 @@
     // ---------- render ----------
     function idx() { return D.anios.indexOf(Y); }
     function vOf(item, k) { var a = item.serie[k]; return a ? a[idx()] : null; }
+    document.addEventListener('obs:unit', function () { if (D) render(); });
     function render() {
         var n = D.items.length;
         $('cmpEmpty').hidden = n >= 2; $('cmpBody').hidden = n < 2;
@@ -89,7 +90,7 @@
             }).join('') + '</tr>';
         }).join('');
         $('cmpMatrix').innerHTML = '<thead><tr><th>' + Y + '</th>' + D.items.map(function (it, i) {
-            return '<th class="text-end" style="--c:' + O.CMP[i] + '"><a href="' + EMP + esc(it.nit) + '"><span class="obs-dotc" style="background:' + O.CMP[i] + '"></span>' + esc(it.razon) + '</a><small>' + esc(it.actividad.length > 38 ? it.actividad.slice(0, 36) + '…' : it.actividad) + '</small></th>';
+            return '<th class="text-end" style="--c:' + O.CMP[i] + '"><a href="' + esc(it.url || EMP + it.nit) + '"><span class="obs-dotc" style="background:' + O.CMP[i] + '"></span>' + esc(it.razon) + '</a><small>' + esc(it.actividad.length > 38 ? it.actividad.slice(0, 36) + '…' : it.actividad) + '</small></th>';
         }).join('') + '</tr></thead><tbody>' + body + '</tbody>';
 
         $('cmpWins').innerHTML = D.items.map(function (it, i) {

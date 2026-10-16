@@ -14,10 +14,16 @@
     var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/sector/" + Model.Slug;
     ViewBag.Canonical = canonical; ViewBag.OgType = "article";
     var explorar = "/observatorio/sectores?k=" + Model.Codigo;
+    var rankUrl = "/observatorio/ranking/ingresos/sector/" + Model.Slug;
     var seccion = Model.Codigo.Length == 1 ? Model.Codigo : cat.Seccion(Model.Codigo.Substring(0, 2));
 }
 @section head {
     @Html.Partial("_ObsHead")
+    @ObservatorioSeo.Faq(ViewBag.Narrativa as ObservatorioService.Narrativa)
+    @ObservatorioSeo.Breadcrumb(new[] {
+        new KeyValuePair<string, string>("Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/"),
+        new KeyValuePair<string, string>(T("Observatorio", "Observatory"), Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio"),
+        new KeyValuePair<string, string>(Model.Titulo, canonical) })
 }
 
 <section class="obs-hero obs-hero-sm">
@@ -55,7 +61,8 @@
                 <div class="obs-card h-100">
                     <div class="obs-card-head"><h2 class="obs-h3">@T("Explora con filtros", "Explore with filters")</h2></div>
                     <p>@T("Cruza este sector con tamaño, departamento, estado y rentabilidad, y compara contra la mediana del mercado.", "Cross this sector with size, department, status and profitability, and benchmark against the market median.")</p>
-                    <a class="btn obs-btn-primary" href="@explorar"><i class="fas fa-sliders-h me-2"></i>@T("Abrir en el análisis por sector", "Open in sector analysis")</a>
+                    <div class="d-flex flex-wrap gap-2"><a class="btn obs-btn-primary" href="@explorar"><i class="fas fa-sliders-h me-2"></i>@T("Abrir en el análisis por sector", "Open in sector analysis")</a>
+                    <a class="btn obs-btn-ghost" href="@rankUrl"><i class="fas fa-trophy me-2"></i>@T("Ver rankings", "See rankings")</a></div>
                 </div>
             </div>
         </div>
@@ -72,7 +79,7 @@
                             var d1 = Ratio.DeudaEbitda(kv.Value);
                             <tr>
                                 <td>@(i++)</td>
-                                <td><a href="/observatorio/empresa/@kv.Key.Nit" class="obs-co">@kv.Key.Razon</a><small>@kv.Key.Ciudad</small></td>
+                                <td><a href="@ObservatorioService.UrlEmpresa(kv.Key)" class="obs-co">@kv.Key.Razon</a><small>@kv.Key.Ciudad</small></td>
                                 <td class="text-end">@ObservatorioFormat.Moneda(kv.Value[M.Ing] / 1000.0)</td>
                                 <td class="text-end @(kv.Value[M.Ebitda] < 0 ? "obs-neg" : "")">@ObservatorioFormat.Moneda(kv.Value[M.Ebitda] / 1000.0)</td>
                                 <td class="text-end">@ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(kv.Value))</td>
@@ -83,6 +90,7 @@
                 </table>
             </div>
         </div>
+        @Html.Partial("_ObsTexto")
         <p class="obs-source"><i class="fas fa-info-circle me-2"></i>@T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>. @T("Procesado por Bufins.", "Processed by Bufins.")</p>
     </div>
 </section>
@@ -90,7 +98,7 @@
 <section class="obs-cta">
     <div class="container text-center">
         <h2>@T("Compara tu empresa contra este sector", "Benchmark your company against this sector")</h2>
-        <a class="btn obs-btn-primary btn-lg" href="@Url.Action("Contact", "Home")">@T("Hablar con Bufins", "Talk to Bufins")</a>
+        <a class="btn obs-btn-primary btn-lg" data-track="cta_click" data-key="sector" href="@Url.Action("Contact", "Home")">@T("Hablar con Bufins", "Talk to Bufins")</a>
     </div>
 </section>
 

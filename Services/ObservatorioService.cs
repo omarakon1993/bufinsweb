@@ -20,7 +20,7 @@ namespace bufinsweb.Services
     /// Lee App_Data/observatorio/empresas.json (índice: perfil + 22 métricas por año) y, bajo demanda,
     /// detalle.bin (rubros completos por empresa, bloques gzip). Los archivos los genera Tools/ObservatorioEtl/build_dataset.py.
     /// </summary>
-    public class ObservatorioService
+    public partial class ObservatorioService
     {
         private const string CacheKey = "observatorio:datos";
         private static readonly object Lock = new object();
@@ -48,7 +48,7 @@ namespace bufinsweb.Services
                     var path = Ruta("empresas.bin");
                     var datos = Cargar(path, Ruta("meta.json"));
                     CacheBench.Clear();
-                    HttpRuntime.Cache.Insert(CacheKey, datos, new CacheDependency(path), Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration);
+                    HttpRuntime.Cache.Insert(CacheKey, datos, new CacheDependency(new[] { path, Ruta("reglas.json"), Ruta("ipc.json") }), Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration);
                     return datos;
                 }
             }
@@ -101,6 +101,7 @@ namespace bufinsweb.Services
                     e.Busqueda = Normalizar(e.Razon);
                     e.Division = CiiuCatalogo.Division(e.Ciiu);
                     e.Seccion = cat.Seccion(e.Division);
+                    e.Slug = Slug(e.Razon);
                     e.Y = new long[nAnios][];
                     var mask = br.ReadUInt16();
                     for (var i = 0; i < nA; i++)
@@ -138,6 +139,7 @@ namespace bufinsweb.Services
                     }
                 }
             }
+            CargarComplementos(d);
             return d;
         }
 
@@ -170,7 +172,7 @@ namespace bufinsweb.Services
         private static double R(double v) { return Math.Round(v, 1); }
         private static double? R(double? v) { return v.HasValue ? (double?)Math.Round(v.Value, 2) : null; }
 
-        private class Fila { public Empresa E; public long[] V; public double? Crec; }
+        private class Fila { public Empresa E; public long[] V, V1, V2; public double? Crec; public SenalesInfo Sen; }
 
         private IEnumerable<Fila> Filtrar(ObservatorioDatos d, FiltroSector f, int anio)
         {
@@ -179,6 +181,7 @@ namespace bufinsweb.Services
             var tams = f.Tamanos.Count > 0 ? new HashSet<string>(f.Tamanos) : null;
             var nodos = f.Ciiu.Where(x => !string.IsNullOrEmpty(x)).ToList();
             var clases = nodos.Count > 0 ? ClasesDe(d, nodos) : null;   // se resuelve una vez, no por empresa
+            var conSen = f.Senales.Count > 0 || f.PotencialMin > 0 || f.Orden == "potencial";
 
             foreach (var e in d.Empresas)
             {
@@ -200,7 +203,15 @@ namespace bufinsweb.Services
                 if (f.Resultado == "perdida" && v[M.Un] >= 0) continue;
 
                 var p = e.En(anio - 1, d.MinAnio);
-                yield return new Fila { E = e, V = v, Crec = p != null && p[M.Ing] > 0 ? (double?)((v[M.Ing] - p[M.Ing]) / (double)p[M.Ing] * 100) : null };
+                var p2 = e.En(anio - 2, d.MinAnio);
+                SenalesInfo si = null;
+                if (conSen)
+                {
+                    si = CalcularSenales(d, e, v, p, p2);
+                    if (f.Senales.Any(sn => !si.Claves.Contains(sn))) continue;
+                    if (si.Potencial < f.PotencialMin) continue;
+                }
+                yield return new Fila { E = e, V = v, V1 = p, V2 = p2, Sen = si, Crec = p != null && p[M.Ing] > 0 ? (double?)((v[M.Ing] - p[M.Ing]) / (double)p[M.Ing] * 100) : null };
             }
         }
 
@@ -249,7 +260,8 @@ namespace bufinsweb.Services
                 departamentos = actuales.Where(e => e.Depto.Length > 0).GroupBy(e => e.Depto).OrderBy(g => g.Key).Select(g => new { valor = g.Key, n = g.Count() }),
                 estados = actuales.Where(e => e.Estado.Length > 0).GroupBy(e => e.Estado).OrderByDescending(g => g.Count()).Select(g => new { valor = g.Key, n = g.Count() }),
                 tamanos = new[] { "S", "M", "L", "XL" }.Select(t => new { codigo = t, n = actuales.Count(e => Tamano(e.En(d.MaxAnio, d.MinAnio)[M.Ing]) == t) }),
-                arbol = cat.Arbol(conteo)
+                arbol = cat.Arbol(conteo),
+                senales = SenalesDefs(d)
             };
         }
 
@@ -273,7 +285,7 @@ namespace bufinsweb.Services
                 .Take(Math.Max(1, Math.Min(take, 15)))
                 .Select(e => new
                 {
-                    nit = e.Nit, razon = e.Razon, ciiu = e.Ciiu, actividad = cat.Nombre(e.Ciiu), ciudad = e.Ciudad, estado = e.Estado,
+                    nit = e.Nit, razon = e.Razon, url = UrlEmpresa(e), ciiu = e.Ciiu, actividad = cat.Nombre(e.Ciiu), ciudad = e.Ciudad, estado = e.Estado,
                     ing = Mm(e.RankIng), tam = Tamano(e.RankIng)
                 }).ToList();
         }
@@ -326,7 +338,7 @@ namespace bufinsweb.Services
             var dispersion = filas.OrderByDescending(x => x.V[M.Ing]).Take(300).Where(x => Ratio.MargenEbitda(x.V).HasValue && Ratio.Endeudamiento(x.V).HasValue)
                 .Select(x => new
                 {
-                    nit = x.E.Nit, razon = x.E.Razon, x = Math.Max(0, Math.Min(Ratio.Endeudamiento(x.V).Value, 200)),
+                    nit = x.E.Nit, url = UrlEmpresa(x.E), razon = x.E.Razon, x = Math.Max(0, Math.Min(Ratio.Endeudamiento(x.V).Value, 200)),
                     y = Math.Max(-60, Math.Min(Ratio.MargenEbitda(x.V).Value, 80)), r = Mm(x.V[M.Act]), t = x.E.Seccion
                 }).ToList();
 
@@ -338,19 +350,22 @@ namespace bufinsweb.Services
                 tendencia,
                 estadisticas = estad,
                 tamanos = porTam,
-                divisiones = agrupar(x => x.E.Division, k => cat.Nombre(k), 12),
-                departamentos = agrupar(x => x.E.Depto, k => k, 12),
+                divisiones = agrupar(x => x.E.Division, k => cat.Nombre(k), 24),
+                departamentos = agrupar(x => x.E.Depto, k => k, 40),
+                cajas = Cajas(filas.Select(x => x.V).ToList(), filas.Select(x => Tamano(x.V[M.Ing])).ToList()),
                 dispersion,
-                tabla = orden.Skip((pagina - 1) * tam).Take(tam).Select(FilaTabla),
+                tabla = orden.Skip((pagina - 1) * tam).Take(tam).Select(r => FilaTabla(d, r)),
                 pagina, paginas, tamano = tam
             };
         }
 
-        private static object FilaTabla(Fila r)
+        private object FilaTabla(ObservatorioDatos d, Fila r)
         {
             var v = r.V;
+            var sen = r.Sen ?? CalcularSenales(d, r.E, v, r.V1, r.V2);
             return new
             {
+                senales = sen.Claves, potencial = sen.Potencial, score = R(Salud.Calcular(v).Total), url = UrlEmpresa(r.E),
                 nit = r.E.Nit, razon = r.E.Razon, ciiu = r.E.Ciiu, ciudad = r.E.Ciudad, depto = r.E.Depto, estado = r.E.Estado, tam = Tamano(v[M.Ing]),
                 ing = Mm(v[M.Ing]), uop = Mm(v[M.Uop]), ebitda = Mm(v[M.Ebitda]), un = Mm(v[M.Un]), act = Mm(v[M.Act]), deuda = Mm(v[M.Deuda]),
                 mbruto = R(Ratio.MargenBruto(v)), moper = R(Ratio.MargenOperativo(v)), mebitda = R(Ratio.MargenEbitda(v)),
@@ -375,6 +390,8 @@ namespace bufinsweb.Services
                 case "deudaebitda": num = r => Ratio.DeudaEbitda(r.V) ?? double.NegativeInfinity; break;
                 case "ktingresos": num = r => Ratio.KtSobreIngresos(r.V) ?? double.NegativeInfinity; break;
                 case "crec": num = r => r.Crec ?? double.NegativeInfinity; break;
+                case "potencial": num = r => r.Sen != null ? r.Sen.Potencial : 0; break;
+                case "score": num = r => Salud.Calcular(r.V).Total; break;
                 default: num = r => r.V[M.Ing]; break;
             }
             return desc ? rows.OrderByDescending(num) : rows.OrderBy(num);
@@ -538,8 +555,25 @@ namespace bufinsweb.Services
                 bench[a.ToString()] = new { nivel, codigo, nombre = codigo.Length > 0 ? cat.Nombre(codigo) : "", empresas = n, ratios };
             }
 
+            var saludAnios = new Dictionary<string, object>();
+            foreach (var a in d.Meta.Anios)
+            {
+                var v = e.En(a, d.MinAnio);
+                if (v == null) continue;
+                var sr = Salud.Calcular(v);
+                var z = Ratio.Altman(v);
+                saludAnios[a.ToString()] = new { total = sr.Total, nivel = sr.Nivel, pilares = sr.Pilares.Select(x => new { x.Clave, x.Es, x.En, puntos = x.Puntos, max = x.Max }),
+                    altman = R(z), zona = z.HasValue ? Ratio.ZonaAltman(z.Value) : null };
+            }
+            long[] contr;
+            d.Contratos.TryGetValue(e.Nit, out contr);
+
             return new
             {
+                url = UrlEmpresa(e),
+                salud = saludAnios,
+                contratos = contr == null ? null : new { n = contr[0], valor = contr[1], desde = d.ContratosDesde },
+                macro = new { trm = d.Trm.ToDictionary(kv => kv.Key.ToString(), kv => new { prom = kv.Value[0], cierre = kv.Value[1] }), ipc = d.Ipc.ToDictionary(kv => kv.Key.ToString(), kv => kv.Value) },
                 perfil = new
                 {
                     nit = e.Nit, razon = e.Razon, ciiu = e.Ciiu, actividad = cat.Nombre(e.Ciiu), division = e.Division, divisionNombre = cat.Nombre(e.Division),
@@ -561,7 +595,7 @@ namespace bufinsweb.Services
             var anios = d.Meta.Anios.OrderBy(a => a).ToList();
             var items = nits.Distinct().Take(4).Select(n => PorNit(n)).Where(e => e != null).Select(e => new
             {
-                nit = e.Nit, razon = e.Razon, ciiu = e.Ciiu, actividad = cat.Nombre(e.Ciiu), ciudad = e.Ciudad, estado = e.Estado, serie = Serie(e, d)
+                nit = e.Nit, razon = e.Razon, url = UrlEmpresa(e), ciiu = e.Ciiu, actividad = cat.Nombre(e.Ciiu), ciudad = e.Ciudad, estado = e.Estado, serie = Serie(e, d)
             }).ToList();
             return new { anios, items };
         }

@@ -1,0 +1,35 @@
+@* CTA comun de las paginas del Observatorio (inicio y ficha de empresa). *@
+@using bufinsweb.Helpers
+@{
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+}
+<section class="obs-cta obs-cta-rich">
+    <div class="container-xl">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="obs-cta-eyebrow"><i class="fas fa-bolt me-2"></i>@T("Bufins para tu empresa", "Bufins for your company")</span>
+                <h2>@T("¿Quieres este análisis sobre", "Want this analysis on") <span class="obs-cta-hl">@T("TU empresa", "YOUR company")</span>, @T("en tiempo real?", "in real time?")</h2>
+                <p class="obs-cta-lead">@T("Bufins automatiza tus estados financieros e indicadores y te compara contra tu sector.", "Bufins automates your financial statements and ratios and benchmarks you against your sector.")</p>
+                <div class="obs-cta-actions">
+                    <a class="btn obs-btn-primary" data-track="cta_click" data-key="@(ViewBag.ObsActive ?? "obs")" href="@Url.Action("Contact", "Home")"><i class="fas fa-headset me-2"></i>@T("Hablar con un asesor comercial", "Talk to a sales advisor")<i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block" aria-hidden="true">
+                <div class="obs-cta-mock">
+                    <div class="obs-cta-mock-head">
+                        <span></span><span></span><span></span>
+                        <em>@T("Tu empresa vs. sector", "Your company vs. sector")</em>
+                    </div>
+                    <div class="obs-cta-mock-kpis">
+                        <div><small>@T("Margen neto", "Net margin")</small><strong>12,4%</strong><b class="up"><i class="fas fa-caret-up"></i> 3,1 pp</b></div>
+                        <div><small>ROE</small><strong>18,7%</strong><b class="up"><i class="fas fa-caret-up"></i> 2,4 pp</b></div>
+                        <div><small>@T("Endeudamiento", "Leverage")</small><strong>46%</strong><b class="down"><i class="fas fa-caret-down"></i> 5 pp</b></div>
+                    </div>
+                    <div class="obs-cta-mock-bars">
+                        <i style="height:42%"></i><i style="height:58%"></i><i style="height:51%"></i><i style="height:67%"></i><i style="height:74%"></i><i style="height:88%"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

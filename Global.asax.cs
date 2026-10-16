@@ -18,12 +18,19 @@ namespace bufinsweb
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            bufinsweb.Services.UsoService.Iniciar();
+
             // Carga los datos del Observatorio en un hilo de fondo: la primera visita ya los encuentra en memoria
             Task.Run(() =>
             {
                 try { bufinsweb.Services.ObservatorioService.Precargar(); }
                 catch (Exception) { /* si faltan los archivos, el error aparecerá al visitar /observatorio */ }
             });
+        }
+
+        protected void Application_End()
+        {
+            bufinsweb.Services.UsoService.Vaciar();
         }
 
         protected void Application_AcquireRequestState(object sender, EventArgs e)

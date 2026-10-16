@@ -382,3 +382,4 @@ App_Data/observatorio/etl.lock
 App_Data/observatorio/etl_status.json
 Tools/ObservatorioEtl/bin/
 Tools/ObservatorioEtl/obj/
+App_Data/observatorio/uso/

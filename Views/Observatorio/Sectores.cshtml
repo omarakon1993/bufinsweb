@@ -100,6 +100,14 @@
                             </div>
                         </div>
 
+                        <details class="obs-field obs-sig" id="fSigBox">
+                            <summary>@T("Señales de interés", "Signals of interest") <span class="obs-count-badge" id="fSigCount" hidden>0</span></summary>
+                            <p class="obs-hint">@T("Se calculan con cifras públicas del año elegido. Son indicios, no recomendaciones.", "Computed from public figures for the chosen year. They are hints, not recommendations.")</p>
+                            <div id="fSig" class="obs-sigchips"></div>
+                            <label for="fPot" class="mt-2">@T("Potencial mínimo", "Minimum potential") <output id="fPotOut">0</output></label>
+                            <input id="fPot" type="range" min="0" max="90" step="5" value="0" class="form-range" />
+                        </details>
+
                         <button type="button" class="btn obs-btn-ghost w-100 d-lg-none mt-2" id="obsResetMobile">@T("Limpiar filtros", "Clear filters")</button>
                     </div>
                 </div>
@@ -135,7 +143,13 @@
                                 <h3><span id="obsTotal">—</span> @T("empresas", "companies")</h3>
                                 <div class="obs-actions">
                                     <a class="btn obs-btn-primary btn-sm" id="obsCompare" href="/observatorio/comparar" hidden><i class="fas fa-balance-scale me-2"></i><span>@T("Comparar", "Compare")</span></a>
-                                    <a class="btn obs-btn-ghost btn-sm" id="obsExport" href="#"><i class="fas fa-file-csv me-2"></i>@T("Exportar CSV", "Export CSV")</a>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn obs-btn-ghost btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-download me-2"></i>@T("Descargar", "Download")</button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" id="obsExportX" href="#"><i class="fas fa-file-excel me-2"></i>Excel (.xlsx)</a></li>
+                                            <li><a class="dropdown-item" id="obsExport" href="#"><i class="fas fa-file-csv me-2"></i>CSV</a></li>
+                                        </ul>
+                                    </div>
                                     <a class="btn obs-btn-ghost btn-sm" id="obsShare" href="#"><i class="fas fa-link me-2"></i>@T("Copiar enlace", "Copy link")</a>
                                 </div>
                             </div>
@@ -145,6 +159,7 @@
                                         <tr>
                                             <th></th>
                                             <th data-o="nombre">@T("Empresa", "Company")</th>
+                                            <th data-o="potencial" class="text-end" title="@T("Puntaje 0-100 según las señales de interés", "0-100 score from the signals of interest")">@T("Potencial", "Potential")</th>
                                             <th data-o="ing" class="text-end">@T("Ingresos", "Revenue")</th>
                                             <th data-o="crec" class="text-end">@T("Crec.", "Growth")</th>
                                             <th data-o="uop" class="text-end">@T("U. operativa", "Op. profit")</th>
@@ -165,11 +180,48 @@
                     </div>
 
                     <div class="tab-pane fade" id="tabDist">
-                        <div class="row g-4">
-                            <div class="col-md-5"><div class="obs-card"><div class="obs-card-head"><h3>@T("Empresas por tamaño", "Companies by size")</h3></div><div class="obs-chart"><canvas id="chTam"></canvas></div></div></div>
-                            <div class="col-md-7"><div class="obs-card"><div class="obs-card-head"><h3>@T("Ingresos por departamento", "Revenue by department")</h3><span class="obs-hint">@T("Clic para filtrar", "Click to filter")</span></div><div class="obs-chart"><canvas id="chDepto"></canvas></div></div></div>
-                            <div class="col-12"><div class="obs-card"><div class="obs-card-head"><h3>@T("Actividades con más ingresos", "Top activities by revenue")</h3><span class="obs-hint">@T("Clic para filtrar", "Click to filter")</span></div><div class="obs-chart obs-chart-lg"><canvas id="chDiv"></canvas></div></div></div>
-                            <div class="col-12"><div class="obs-card"><div class="obs-card-head"><h3>@T("Margen EBITDA vs. endeudamiento", "EBITDA margin vs. leverage")</h3><span class="obs-hint">@T("Las 300 mayores · tamaño = activos · clic abre la ficha", "Top 300 · size = assets · click opens profile")</span></div><div class="obs-chart obs-chart-lg"><canvas id="chScatter"></canvas></div></div></div>
+                        <div class="obs-seg obs-seg-wrap mb-3" id="distView" role="group" aria-label="@T("Tipo de vista", "View type")">
+                            <button type="button" data-v="tam" class="active">@T("Tamaño", "Size")</button>
+                            <button type="button" data-v="depto">@T("Departamentos", "Departments")</button>
+                            <button type="button" data-v="act">@T("Actividades", "Activities")</button>
+                            <button type="button" data-v="disp">@T("Dispersión", "Scatter")</button>
+                        </div>
+                        <div class="obs-dist" data-view="tam">
+                            <div class="row g-4">
+                                <div class="col-md-5"><div class="obs-card"><div class="obs-card-head"><h3>@T("Empresas por tamaño", "Companies by size")</h3><span class="obs-hint">@T("Clic para filtrar", "Click to filter")</span></div><div class="obs-chart"><canvas id="chTam"></canvas></div></div></div>
+                                <div class="col-md-7"><div class="obs-card">
+                                    <div class="obs-card-head"><h3>@T("Cómo varía cada indicador según el tamaño", "How each ratio varies with size")</h3></div>
+                                    <div class="obs-seg obs-seg-wrap obs-seg-sm mb-2" id="boxMetric">
+                                        <button type="button" data-m="mebitda" class="active">@T("Margen EBITDA", "EBITDA margin")</button>
+                                        <button type="button" data-m="mneto">@T("Margen neto", "Net margin")</button>
+                                        <button type="button" data-m="endeud">@T("Endeudamiento", "Leverage")</button>
+                                        <button type="button" data-m="liquidez">@T("Liquidez", "Liquidity")</button>
+                                        <button type="button" data-m="score">Score</button>
+                                    </div>
+                                    <div class="obs-chart"><canvas id="chBox"></canvas></div>
+                                    <p class="obs-hint mt-2">@T("La caja cubre del percentil 25 al 75, la línea blanca es la mediana y los bigotes llegan al percentil 10 y 90.", "The box spans the 25th to 75th percentile, the white line is the median and whiskers reach the 10th and 90th percentile.")</p>
+                                </div></div>
+                            </div>
+                        </div>
+                        <div class="obs-dist" data-view="depto" hidden>
+                            <div class="obs-card">
+                                <div class="obs-card-head"><h3>@T("Mapa de departamentos", "Department map")</h3><span class="obs-hint">@T("Mapa esquemático · clic para filtrar", "Schematic map · click to filter")</span></div>
+                                <div class="obs-seg obs-seg-sm mb-3" id="mapMetric">
+                                    <button type="button" data-m="ing" class="active">@T("Ingresos", "Revenue")</button>
+                                    <button type="button" data-m="mebitda">@T("Margen EBITDA", "EBITDA margin")</button>
+                                    <button type="button" data-m="n">@T("N.º de empresas", "No. of companies")</button>
+                                </div>
+                                <div id="deptoMap" class="obs-tilemap"></div>
+                            </div>
+                        </div>
+                        <div class="obs-dist" data-view="act" hidden>
+                            <div class="obs-card">
+                                <div class="obs-card-head"><h3>@T("Actividades con más ingresos", "Top activities by revenue")</h3><span class="obs-hint">@T("El área es proporcional a los ingresos · clic para filtrar", "Area is proportional to revenue · click to filter")</span></div>
+                                <div id="treemap" class="obs-treemap"></div>
+                            </div>
+                        </div>
+                        <div class="obs-dist" data-view="disp" hidden>
+                            <div class="obs-card"><div class="obs-card-head"><h3>@T("Margen EBITDA vs. endeudamiento", "EBITDA margin vs. leverage")</h3><span class="obs-hint">@T("Las 300 mayores · tamaño = activos · clic abre la ficha", "Top 300 · size = assets · click opens profile")</span></div><div class="obs-chart obs-chart-lg"><canvas id="chScatter"></canvas></div></div>
                         </div>
                     </div>
                 </div>

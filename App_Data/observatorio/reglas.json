@@ -1,0 +1,14 @@
+{
+  "descripcion": "Reglas del puntaje de prospecto (0-100). Editable: el sitio las recarga al guardar el archivo. Suma de puntos de tamaño + señales; máximo 100.",
+  "tamano": { "S": 0, "M": 15, "L": 20, "XL": 10 },
+  "senales": {
+    "liquidez":   { "puntos": 15, "tipo": "presion",     "es": "Liquidez baja",            "en": "Low liquidity",          "regla": "Liquidez corriente menor a 1" },
+    "ktneg":      { "puntos": 10, "tipo": "presion",     "es": "Capital de trabajo negativo", "en": "Negative working capital", "regla": "Capital de trabajo neto menor a 0" },
+    "deuda":      { "puntos": 15, "tipo": "presion",     "es": "Deuda alta",               "en": "High debt",              "regla": "Deuda mayor a 4 veces el EBITDA (o EBITDA no positivo con deuda)" },
+    "ebitdaneg":  { "puntos": 10, "tipo": "presion",     "es": "EBITDA negativo",          "en": "Negative EBITDA",        "regla": "EBITDA menor a 0" },
+    "perdida":    { "puntos": 5,  "tipo": "presion",     "es": "Pérdida del ejercicio",    "en": "Net loss",               "regla": "Utilidad neta menor a 0" },
+    "reorg":      { "puntos": 10, "tipo": "presion",     "es": "En reorganización",        "en": "In restructuring",       "regla": "Estado de reorganización, reestructuración o concordato" },
+    "crece":      { "puntos": 20, "tipo": "oportunidad", "es": "Crecimiento sostenido",    "en": "Sustained growth",       "regla": "Ingresos crecen más de 20 % dos años seguidos" },
+    "rentable":   { "puntos": 5,  "tipo": "oportunidad", "es": "Rentable",                 "en": "Profitable",             "regla": "Margen EBITDA mayor a 10 % con ingresos positivos" }
+  }
+}

@@ -215,7 +215,7 @@ namespace ObservatorioEtl
         public static readonly string[] Metricas =
         {
             "ing", "ub", "gop", "uop", "ebitda", "un", "act", "pas", "pat", "ktn", "deuda", "cxc", "inv", "cxp", "fco",
-            "caja", "costo", "da", "cfin", "ac", "pc", "ppye"
+            "caja", "costo", "da", "cfin", "ac", "pc", "ppye", "gacum"
         };
 
         public static string Norm(string s)
@@ -390,6 +390,15 @@ namespace ObservatorioEtl
             for (var i = 0; i < kv.Length; i += 2) p.Add(new KeyValuePair<string, string>(kv[i], kv[i + 1]));
             var ser = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
             return ser.DeserializeObject(Encoding.UTF8.GetString(Get(Url(ds, "json", p))));
+        }
+
+        /// <summary>Consulta JSON de cualquier dataset de datos.gov.co por su id (datos complementarios).</summary>
+        public object JsonId(string id, params string[] kv)
+        {
+            var q = new List<string>();
+            for (var i = 0; i < kv.Length; i += 2) q.Add(kv[i] + "=" + Uri.EscapeDataString(kv[i + 1]));
+            var ser = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+            return ser.DeserializeObject(Encoding.UTF8.GetString(Get(Base + "/resource/" + id + ".json?" + string.Join("&", q))));
         }
 
         public long RowsUpdatedAt(string ds)
@@ -692,6 +701,7 @@ namespace ObservatorioEtl
             // 6) Publicación atómica
             _e.Paso("Publicando archivos", 94);
             Publicar(lista, years, fuenteAct);
+            Complementos(lista, years);
             _e.Termina("ok", string.Format("Datos actualizados: {0:N0} empresas, años {1}–{2}, fuente {3}. Duración {4:0} min.", lista.Count, years.First(), years.Last(), fuenteAct, sw.Elapsed.TotalMinutes));
         }
 
@@ -805,6 +815,67 @@ namespace ObservatorioEtl
             }
             var antiguo = Ruta("empresas.json");
             if (File.Exists(antiguo)) { try { File.Delete(antiguo); } catch (IOException) { } }
+        }
+
+        // ---------------------------------------------------------------- datos complementarios (no críticos)
+
+        private void Complementos(List<Emp> lista, List<int> years)
+        {
+            _e.Paso("Contratación estatal y TRM", 96);
+            try { Contratos(lista, years); } catch (Exception ex) { _e.Log("SECOP II no disponible (se conserva el archivo anterior): " + ex.GetBaseException().Message); }
+            try { Trm(years); } catch (Exception ex) { _e.Log("TRM no disponible (se conserva el archivo anterior): " + ex.GetBaseException().Message); }
+        }
+
+        /// <summary>Contratos con el Estado (SECOP II) por NIT de proveedor, de los últimos 3 años calendario.</summary>
+        private void Contratos(List<Emp> lista, List<int> years)
+        {
+            var nits = new HashSet<string>(lista.Select(e => e.Nit));
+            var desde = (years.Last() - 2) + "-01-01T00:00:00";
+            var res = new SortedDictionary<string, long[]>(StringComparer.Ordinal);
+            const double TopeValor = 2e13;   // 20 billones de COP por proveedor: por encima es casi seguro un error de digitación en la fuente
+            for (var offset = 0; ; offset += 50000)
+            {
+                var pag = (object[])_s.JsonId("jbjy-vk9h", "$select", "documento_proveedor,count(*) as n,sum(valor_del_contrato) as v",
+                    "$where", "fecha_de_firma >= '" + desde + "' AND tipodocproveedor='NIT'", "$group", "documento_proveedor",
+                    "$order", "documento_proveedor", "$limit", "50000", "$offset", offset.ToString());
+                foreach (Dictionary<string, object> r in pag)
+                {
+                    if (!r.ContainsKey("documento_proveedor") || r["documento_proveedor"] == null) continue;   // grupos sin NIT
+                    var nit = Convert.ToString(r["documento_proveedor"]).Trim();
+                    if (!nits.Contains(nit)) continue;
+                    double v = 0; if (r.ContainsKey("v") && r["v"] != null) double.TryParse(Convert.ToString(r["v"]), NumberStyles.Float, CultureInfo.InvariantCulture, out v);
+                    res[nit] = new[] { r.ContainsKey("n") ? Convert.ToInt64(r["n"]) : 0L, v > 0 && v <= TopeValor ? (long)v : 0L };
+                }
+                if (pag.Length < 50000) break;
+            }
+            var sb = new StringBuilder("{\"fuente\":" + Esc("SECOP II - Contratos Electrónicos (datos.gov.co, Agencia Nacional de Contratación Pública)") +
+                ",\"desde\":" + Esc(desde.Substring(0, 10)) + ",\"generado\":" + Esc(DateTime.Now.ToString("yyyy-MM-dd")) + ",\"d\":{");
+            sb.Append(string.Join(",", res.Select(kv => Esc(kv.Key) + ":[" + kv.Value[0] + "," + kv.Value[1] + "]")));
+            sb.Append("}}");
+            File.WriteAllText(Ruta("contratos.json.tmp"), sb.ToString(), new UTF8Encoding(false));
+            Mover(Ruta("contratos.json.tmp"), Ruta("contratos.json"));
+            _e.Log("SECOP II: " + res.Count.ToString("N0") + " empresas del universo con contratos desde " + desde.Substring(0, 4));
+        }
+
+        /// <summary>TRM promedio y de cierre de cada año (Superintendencia Financiera).</summary>
+        private void Trm(List<int> years)
+        {
+            var prom = ((object[])_s.JsonId("32sa-8pi3", "$select", "date_extract_y(vigenciadesde) as y,avg(valor) as trm", "$group", "y", "$order", "y"))
+                .Cast<Dictionary<string, object>>().ToDictionary(r => int.Parse(Convert.ToString(r["y"])), r => double.Parse(Convert.ToString(r["trm"]), CultureInfo.InvariantCulture));
+            var partes = new List<string>();
+            foreach (var y in years)
+            {
+                double cierre = 0;
+                var ult = (object[])_s.JsonId("32sa-8pi3", "$select", "valor", "$where", "vigenciadesde <= '" + y + "-12-31T23:59:59' AND vigenciadesde >= '" + y + "-12-01T00:00:00'",
+                    "$order", "vigenciadesde DESC", "$limit", "1");
+                if (ult.Length > 0) double.TryParse(Convert.ToString(((Dictionary<string, object>)ult[0])["valor"]), NumberStyles.Float, CultureInfo.InvariantCulture, out cierre);
+                double p; if (!prom.TryGetValue(y, out p)) continue;
+                partes.Add("\"" + y + "\":{\"prom\":" + p.ToString("0.##", CultureInfo.InvariantCulture) + ",\"cierre\":" + cierre.ToString("0.##", CultureInfo.InvariantCulture) + "}");
+            }
+            var json = "{\"fuente\":" + Esc("Superintendencia Financiera de Colombia - TRM (datos.gov.co 32sa-8pi3)") + ",\"generado\":" + Esc(DateTime.Now.ToString("yyyy-MM-dd")) + ",\"trm\":{" + string.Join(",", partes) + "}}";
+            File.WriteAllText(Ruta("macro.json.tmp"), json, new UTF8Encoding(false));
+            Mover(Ruta("macro.json.tmp"), Ruta("macro.json"));
+            _e.Log("TRM: " + partes.Count + " años");
         }
 
         /// <summary>Reemplaza el destino con reintentos (el sitio puede tener el archivo abierto un instante).</summary>

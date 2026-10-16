@@ -4,4 +4,21 @@
 <meta property="og:description" content="@ViewBag.MetaDescription" />
 <meta property="og:type" content="@(ViewBag.OgType ?? "website")" />
 <meta property="og:url" content="@ViewBag.Canonical" />
+@{
+    var og = (string)ViewBag.OgImage;
+    var ogAbs = string.IsNullOrEmpty(og) ? null : Request.Url.GetLeftPart(UriPartial.Authority) + og;
+}
+@if (ogAbs != null)
+{
+    <meta property="og:image" content="@ogAbs" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="@ogAbs" />
+}
+else
+{
+    <meta name="twitter:card" content="summary" />
+}
+<meta name="twitter:title" content="@ViewBag.Title" />
 @Styles.Render("~/bundles/obs-css")

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Web;
+using bufinsweb.Helpers;
 using System.Web.Mvc;
 using bufinsweb.Filters;
 using bufinsweb.Models.Observatorio;
@@ -38,6 +40,7 @@ namespace bufinsweb.Controllers
         /// <summary>Inicio: buscador de empresas y acceso a los tres módulos.</summary>
         public ActionResult Index()
         {
+            Vista("vista_home", "");
             ViewBag.Datos = _svc.Datos;
             ViewBag.Top = _svc.TopNacional(10);
             return View();
@@ -46,6 +49,7 @@ namespace bufinsweb.Controllers
         /// <summary>Análisis por sector (benchmark).</summary>
         public ActionResult Sectores()
         {
+            Vista("vista_sectores", "");
             ViewBag.Datos = _svc.Datos;
             return View();
         }
@@ -53,17 +57,86 @@ namespace bufinsweb.Controllers
         /// <summary>Comparación de empresas (hasta 4).</summary>
         public ActionResult Comparador()
         {
+            Vista("vista_comparar", "");
             ViewBag.Datos = _svc.Datos;
             return View();
         }
 
         /// <summary>Análisis individual de una empresa.</summary>
-        public ActionResult Empresa(string nit)
+        public ActionResult Empresa(string id)
         {
-            var e = _svc.PorNit(nit);
+            var e = _svc.PorNit(ObservatorioService.NitDeId(id));
             if (e == null) return HttpNotFound();
+            // una sola URL por empresa: /observatorio/empresa/{nit}-{nombre}; las demás redirigen (301)
+            var canon = ObservatorioService.UrlEmpresa(e);
+            if (!string.Equals(Request.Path, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.Url.Query);
+            Vista("vista_empresa", e.Ciiu);
             ViewBag.Datos = _svc.Datos;
+            ViewBag.Narrativa = _svc.NarrativaEmpresa(e);
+            ViewBag.OgImage = "/observatorio/og/" + e.Nit + "?v=" + _svc.Datos.Version;
             return View(e);
+        }
+
+        /// <summary>Informe imprimible (A4) de una empresa: se guarda como PDF desde el navegador.</summary>
+        public ActionResult Informe(string id)
+        {
+            var e = _svc.PorNit(ObservatorioService.NitDeId(id));
+            if (e == null) return HttpNotFound();
+            Vista("informe_pdf", e.Ciiu);
+            ViewBag.Datos = _svc.Datos;
+            ViewBag.Narrativa = _svc.NarrativaEmpresa(e);
+            return View(e);
+        }
+
+        /// <summary>Rankings: sin parámetros muestra el índice; con métrica, el Top 100 (nacional, sector, departamento o ciudad).</summary>
+        public ActionResult Ranking(string metrica, string tipo, string clave)
+        {
+            ViewBag.Datos = _svc.Datos;
+            if (string.IsNullOrEmpty(metrica))
+            {
+                Vista("vista_ranking", "indice");
+                ViewBag.Hub = _svc.HubRankings();
+                return View("RankingHub");
+            }
+            var r = _svc.Ranking(metrica, tipo, clave, 100);
+            if (r == null) return HttpNotFound();
+            Vista("vista_ranking", metrica);
+            return View(r);
+        }
+
+        [Throttle(Grupo = "obs-og", Max = 40)]
+        [OutputCache(Duration = 86400, VaryByParam = "v;id")]
+        public ActionResult Og(string id)
+        {
+            var d = _svc.Datos;
+            var e = _svc.PorNit(ObservatorioService.NitDeId(id));
+            if (e == null) return HttpNotFound();
+            var yv = e.En(d.MaxAnio, d.MinAnio) ?? e.Y.LastOrDefault(z => z != null);
+            if (yv == null) return HttpNotFound();
+            var cat = CiiuCatalogo.Actual;
+            var sal = Salud.Calcular(yv);
+            var kpis = new List<OgImage.Kpi>
+            {
+                new OgImage.Kpi { Etiqueta = "Ingresos", Valor = ObservatorioFormat.Moneda(yv[M.Ing] / 1000.0) },
+                new OgImage.Kpi { Etiqueta = "EBITDA", Valor = ObservatorioFormat.Moneda(yv[M.Ebitda] / 1000.0) },
+                new OgImage.Kpi { Etiqueta = "Margen EBITDA", Valor = ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(yv)) },
+                new OgImage.Kpi { Etiqueta = "Score de salud", Valor = sal.Total.ToString("0") + " / 100" }
+            };
+            var png = OgImage.Generar(e.Razon, cat.Nombre(e.Ciiu) + " · " + e.Ciudad, kpis, "NIT " + e.Nit + " · Año " + d.MaxAnio + " · bufins.com/observatorio", Server.MapPath("~/Assets/images/Bufins_Logofinal.png"));
+            return File(png, "image/png");
+        }
+
+        [HttpPost]
+        [Throttle(Grupo = "obs-evento", Max = 120)]
+        public ActionResult Evento(string t, string k)
+        {
+            if (!UsoService.EsBot(Request.UserAgent)) UsoService.Contar((t ?? "").Trim(), k);
+            return new HttpStatusCodeResult(204);
+        }
+
+        private void Vista(string tipo, string clave)
+        {
+            if (Request.HttpMethod == "GET" && !UsoService.EsBot(Request.UserAgent)) UsoService.Contar(tipo, clave);
         }
 
         /// <summary>Página indexable por sección / división / clase CIIU.</summary>
@@ -71,6 +144,8 @@ namespace bufinsweb.Controllers
         {
             var s = _svc.Nodo(slug);
             if (s == null) return HttpNotFound();
+            Vista("vista_sector", slug);
+            ViewBag.Narrativa = _svc.NarrativaNodo(s);
             ViewBag.Datos = _svc.Datos;
             return View(s);
         }
@@ -107,8 +182,30 @@ namespace bufinsweb.Controllers
         }
 
         [Throttle(Grupo = "obs-exportar", Max = 6)]
+        public ActionResult ExportarXlsx()
+        {
+            Vista2("export_xlsx", "sector");
+            var f = LeerFiltro();
+            var bytes = _svc.XlsxSector(f);
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "bufins-sector-" + (f.Anio ?? _svc.Datos.MaxAnio) + ".xlsx");
+        }
+
+        [Throttle(Grupo = "obs-exportar-empresa-xlsx", Max = 15)]
+        public ActionResult ExportarEmpresaXlsx(string nit)
+        {
+            var e = _svc.PorNit(nit);
+            if (e == null) return HttpNotFound();
+            Vista2("export_xlsx", "empresa");
+            var bytes = _svc.XlsxEmpresa(nit, ObservatorioRubros.Etiqueta, ObservatorioRubros.Orden.ToList());
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "bufins-" + e.Nit + ".xlsx");
+        }
+
+        private void Vista2(string tipo, string clave) { if (!UsoService.EsBot(Request.UserAgent)) UsoService.Contar(tipo, clave); }
+
+        [Throttle(Grupo = "obs-exportar", Max = 6)]
         public ActionResult Exportar()
         {
+            Vista2("export_csv", "sector");
             int anio;
             var filas = _svc.Exportar(LeerFiltro(), out anio);
             var sb = new StringBuilder();
@@ -124,6 +221,7 @@ namespace bufinsweb.Controllers
         {
             var e = _svc.PorNit(nit);
             if (e == null) return HttpNotFound();
+            Vista2("export_csv", "empresa");
             var orden = ObservatorioRubros.Orden;
             var filas = _svc.ExportarEmpresa(nit, ObservatorioRubros.Etiqueta, orden);
             var sb = new StringBuilder();
@@ -158,7 +256,9 @@ namespace bufinsweb.Controllers
             f.IngMax = Decimal(q["imax"]);
             f.Resultado = q["res"] == "utilidad" || q["res"] == "perdida" ? q["res"] : null;
             var orden = q["o"];
-            f.Orden = new[] { "nombre", "ing", "uop", "ebitda", "un", "act", "deuda", "mbruto", "moper", "mebitda", "deudaebitda", "ktingresos", "crec" }.Contains(orden) ? orden : "ing";
+            f.Orden = new[] { "nombre", "ing", "uop", "ebitda", "un", "act", "deuda", "mbruto", "moper", "mebitda", "deudaebitda", "ktingresos", "crec", "potencial", "score" }.Contains(orden) ? orden : "ing";
+            f.Senales = Lista(q["sn"]).Where(x => x.Length <= 20 && x.All(c => char.IsLetterOrDigit(c))).Take(10).ToList();
+            f.PotencialMin = Math.Max(0, Math.Min(100, Entero(q["pot"]) ?? 0));
             f.Desc = q["asc"] != "1";
             f.Pagina = Entero(q["p"]) ?? 1;
             f.Tamano = Entero(q["ps"]) ?? 25;

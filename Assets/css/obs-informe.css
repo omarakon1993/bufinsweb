@@ -1,0 +1,50 @@
+/* Informe imprimible del Observatorio (A4). Pantalla: hoja centrada; impresión: sin barra ni márgenes extra. */
+:root { --ink: #160933; --brand: #583AFF; --cyan: #01B3AB; --muted: #5b5670; --line: #e4e1ee; --soft: #f6f4fd; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #ecebf3; color: var(--ink); font-family: Inter, system-ui, "Segoe UI", Arial, sans-serif; font-size: 13px; line-height: 1.5; }
+.inf-bar { max-width: 210mm; margin: 12px auto 0; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: #fff; border-radius: 10px; font-size: 13px; }
+.inf-bar a { color: var(--brand); text-decoration: none; font-weight: 600; }
+.inf-bar button { background: var(--brand); color: #fff; border: 0; border-radius: 8px; padding: 8px 16px; font-weight: 600; cursor: pointer; }
+.inf-bar span { color: var(--muted); }
+.inf { max-width: 210mm; margin: 12px auto 24px; background: #fff; padding: 16mm 15mm; box-shadow: 0 2px 18px rgba(22, 9, 51, .08); }
+.inf-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin-bottom: 18px; font-size: 12px; color: var(--muted); text-align: right; }
+.inf-logo { height: 34px; width: auto; }
+h1 { font-size: 24px; margin: 0 0 4px; line-height: 1.2; }
+h2 { font-size: 15px; margin: 20px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); break-after: avoid; }
+h2 small { font-weight: 400; color: var(--muted); font-size: 12px; }
+p { margin: 0 0 8px; }
+.inf-sub { color: var(--muted); margin-bottom: 14px; }
+.inf-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.inf-kpis > div { background: var(--soft); border-radius: 8px; padding: 8px 10px; }
+.inf-kpis span { display: block; font-size: 11px; color: var(--muted); }
+.inf-kpis strong { display: block; font-size: 15px; }
+.inf-kpis em { font-style: normal; font-size: 11px; color: var(--muted); }
+.inf-score { display: flex; gap: 18px; align-items: center; margin-top: 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; break-inside: avoid; }
+.inf-score-n { text-align: center; min-width: 90px; }
+.inf-score-n strong { font-size: 40px; line-height: 1; color: var(--brand); }
+.inf-score-n span { color: var(--muted); }
+.inf-score-n em { display: block; font-style: normal; font-weight: 600; margin-top: 2px; }
+.inf-score-bars { flex: 1; }
+.inf-score-bars > div { display: grid; grid-template-columns: 110px 1fr 40px; gap: 8px; align-items: center; margin-bottom: 4px; }
+.inf-score-bars i { height: 8px; background: var(--soft); border-radius: 4px; overflow: hidden; display: block; }
+.inf-score-bars b { display: block; height: 100%; background: var(--cyan); }
+.inf-score-bars small { color: var(--muted); text-align: right; }
+.inf-score-bars p { margin: 6px 0 0; color: var(--muted); }
+.inf-chart { height: 220px; position: relative; break-inside: avoid; }
+.inf-table { width: 100%; border-collapse: collapse; font-size: 12px; break-inside: avoid; }
+.inf-table th, .inf-table td { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: right; }
+.inf-table th:first-child, .inf-table td:first-child { text-align: left; }
+.inf-table thead th { background: var(--soft); font-weight: 600; }
+.inf-foot { margin-top: 22px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--muted); }
+@page { size: A4; margin: 10mm; }
+@media print {
+    body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none !important; }
+    .inf { margin: 0; padding: 0; box-shadow: none; max-width: none; }
+}
+@media (max-width: 640px) {
+    .inf { padding: 14px; }
+    .inf-kpis { grid-template-columns: repeat(2, 1fr); }
+    .inf-score { flex-direction: column; align-items: stretch; }
+    .inf-table { display: block; overflow-x: auto; }
+}

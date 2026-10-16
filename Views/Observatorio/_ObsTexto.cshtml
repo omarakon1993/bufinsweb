@@ -1,0 +1,26 @@
+@* Texto automático (resumen en palabras) y preguntas frecuentes, generados en servidor para que los buscadores los lean. Requiere ViewBag.Narrativa. *@
+@using bufinsweb.Helpers
+@using bufinsweb.Services
+@{
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var n = ViewBag.Narrativa as ObservatorioService.Narrativa;
+}
+@if (n != null)
+{
+    <section class="obs-card mt-4 obs-texto" aria-labelledby="obsTextoH">
+        <div class="obs-card-head"><h2 class="obs-h3" id="obsTextoH">@T("En palabras", "In plain words")</h2></div>
+        <div class="obs-prose">
+            @foreach (var p in n.Parrafos) { <p>@p</p> }
+        </div>
+        <h3 class="obs-faq-title">@T("Preguntas frecuentes", "Frequently asked questions")</h3>
+        <div class="obs-faq">
+            @foreach (var f in n.Faqs)
+            {
+                <details>
+                    <summary>@f.P</summary>
+                    <p>@f.R</p>
+                </details>
+            }
+        </div>
+    </section>
+}

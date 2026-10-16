@@ -55,6 +55,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
     </Reference>
@@ -159,6 +160,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\ObservatorioService.cs" />
+    <Compile Include="Services\ObservatorioService.Extras.cs" />
+    <Compile Include="Services\UsoService.cs" />
+    <Compile Include="Services\ObservatorioService.Export.cs" />
+    <Compile Include="Helpers\XlsxWriter.cs" />
+    <Compile Include="Helpers\OgImage.cs" />
+    <Compile Include="Helpers\ObservatorioSeo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\css\bootstrap.min.css" />
@@ -204,11 +211,22 @@
     <Content Include="Assets\js\obs-comparar.js" />
     <Content Include="Views\Observatorio\_ObsNav.cshtml" />
     <Content Include="Views\Observatorio\_ObsHead.cshtml" />
+    <Content Include="Views\Observatorio\_ObsCta.cshtml" />
+    <Content Include="Views\Observatorio\_ObsTexto.cshtml" />
+    <Content Include="Views\Observatorio\Ranking.cshtml" />
+    <Content Include="Views\Observatorio\RankingHub.cshtml" />
+    <Content Include="Views\Observatorio\Informe.cshtml" />
+    <Content Include="Assets\js\obs-informe.js" />
+    <Content Include="Assets\css\obs-informe.css" />
     <Content Include="Views\Observatorio\Sectores.cshtml" />
     <Content Include="Views\Observatorio\Comparador.cshtml" />
     <Content Include="Views\Observatorio\Nodo.cshtml" />
     <Content Include="App_Data\observatorio\ciiu.json" />
     <Content Include="App_Data\observatorio\meta.json" />
+    <Content Include="App_Data\observatorio\contratos.json" />
+    <Content Include="App_Data\observatorio\macro.json" />
+    <Content Include="App_Data\observatorio\ipc.json" />
+    <Content Include="App_Data\observatorio\reglas.json" />
     <Content Include="App_Data\observatorio\empresas.bin" />
     <Content Include="App_Data\observatorio\detalle.*.bin" />
     <Content Include="App_Data\observatorio\detalle.*.idx.json" />
@@ -223,10 +241,10 @@
     <Content Include="App_GlobalResources\Strings.en-US.resx" />
   </ItemGroup>
   <ItemGroup>
-
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\bufins NO USAR.pubxml" />
     <None Include="Properties\PublishProfiles\bufins.com - Web Deploy.pubxml" />
   </ItemGroup>
   <PropertyGroup>

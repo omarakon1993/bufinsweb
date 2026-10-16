@@ -1,45 +1,97 @@
+using System;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using bufinsweb.Models.Observatorio;
 using bufinsweb.Services;
 
 namespace bufinsweb.Controllers
 {
     public class SeoController : Controller
     {
+        private const int PorArchivo = 10000;   // empresas por archivo de sitemap (el límite del protocolo es 50.000)
+
         public ActionResult Robots()
         {
             var baseUrl = BaseUrl();
-            var txt = "User-agent: *\nAllow: /\nDisallow: /observatorio/api/\n\nSitemap: " + baseUrl + "/sitemap.xml\n";
+            var txt = "User-agent: *\nAllow: /\nDisallow: /observatorio/api/\nDisallow: /observatorio/informe/\n\nSitemap: " + baseUrl + "/sitemap.xml\n";
             return Content(txt, "text/plain", Encoding.UTF8);
         }
 
+        /// <summary>Índice de sitemaps: páginas, sectores, rankings y empresas (en trozos de 10.000).</summary>
         public ActionResult Sitemap()
         {
-            var cached = HttpRuntime.Cache["seo:sitemap"] as string;
-            if (cached == null)
+            var svc = new ObservatorioService();
+            var d = svc.Datos;
+            var b = BaseUrl();
+            var lm = Fecha(d);
+            var n = (int)Math.Ceiling(d.Empresas.Count(x => x.En(d.MaxAnio, d.MinAnio) != null) / (double)PorArchivo);
+            var sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+            Parte(sb, b + "/sitemap-paginas.xml", lm);
+            Parte(sb, b + "/sitemap-sectores.xml", lm);
+            Parte(sb, b + "/sitemap-rankings.xml", lm);
+            for (var i = 1; i <= n; i++) Parte(sb, b + "/sitemap-empresas-" + i + ".xml", lm);
+            sb.Append("</sitemapindex>");
+            return Xml(sb.ToString());
+        }
+
+        public ActionResult SitemapParte(string archivo)
+        {
+            var svc = new ObservatorioService();
+            var d = svc.Datos;
+            var b = BaseUrl();
+            var lm = Fecha(d);
+            var sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+            if (archivo == "sitemap-paginas")
             {
-                var svc = new ObservatorioService();
-                var d = svc.Datos;
-                var b = BaseUrl();
-                var fecha = d.Meta.FuenteActualizado;
-                var sb = new StringBuilder();
-                sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
                 Add(sb, b + "/", null, "1.0");
                 Add(sb, b + "/Home/About", null, "0.6");
                 Add(sb, b + "/Home/Contact", null, "0.6");
-                Add(sb, b + "/observatorio", fecha, "0.9");
-                Add(sb, b + "/observatorio/sectores", fecha, "0.8");
-                Add(sb, b + "/observatorio/comparar", fecha, "0.7");
-                foreach (var s in svc.SlugsSector()) Add(sb, b + "/observatorio/sector/" + s, fecha, "0.7");
-                foreach (var e in d.Empresas.Where(x => x.En(d.MaxAnio, d.MinAnio) != null))
-                    Add(sb, b + "/observatorio/empresa/" + e.Nit, fecha, "0.5");
-                sb.Append("</urlset>");
-                cached = sb.ToString();
-                HttpRuntime.Cache.Insert("seo:sitemap", cached, null, System.DateTime.UtcNow.AddHours(12), System.Web.Caching.Cache.NoSlidingExpiration);
+                Add(sb, b + "/observatorio", lm, "0.9");
+                Add(sb, b + "/observatorio/sectores", lm, "0.8");
+                Add(sb, b + "/observatorio/comparar", lm, "0.7");
+                Add(sb, b + "/observatorio/ranking", lm, "0.8");
             }
-            return Content(cached, "application/xml", Encoding.UTF8);
+            else if (archivo == "sitemap-sectores")
+            {
+                foreach (var s in svc.SlugsSector()) Add(sb, b + "/observatorio/sector/" + s, lm, "0.7");
+            }
+            else if (archivo == "sitemap-rankings")
+            {
+                foreach (var m in ObservatorioService.Rankings)
+                    foreach (var r in svc.RutasRanking())
+                        Add(sb, b + "/observatorio/ranking/" + m.Clave + (r == "nacional" ? "" : "/" + r), lm, r == "nacional" ? "0.8" : "0.6");
+            }
+            else if (archivo.StartsWith("sitemap-empresas-", StringComparison.Ordinal))
+            {
+                int i;
+                if (!int.TryParse(archivo.Substring(17), out i) || i < 1) return HttpNotFound();
+                var lista = d.Empresas.Where(x => x.En(d.MaxAnio, d.MinAnio) != null).Skip((i - 1) * PorArchivo).Take(PorArchivo).ToList();
+                if (lista.Count == 0) return HttpNotFound();
+                foreach (var e in lista) Add(sb, b + ObservatorioService.UrlEmpresa(e), lm, "0.5");
+            }
+            else return HttpNotFound();
+            sb.Append("</urlset>");
+            return Xml(sb.ToString());
+        }
+
+        private ActionResult Xml(string xml)
+        {
+            Response.Cache.SetCacheability(HttpCacheability.Public);
+            Response.Cache.SetMaxAge(TimeSpan.FromHours(6));
+            return Content(xml, "application/xml", Encoding.UTF8);
+        }
+
+        private static string Fecha(ObservatorioDatos d)
+        {
+            DateTime t;
+            return DateTime.TryParse(d.Meta.FuenteActualizado, out t) ? t.ToString("yyyy-MM-dd") : DateTime.UtcNow.ToString("yyyy-MM-dd");
+        }
+
+        private static void Parte(StringBuilder sb, string loc, string lastmod)
+        {
+            sb.Append("<sitemap><loc>").Append(HttpUtility.HtmlEncode(loc)).Append("</loc><lastmod>").Append(lastmod).Append("</lastmod></sitemap>\n");
         }
 
         private static void Add(StringBuilder sb, string loc, string lastmod, string prio)
