@@ -137,6 +137,23 @@
     }
     function reset() { var keep = st.c; st = JSON.parse(JSON.stringify(DEF)); st.c = keep; syncControls(); refresh(); }
 
+    // ---------- atajos de prospectos ----------
+    var PRESETS = {
+        pierden: { t: ['M', 'L', 'XL'], sn: ['vendepierde'] },
+        recurrente: { t: ['M', 'L', 'XL'], sn: ['perdida2'] },
+        presion: { t: ['M', 'L', 'XL'], sn: ['perdida', 'liquidez', 'deuda'] },
+        reorg: { t: ['M', 'L', 'XL'], sn: ['reorg'] }
+    };
+    $('obsPresets').addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-p]'); if (!b) return;
+        var p = PRESETS[b.getAttribute('data-p')]; if (!p) return;
+        var keep = st.c, anio = st.anio; st = JSON.parse(JSON.stringify(DEF)); st.c = keep; st.anio = anio;
+        st.t = p.t.slice(); st.sn = p.sn.slice(); st.o = 'ing'; st.asc = false;
+        O.track('filtro_sector', 'atajo-' + b.getAttribute('data-p'));
+        syncControls(); refresh();
+        var tab = document.querySelector('[data-bs-target="#tabEmpresas"]'); if (tab) new bootstrap.Tab(tab).show();
+    });
+
     // ---------- chips ----------
     function renderChips() {
         var chips = [];

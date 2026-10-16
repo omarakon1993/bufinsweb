@@ -7,6 +7,8 @@
     "deuda":      { "puntos": 15, "tipo": "presion",     "es": "Deuda alta",               "en": "High debt",              "regla": "Deuda mayor a 4 veces el EBITDA (o EBITDA no positivo con deuda)" },
     "ebitdaneg":  { "puntos": 10, "tipo": "presion",     "es": "EBITDA negativo",          "en": "Negative EBITDA",        "regla": "EBITDA menor a 0" },
     "perdida":    { "puntos": 5,  "tipo": "presion",     "es": "Pérdida del ejercicio",    "en": "Net loss",               "regla": "Utilidad neta menor a 0" },
+    "vendepierde": { "puntos": 15, "tipo": "presion",     "es": "Vende mucho y no gana",    "en": "Big sales, no profit",   "regla": "Ingresos desde 20.000 millones (tamaño M o mayor) y utilidad neta menor o igual a 0" },
+    "perdida2":   { "puntos": 10, "tipo": "presion",     "es": "Pérdida dos años seguidos", "en": "Two years of losses",   "regla": "Utilidad neta negativa este año y el anterior" },
     "reorg":      { "puntos": 10, "tipo": "presion",     "es": "En reorganización",        "en": "In restructuring",       "regla": "Estado de reorganización, reestructuración o concordato" },
     "crece":      { "puntos": 20, "tipo": "oportunidad", "es": "Crecimiento sostenido",    "en": "Sustained growth",       "regla": "Ingresos crecen más de 20 % dos años seguidos" },
     "rentable":   { "puntos": 5,  "tipo": "oportunidad", "es": "Rentable",                 "en": "Profitable",             "regla": "Margen EBITDA mayor a 10 % con ingresos positivos" }

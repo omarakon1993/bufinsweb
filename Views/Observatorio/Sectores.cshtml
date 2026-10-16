@@ -115,6 +115,13 @@
 
             <!-- ============ CONTENIDO ============ -->
             <div class="col-lg-9">
+                <div class="obs-presets" id="obsPresets" role="group" aria-label="@T("Atajos para encontrar prospectos", "Shortcuts to find prospects")">
+                    <span>@T("Prospectos:", "Prospects:")</span>
+                    <button type="button" data-p="pierden" title="@T("Empresas medianas o grandes (ingresos desde 20.000 millones) que cerraron el año sin utilidad", "Mid-size or large companies (revenue from COP 20,000 M) that closed the year without profit")">@T("Venden mucho y no ganan", "Big sales, no profit")</button>
+                    <button type="button" data-p="recurrente" title="@T("Pérdida neta este año y el anterior", "Net loss this year and last")">@T("Pérdida dos años seguidos", "Two years of losses")</button>
+                    <button type="button" data-p="presion" title="@T("Pérdida, liquidez baja y deuda alta a la vez", "Loss, low liquidity and high debt together")">@T("Pérdida con presión de caja", "Loss with cash pressure")</button>
+                    <button type="button" data-p="reorg" title="@T("En reorganización o reestructuración", "In restructuring")">@T("En reorganización", "In restructuring")</button>
+                </div>
                 <div class="obs-chips" id="obsChips" aria-live="polite"></div>
                 <div class="obs-kpis" id="obsKpis"></div>
 

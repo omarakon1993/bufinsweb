@@ -430,3 +430,9 @@ a.obs-module:hover { transform: translateY(-6px); border-color: var(--color-seco
 .obs-lblbtn.on { background: var(--color-secondary-1); border-color: var(--color-secondary-1); color: #fff; }
 .obs-lblbtn:focus-visible { outline: 2px solid var(--color-secondary-1); outline-offset: 2px; }
 @media print { .obs-lblbtn, .obs-unit { display: none; } }
+
+/* Atajos de prospectos */
+.obs-presets { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin-bottom: 1rem; }
+.obs-presets > span { font-size: .82rem; font-weight: 700; color: var(--color-text-muted); }
+.obs-presets button { border: 1px solid var(--color-secondary-1); background: #fff; color: var(--color-secondary-1); border-radius: 999px; padding: .3rem .85rem; font-size: .82rem; font-weight: 600; }
+.obs-presets button:hover { background: var(--color-secondary-1); color: #fff; }

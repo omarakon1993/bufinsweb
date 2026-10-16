@@ -106,6 +106,8 @@ namespace bufinsweb.Services
             if ((de.HasValue && de.Value > 4) || (v[M.Ebitda] <= 0 && v[M.Deuda] > 0)) si.Claves.Add("deuda");
             if (v[M.Ebitda] < 0) si.Claves.Add("ebitdaneg");
             if (v[M.Un] < 0) si.Claves.Add("perdida");
+            if (v[M.Un] <= 0 && Tamano(v[M.Ing]) != "S") si.Claves.Add("vendepierde");
+            if (v[M.Un] < 0 && p != null && p[M.Un] < 0) si.Claves.Add("perdida2");
             if (EnReorganizacion(e.Estado)) si.Claves.Add("reorg");
             if (p != null && p2 != null && p2[M.Ing] > 0 && p[M.Ing] > 0 && p[M.Ing] > p2[M.Ing] * 1.2 && v[M.Ing] > p[M.Ing] * 1.2) si.Claves.Add("crece");
             var me = Ratio.MargenEbitda(v);
