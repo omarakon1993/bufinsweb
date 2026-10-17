@@ -175,6 +175,8 @@
     <Content Include="Assets\css\inter-font.css" />
     <Content Include="Assets\images\Bufins_Favicon.png" />
     <Content Include="Assets\images\Bufins_Logofinal.png" />
+    <Content Include="Assets\images\Bufins_Wordmark_Aqua.png" />
+    <Content Include="Assets\images\Bufins_Wordmark_Purple.png" />
     <Content Include="Assets\images\ImagenParaQuien.jpg" />
     <Content Include="Assets\images\ImagenVentajas.jpg" />
     <Content Include="Assets\images\LaptopSinFondo.jpg" />

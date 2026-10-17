@@ -49,11 +49,16 @@ body {
 }
 
 .navbar-brand {
-    font-weight: 800;
-    font-size: 1.8rem;
-    color: var(--color-cyan) !important;
-    letter-spacing: -0.02em;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Logotipo oficial (PNG con la tipografia original) en navbar y footer */
+.brand-logo {
+    height: 30px;
+    width: auto;
+    display: block;
 }
 
 .nav-link {
@@ -262,6 +267,13 @@ body {
 .brand-text {
     color: var(--color-purple);
     font-weight: 800;
+}
+
+/* Logotipo morado dentro de un titulo (h1) */
+.title-brand-logo {
+    height: 0.85em;
+    width: auto;
+    vertical-align: baseline;
 }
 
 .modules-list {
@@ -654,10 +666,6 @@ footer .container {
 }
 
 .footer-brand {
-    color: var(--color-cyan);
-    font-weight: 800;
-    font-size: 1.8rem;
-    letter-spacing: -0.02em;
     margin-bottom: 1rem;
 }
 
@@ -778,10 +786,6 @@ footer .container {
         padding: 3rem 0 1.5rem;
     }
 
-    .footer-brand {
-        font-size: 1.5rem;
-    }
-
     .footer-title {
         margin-top: 1.5rem;
     }
@@ -855,11 +859,11 @@ html {
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.hero-subtitle .hero-brand {
-    color: var(--color-secondary-2);
-    font-size: 1.15em;
-    font-weight: 700;
-    text-shadow: 0 2px 8px rgba(1, 225, 215, 0.4);
+.hero-subtitle .hero-brand-logo {
+    height: 1.2em;
+    width: auto;
+    vertical-align: -0.2em;
+    filter: drop-shadow(0 2px 8px rgba(1, 225, 215, 0.4));
 }
 
 .hero-category {
@@ -1658,8 +1662,8 @@ html {
         justify-content: center;
     }
 
-    .navbar-brand {
-        font-size: 1.5rem;
+    .brand-logo {
+        height: 26px;
     }
 
     .benefit-card,
