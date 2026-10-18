@@ -31,6 +31,7 @@
     OBS.unit = function () { return UNIT; };
     OBS.setUnit = function (u) {
         if (!UNITS[u]) return; UNIT = u;
+        OBS.track('unidad', u);
         try { localStorage.setItem('obs_unit', u); } catch (e) { }
         OBS.syncUnitUi();
         document.dispatchEvent(new Event('obs:unit'));
@@ -75,17 +76,48 @@
         return '<em class="' + (v >= 0 ? 'up' : 'down') + '">' + (v >= 0 ? '▲ ' : '▼ ') + NUM1.format(Math.abs(v)) + '% ' + OBS.L('vs. año anterior', 'vs. prior year') + '</em>';
     };
     // Analítica anónima: solo el tipo de evento y una clave corta (sin identificar a la persona); el servidor lleva contadores por día.
-    OBS.track = function (tipo, clave) {
+    // Parámetros opcionales: x = detalle corto (letras, números y , - _ . | /), extra = { ms, sc, tz, w } (permanencia, scroll, zona horaria, ancho).
+    OBS.track = function (tipo, clave, x, extra) {
         try {
-            var body = new URLSearchParams({ t: tipo, k: String(clave || '').slice(0, 40) });
+            var p = { t: tipo, k: String(clave || '').slice(0, 40) };
+            if (x) p.x = String(x).slice(0, 100);
+            if (extra) for (var n in extra) if (extra[n] != null && extra[n] !== '') p[n] = String(extra[n]);
+            var body = new URLSearchParams(p);
             if (navigator.sendBeacon) navigator.sendBeacon('/observatorio/api/evento', body);
             else fetch('/observatorio/api/evento', { method: 'POST', body: body, keepalive: true });
         } catch (e) { /* la analítica nunca debe romper la página */ }
     };
     document.addEventListener('click', function (e) {
         var el = e.target.closest ? e.target.closest('[data-track]') : null;
-        if (el) OBS.track(el.getAttribute('data-track'), el.getAttribute('data-key') || '');
+        if (el) OBS.track(el.getAttribute('data-track'), el.getAttribute('data-key') || '', el.getAttribute('data-detail') || '');
+        // Salidas a otros sitios: solo se guarda el dominio de destino
+        var a = e.target.closest ? e.target.closest('a[href]') : null;
+        if (a && /^https?:/i.test(a.href) && a.hostname !== location.hostname && !/(^|\.)bufins\.com$/i.test(a.hostname))
+            OBS.track('outbound', a.hostname.replace(/^www\./, '').replace(/[^a-z0-9.\-]/gi, '').toLowerCase().slice(0, 40));
     });
+    // Permanencia en la página y hasta dónde se desplazó (se envía una sola vez al salir o al pasar a segundo plano)
+    (function () {
+        var ini = Date.now(), acum = 0, visible = !document.hidden, max = 0, enviado = false;
+        function scroll() {
+            var h = document.documentElement, total = Math.max(1, h.scrollHeight - h.clientHeight);
+            max = Math.max(max, Math.min(100, Math.round(((window.pageYOffset || h.scrollTop) / total) * 100)));
+        }
+        window.addEventListener('scroll', scroll, { passive: true });
+        function corte() { if (visible) { acum += Date.now() - ini; } }
+        function enviar() {
+            if (enviado) return;
+            corte();
+            if (acum < 1500) return;               // visitas fantasma de menos de 1,5 s no cuentan
+            enviado = true;
+            var tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { }
+            OBS.track('perm', (location.pathname.split('/')[2] || 'inicio').replace(/[^a-z0-9]/gi, '').toLowerCase().slice(0, 20), '', { ms: Math.min(acum, 3600000), sc: max, tz: tz, w: window.innerWidth });
+        }
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) { corte(); visible = false; enviar(); }
+            else { visible = true; ini = Date.now(); enviado = false; acum = 0; }
+        });
+        window.addEventListener('pagehide', enviar);
+    })();
     OBS.debounce = function (fn, ms) { var t; return function () { var a = arguments, c = this; clearTimeout(t); t = setTimeout(function () { fn.apply(c, a); }, ms); }; };
 
     // La versión de los datos (v) va en cada llamada: las respuestas se cachean en el navegador y, al publicar datos nuevos, la URL cambia sola.
@@ -103,6 +135,7 @@
         var html = btn.innerHTML;
         btn.addEventListener('click', function (e) {
             e.preventDefault();
+            OBS.track('copiar_enlace', (location.pathname.split('/')[2] || 'inicio').slice(0, 20));
             var url = location.href;
             (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () {
                 btn.innerHTML = '<i class="fas fa-check me-2"></i>' + OBS.L('¡Copiado!', 'Copied!');
@@ -141,7 +174,7 @@
             var it = items[i]; if (!it) return;
             OBS.addRecent(it); close();
             if (opts.onSelect) { input.value = opts.clear === false ? it.razon : ''; opts.onSelect(it); }
-            else { OBS.track('busqueda_sel', ''); location.href = it.url || ('/observatorio/empresa/' + it.nit); }
+            else { OBS.track('busqueda_sel', it.nit || '', '', null); location.href = it.url || ('/observatorio/empresa/' + it.nit); }
         }
         function paint() {
             box.innerHTML = items.map(function (it, i) {

@@ -39,6 +39,7 @@ namespace bufinsweb.Filters
             }
             if (Interlocked.Increment(ref c.N) > Max)
             {
+                bufinsweb.Services.UsoService.Contar("throttle_429", (Grupo ?? ctx.ActionDescriptor.ActionName).Replace(' ', '-'));
                 ctx.HttpContext.Response.AppendHeader("Retry-After", Segundos.ToString());
                 ctx.Result = new HttpStatusCodeResult(429, "Demasiadas solicitudes. Intente de nuevo en un momento.");
             }

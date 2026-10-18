@@ -20,6 +20,9 @@ namespace bufinsweb.Controllers
 
         public ActionResult Contact()
         {
+            // Embudo anónimo: ¿llegan a «Contacto» desde el Observatorio o de otro lado?
+            var desde = Request.UrlReferrer != null && Request.UrlReferrer.AbsolutePath.StartsWith("/observatorio", StringComparison.OrdinalIgnoreCase) ? "observatorio" : "otro";
+            UsoService.Registrar(Request, "vista_contacto", desde, conOrigen: true);
             return View();
         }
 
@@ -42,6 +45,7 @@ namespace bufinsweb.Controllers
                 EmailService emailService = new EmailService();
                 emailService.SendContactFormToAdmin(model);
                 emailService.SendConfirmationToUser(model);
+                UsoService.Registrar(Request, "contacto_enviado", "web");   // solo el hecho: nada del formulario se guarda en la analítica
 
                 return Json(new { success = true, message = "¡Gracias por contactarnos! Hemos recibido tu mensaje y te responderemos pronto." });
             }

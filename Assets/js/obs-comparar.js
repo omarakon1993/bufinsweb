@@ -62,6 +62,7 @@
             d.items.forEach(function (x) { names[x.nit] = x.razon; });
             if (!Y || d.anios.indexOf(Y) < 0) Y = d.anios[d.anios.length - 1];
             renderSlots(); render();
+            O.track('comparar', String(d.items.length), d.items.map(function (x) { return x.nit; }).join(','));
         });
     }
 
@@ -119,7 +120,7 @@
     }
 
     $('cmpYears').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; Y = parseInt(b.getAttribute('data-y'), 10); toUrl(); render(); });
-    $('cmpPrint').addEventListener('click', function () { window.print(); });
+    $('cmpPrint').addEventListener('click', function () { O.track('imprimir', 'comparar'); window.print(); });
     O.share($('cmpShare'));
 
     fromUrl(); renderSlots(); update();

@@ -23,10 +23,14 @@ namespace bufinsweb.Controllers
         };
 
         private readonly ObservatorioService _svc = new ObservatorioService();
+        private static readonly HashSet<string> PaginasBot = new HashSet<string> { "Index", "Sectores", "Comparador", "Empresa", "Informe", "Ranking", "Nodo", "Og" };
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             ViewBag.ObsVer = _svc.Datos.Version;   // versiona las URL de la API: al publicar datos nuevos cambian y no se sirve caché vieja
+            var accion = Convert.ToString(filterContext.ActionDescriptor.ActionName);
+            if (Request.HttpMethod == "GET" && PaginasBot.Contains(accion) && UsoService.EsBot(Request.UserAgent))
+                UsoService.ContarBot(Request.UserAgent, accion);   // rastreadores (buscadores, IA, previsualizadores): solo un contador por familia
             base.OnActionExecuting(filterContext);
         }
 
@@ -66,11 +70,11 @@ namespace bufinsweb.Controllers
         public ActionResult Empresa(string id)
         {
             var e = _svc.PorNit(ObservatorioService.NitDeId(id));
-            if (e == null) return HttpNotFound();
+            if (e == null) return NoEncontrado();
             // una sola URL por empresa: /observatorio/empresa/{nit}-{nombre}; las demás redirigen (301)
             var canon = ObservatorioService.UrlEmpresa(e);
             if (!string.Equals(Request.Path, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.Url.Query);
-            Vista("vista_empresa", e.Ciiu);
+            Vista("vista_empresa", e.Ciiu, e.Nit, e.Razon);
             ViewBag.Datos = _svc.Datos;
             ViewBag.Narrativa = _svc.NarrativaEmpresa(e);
             ViewBag.OgImage = "/observatorio/og/" + e.Nit + "?v=" + _svc.Datos.Version;
@@ -81,8 +85,8 @@ namespace bufinsweb.Controllers
         public ActionResult Informe(string id)
         {
             var e = _svc.PorNit(ObservatorioService.NitDeId(id));
-            if (e == null) return HttpNotFound();
-            Vista("informe_pdf", e.Ciiu);
+            if (e == null) return NoEncontrado();
+            Vista("informe_pdf", e.Ciiu, e.Nit, e.Razon);
             ViewBag.Datos = _svc.Datos;
             ViewBag.Narrativa = _svc.NarrativaEmpresa(e);
             return View(e);
@@ -99,8 +103,8 @@ namespace bufinsweb.Controllers
                 return View("RankingHub");
             }
             var r = _svc.Ranking(metrica, tipo, clave, 100);
-            if (r == null) return HttpNotFound();
-            Vista("vista_ranking", metrica);
+            if (r == null) return NoEncontrado();
+            Vista("vista_ranking", metrica, (tipo ?? "nacional") + "/" + (clave ?? ""));
             return View(r);
         }
 
@@ -110,9 +114,9 @@ namespace bufinsweb.Controllers
         {
             var d = _svc.Datos;
             var e = _svc.PorNit(ObservatorioService.NitDeId(id));
-            if (e == null) return HttpNotFound();
+            if (e == null) return NoEncontrado();
             var yv = e.En(d.MaxAnio, d.MinAnio) ?? e.Y.LastOrDefault(z => z != null);
-            if (yv == null) return HttpNotFound();
+            if (yv == null) return NoEncontrado();
             var cat = CiiuCatalogo.Actual;
             var sal = Salud.Calcular(yv);
             var kpis = new List<OgImage.Kpi>
@@ -128,22 +132,30 @@ namespace bufinsweb.Controllers
 
         [HttpPost]
         [Throttle(Grupo = "obs-evento", Max = 120)]
-        public ActionResult Evento(string t, string k)
+        public ActionResult Evento(string t, string k, string x, int ms = 0, int sc = 0, string tz = null, int w = 0)
         {
-            if (!UsoService.EsBot(Request.UserAgent)) UsoService.Contar((t ?? "").Trim(), k);
+            t = (t ?? "").Trim();
+            if (UsoService.TiposCliente.Contains(t)) UsoService.Registrar(Request, t, k, x, "", ms, sc, tz, w);
             return new HttpStatusCodeResult(204);
         }
 
-        private void Vista(string tipo, string clave)
+        /// <summary>Vista de página (GET): registro anónimo con origen de la visita (buscador, red social, directo…).</summary>
+        private void Vista(string tipo, string clave, string detalle = "", string nombre = "")
         {
-            if (Request.HttpMethod == "GET" && !UsoService.EsBot(Request.UserAgent)) UsoService.Contar(tipo, clave);
+            if (Request.HttpMethod == "GET") UsoService.Registrar(Request, tipo, clave, detalle, nombre, conOrigen: true);
+        }
+
+        private ActionResult NoEncontrado()
+        {
+            if (Request.HttpMethod == "GET") UsoService.Registrar(Request, "error_404", Convert.ToString(RouteData.Values["action"]));
+            return HttpNotFound();
         }
 
         /// <summary>Página indexable por sección / división / clase CIIU.</summary>
         public ActionResult Nodo(string slug)
         {
             var s = _svc.Nodo(slug);
-            if (s == null) return HttpNotFound();
+            if (s == null) return NoEncontrado();
             Vista("vista_sector", slug);
             ViewBag.Narrativa = _svc.NarrativaNodo(s);
             ViewBag.Datos = _svc.Datos;
@@ -169,7 +181,7 @@ namespace bufinsweb.Controllers
         public ActionResult Ficha(string nit)
         {
             var o = _svc.Detalle(nit);
-            if (o == null) return HttpNotFound();
+            if (o == null) return NoEncontrado();
             return JsonOut(o);
         }
 
@@ -194,13 +206,13 @@ namespace bufinsweb.Controllers
         public ActionResult ExportarEmpresaXlsx(string nit)
         {
             var e = _svc.PorNit(nit);
-            if (e == null) return HttpNotFound();
-            Vista2("export_xlsx", "empresa");
+            if (e == null) return NoEncontrado();
+            Vista2("export_xlsx", "empresa", e.Nit);
             var bytes = _svc.XlsxEmpresa(nit, ObservatorioRubros.Etiqueta, ObservatorioRubros.Orden.ToList());
             return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "bufins-" + e.Nit + ".xlsx");
         }
 
-        private void Vista2(string tipo, string clave) { if (!UsoService.EsBot(Request.UserAgent)) UsoService.Contar(tipo, clave); }
+        private void Vista2(string tipo, string clave, string detalle = "") { UsoService.Registrar(Request, tipo, clave, detalle); }
 
         [Throttle(Grupo = "obs-exportar", Max = 6)]
         public ActionResult Exportar()
@@ -220,7 +232,7 @@ namespace bufinsweb.Controllers
         public ActionResult ExportarEmpresa(string nit)
         {
             var e = _svc.PorNit(nit);
-            if (e == null) return HttpNotFound();
+            if (e == null) return NoEncontrado();
             Vista2("export_csv", "empresa");
             var orden = ObservatorioRubros.Orden;
             var filas = _svc.ExportarEmpresa(nit, ObservatorioRubros.Etiqueta, orden);

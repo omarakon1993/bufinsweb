@@ -6,7 +6,7 @@
     var O = OBS, L = O.L, $ = O.$;
     var NIT = root.getAttribute('data-nit'), Y = parseInt(root.getAttribute('data-anio'), 10);
 
-    $('infPrint').addEventListener('click', function () { window.print(); });
+    $('infPrint').addEventListener('click', function () { if (window.OBS) OBS.track('imprimir', 'informe'); window.print(); });
 
     var FILAS = [
         ['mebitda', 'Margen EBITDA', 'EBITDA margin', O.pct], ['mneto', 'Margen neto', 'Net margin', O.pct], ['roa', 'ROA', 'ROA', O.pct], ['roe', 'ROE', 'ROE', O.pct],
