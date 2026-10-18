@@ -328,6 +328,101 @@
             (c.valor > 0 ? ' · ' + L('valor reportado ', 'reported value ') + O.money(c.valor / 1e6) : '') +
             '. <span class="obs-hint">' + L('Cifras declaradas por las entidades en datos.gov.co; pueden incluir adiciones o errores de digitación.', 'Figures declared by public entities on datos.gov.co; may include additions or typing errors.') + '</span></p></div>';
     }
+    // ---------- historia: hitos calculados con datos reales (constitución, estados financieros 2020+, SECOP) ----------
+    var HTIPO = {
+        fund: ['fa-rocket', 'blue'], data: ['fa-file-invoice-dollar', 'gray'], best: ['fa-trophy', 'purple'], up: ['fa-chart-line', 'green'],
+        down: ['fa-arrow-down', 'red'], loss: ['fa-exclamation-triangle', 'red'], back: ['fa-undo', 'green'], debt: ['fa-hand-holding-usd', 'amber'],
+        equity: ['fa-balance-scale', 'blue'], state: ['fa-handshake', 'purple'], last: ['fa-flag-checkered', 'gray']
+    };
+    function signed(v) { return (v > 0 ? '+' : '') + O.pct(v); }
+    function mayorCambio(arr, minAbs, signo) {
+        var best = null;
+        for (var i = 1; i < arr.length; i++) {
+            if (arr[i] == null || arr[i - 1] == null || arr[i - 1] <= 0) continue;
+            var c = (arr[i] - arr[i - 1]) / arr[i - 1] * 100;
+            if (signo && (c > 0) !== (signo > 0)) continue;
+            if (Math.abs(c) >= minAbs && (!best || Math.abs(c) > Math.abs(best.c))) best = { i: i, c: c };
+        }
+        return best;
+    }
+    function renderHistoria() {
+        var s = D.serie, a = s.anios, p = D.perfil, now = new Date().getFullYear(), H = [], first = -1, last = -1, i;
+        for (i = 0; i < a.length; i++) if (s.ing[i] != null) { if (first < 0) first = i; last = i; }
+        function add(y, o, t, tag, title, desc) { H.push({ y: y, o: o, t: t, tag: tag, title: title, desc: desc }); }
+        function argmax(arr) { var b = -1; for (var k = 0; k < arr.length; k++) if (arr[k] != null && (b < 0 || arr[k] > arr[b])) b = k; return b; }
+        function conDatos(arr) { return arr.filter(function (v) { return v != null; }).length; }
+
+        var fy = 0, fecha = '', m = /^(\d{4})-(\d{2})-(\d{2})/.exec(p.fconst || '');
+        if (m) {
+            fy = parseInt(m[1], 10);
+            if (fy >= 1800 && fy <= now) fecha = new Date(fy, parseInt(m[2], 10) - 1, parseInt(m[3], 10)).toLocaleDateString(L('es-CO', 'en-US'), { day: 'numeric', month: 'long', year: 'numeric' });
+            else fy = 0;
+        }
+        if (fy) add(fy, 0, 'fund', L('Constitución', 'Incorporation'), L('Fundación de la empresa', 'Company founded'),
+            L('Constituida el ' + fecha + (p.tipo ? '; hoy es ' + p.tipo + '.' : '.'), 'Incorporated on ' + fecha + (p.tipo ? '; today it is a ' + p.tipo + '.' : '.')));
+
+        if (first >= 0) {
+            add(a[first], 1, 'data', L('Estados financieros', 'Financial statements'), L('Primer año con estados financieros', 'First year with financial statements'),
+                L('Ingresos de ' + O.money(s.ing[first]) + ' reportados a la Supersociedades.', 'Revenue of ' + O.money(s.ing[first]) + ' reported to the Superintendencia de Sociedades.'));
+            var bi = argmax(s.ing);
+            if (conDatos(s.ing) > 1 && bi >= 0 && s.ing[bi] > 0) add(a[bi], 2, 'best', L('Ingresos', 'Revenue'), L('Mejor año de ingresos', 'Best revenue year'),
+                L('Ingresos de ' + O.money(s.ing[bi]) + ', el nivel más alto del periodo.', 'Revenue of ' + O.money(s.ing[bi]) + ', the highest of the period.'));
+            var be = argmax(s.ebitda);
+            if (conDatos(s.ebitda) > 1 && be >= 0 && s.ebitda[be] > 0) {
+                var mg = s.ing[be] > 0 ? ' (' + O.pct(s.ebitda[be] / s.ing[be] * 100) + L(' de los ingresos', ' of revenue') + ')' : '';
+                add(a[be], 3, 'best', 'EBITDA', L('Mejor año de EBITDA', 'Best EBITDA year'), L('EBITDA de ' + O.money(s.ebitda[be]) + mg + '.', 'EBITDA of ' + O.money(s.ebitda[be]) + mg + '.'));
+            }
+            var cu = mayorCambio(s.ing, 10, 1), cd = mayorCambio(s.ing, 10, -1);
+            if (cu) add(a[cu.i], 4, 'up', L('Ingresos', 'Revenue'), L('Mayor crecimiento de ingresos', 'Strongest revenue growth'),
+                L('Los ingresos cambiaron ' + signed(cu.c) + ' frente a ' + a[cu.i - 1] + '.', 'Revenue changed ' + signed(cu.c) + ' versus ' + a[cu.i - 1] + '.'));
+            if (cd) add(a[cd.i], 4, 'down', L('Ingresos', 'Revenue'), L('Mayor caída de ingresos', 'Largest revenue drop'),
+                L('Los ingresos cambiaron ' + signed(cd.c) + ' frente a ' + a[cd.i - 1] + '.', 'Revenue changed ' + signed(cd.c) + ' versus ' + a[cd.i - 1] + '.'));
+            var perd = -1;
+            for (i = 0; i < a.length; i++) if (s.un[i] != null && s.un[i] < 0) { perd = i; break; }
+            if (perd >= 0) {
+                add(a[perd], 5, 'loss', L('Resultados', 'Results'), L('Primera pérdida neta del periodo', 'First net loss of the period'),
+                    L('Pérdida neta de ' + O.money(Math.abs(s.un[perd])) + '.', 'Net loss of ' + O.money(Math.abs(s.un[perd])) + '.'));
+                for (i = perd + 1; i < a.length; i++) if (s.un[i] != null && s.un[i] >= 0) {
+                    add(a[i], 6, 'back', L('Resultados', 'Results'), L('Regreso a utilidad', 'Back to profit'),
+                        L('Utilidad neta de ' + O.money(s.un[i]) + ' tras la pérdida de ' + a[perd] + '.', 'Net profit of ' + O.money(s.un[i]) + ' after the ' + a[perd] + ' loss.'));
+                    break;
+                }
+            }
+            var neg = -1;
+            for (i = 0; i < a.length; i++) if (s.pat[i] != null && s.pat[i] < 0) { neg = i; break; }
+            if (neg >= 0) add(a[neg], 7, 'equity', L('Patrimonio', 'Equity'), L('Primer año con patrimonio negativo', 'First year with negative equity'),
+                L('El patrimonio fue de ' + O.money(s.pat[neg]) + ': los pasivos superaron a los activos.', 'Equity was ' + O.money(s.pat[neg]) + ': liabilities exceeded assets.'));
+            var pc = mayorCambio(s.pat, 50);
+            if (pc && !(pc.c < 0 && pc.i === neg)) add(a[pc.i], 8, 'equity', L('Patrimonio', 'Equity'), pc.c > 0 ? L('Salto del patrimonio', 'Equity jump') : L('Caída del patrimonio', 'Equity drop'),
+                L('El patrimonio cambió ' + signed(pc.c) + ' frente a ' + a[pc.i - 1] + '.', 'Equity changed ' + signed(pc.c) + ' versus ' + a[pc.i - 1] + '.'));
+            var dc2 = mayorCambio(s.deuda, 50);
+            if (dc2) add(a[dc2.i], 9, 'debt', L('Deuda', 'Debt'), dc2.c > 0 ? L('Aumento de la deuda financiera', 'Financial debt increase') : L('Reducción de la deuda financiera', 'Financial debt reduction'),
+                L('La deuda financiera cambió ' + signed(dc2.c) + ' frente a ' + a[dc2.i - 1] + '.', 'Financial debt changed ' + signed(dc2.c) + ' versus ' + a[dc2.i - 1] + '.'));
+        }
+        var c = D.contratos;
+        if (c && c.n > 0) {
+            var cy = parseInt((c.desde || '').slice(0, 4), 10) || (last >= 0 ? a[last] : now);
+            add(cy, 10, 'state', 'SECOP II', L('Contratación con el Estado', 'Public contracting'),
+                L(O.int(c.n) + ' contratos firmados desde ' + cy + (c.valor > 0 ? ', por ' + O.money(c.valor / 1e6) : '') + '.', O.int(c.n) + ' contracts signed since ' + cy + (c.valor > 0 ? ', worth ' + O.money(c.valor / 1e6) : '') + '.'));
+        }
+        if (last > first) add(a[last], 11, 'last', L('Último reporte', 'Latest report'), L('Último reporte a la Supersociedades', 'Latest report to the Superintendencia'),
+            L('Corte ' + a[last] + ': ingresos de ' + O.money(s.ing[last]) + (s.un[last] != null ? ' y utilidad neta de ' + O.money(s.un[last]) : '') + '.', 'Year-end ' + a[last] + ': revenue of ' + O.money(s.ing[last]) + (s.un[last] != null ? ' and net profit of ' + O.money(s.un[last]) : '') + '.'));
+        H.sort(function (x, y) { return x.y - y.y || x.o - y.o; });
+
+        function stat(cl, v, k) { return '<div class="obs-hstat obs-hc-' + cl + '"><strong>' + v + '</strong><span>' + k + '</span></div>'; }
+        var stats = stat('blue', fy || '—', L('Año de fundación', 'Founded')) + stat('green', fy ? Math.max(0, now - fy) : '—', L('Años de operación', 'Years in operation')) +
+            stat('purple', H.length, L('Hitos registrados', 'Milestones')) + stat('amber', last >= 0 ? a[last] : '—', L('Último año reportado', 'Latest year reported'));
+        var line = H.map(function (h) {
+            var t = HTIPO[h.t];
+            return '<li class="obs-hl obs-hc-' + t[1] + '"><span class="obs-hl-ic"><i class="fas ' + t[0] + '"></i></span><div><div class="obs-hl-top"><b>' + h.y + '</b><span class="obs-hl-tag">' + esc(h.tag) +
+                '</span></div><h4>' + esc(h.title) + '</h4><p>' + esc(h.desc) + '</p></div></li>';
+        }).join('');
+        $('histBody').innerHTML = '<div class="obs-hist"><div class="obs-hist-stats">' + stats + '</div>' +
+            (H.length ? '<ol class="obs-hist-line">' + line + '</ol>' : '<div class="obs-empty"><p>' + L('Aún no hay hitos para esta empresa.', 'No milestones for this company yet.') + '</p></div>') + '</div>' +
+            '<p class="obs-hist-note"><i class="fas fa-info-circle me-2"></i>' + L('Los hitos se calculan con la fecha de constitución y los estados financieros que la empresa reporta a la Supersociedades (desde 2020), más la contratación pública declarada en SECOP II. No incluyen eventos del registro mercantil como cambios de directiva o reformas estatutarias.',
+                'Milestones are computed from the incorporation date and the financial statements the company reports to the Superintendencia de Sociedades (since 2020), plus public contracting declared on SECOP II. They do not include commercial-registry events such as board changes or bylaw amendments.') + '</p>';
+    }
+
     var GLOS = [
         ['Bufins Score de salud (0–100)', 'Suma de cuatro pilares de 25 puntos: rentabilidad (margen EBITDA y ROA), liquidez (liquidez corriente y capital de trabajo/ingresos), endeudamiento (deuda/EBITDA y pasivo/activo) y solvencia (cobertura de intereses y Altman). Cada indicador se puntúa en forma lineal entre un piso y un techo. 70 o más: sólida; 50 a 69: estable; 30 a 49: a vigilar; menos de 30: crítica.', 'Sum of four 25-point pillars: profitability (EBITDA margin and ROA), liquidity (current ratio and working capital/revenue), leverage (debt/EBITDA and liabilities/assets) and solvency (interest coverage and Altman). Each ratio is scored linearly between a floor and a ceiling. 70+: strong; 50–69: stable; 30–49: to watch; below 30: critical.'],
         ["Altman Z'' (riesgo de quiebra)", "Z'' = 3,25 + 6,56·(capital de trabajo/activos) + 3,26·(utilidades retenidas/activos) + 6,72·(utilidad operativa/activos) + 1,05·(patrimonio/pasivos). Versión para mercados emergentes. Mayor a 5,85: zona segura; entre 4,15 y 5,85: zona gris; menor a 4,15: zona de alerta. Es una señal estadística, no una predicción.", "Z'' = 3.25 + 6.56·(working capital/assets) + 3.26·(retained earnings/assets) + 6.72·(operating profit/assets) + 1.05·(equity/liabilities). Emerging-markets version. Above 5.85: safe zone; 4.15 to 5.85: grey zone; below 4.15: distress zone. A statistical signal, not a prediction."],
@@ -353,7 +448,7 @@
     // ---------- control de año y pestañas ----------
     function renderYear() {
         Array.prototype.forEach.call(document.querySelectorAll('#empYears button'), function (b) { b.classList.toggle('active', parseInt(b.getAttribute('data-y'), 10) === Y); });
-        renderKpis(); renderScore(); renderMacro(); renderCharts(); renderInsights(); renderBench(); renderDupont(); renderStatement();
+        renderKpis(); renderScore(); renderMacro(); renderCharts(); renderInsights(); renderBench(); renderDupont(); renderStatement(); renderHistoria();
         var u = new URL(location.href); u.searchParams.set('anio', Y); history.replaceState(null, '', u.pathname + u.search + u.hash);
     }
     $('empYears').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; Y = parseInt(b.getAttribute('data-y'), 10); renderYear(); });

@@ -90,8 +90,8 @@
         <table class="inf-table" id="infBench"><tbody><tr><td>@T("Cargando…", "Loading…")</td></tr></tbody></table>
 
         <footer class="inf-foot">
-            @T("Fuente: ", "Source: ")@datos.Meta.Fuente @T("(datos.gov.co). Cifras reportadas por la empresa a la Supersociedades; los indicadores son cálculos de Bufins. Información pública con fines informativos; no constituye asesoría financiera.",
-               "(datos.gov.co). Figures reported by the company to the Superintendencia de Sociedades; ratios are Bufins calculations. Public information for information only; not financial advice.")
+            @Html.Partial("_ObsFuentes", false) @T("Cifras reportadas por la empresa a la Supersociedades. Información pública con fines informativos; no constituye asesoría financiera.",
+               "Figures reported by the company to the Superintendencia de Sociedades. Public information for information only; not financial advice.")
             · @T("Generado el ", "Generated on ")@DateTime.Now.ToString("yyyy-MM-dd")
         </footer>
     </main>

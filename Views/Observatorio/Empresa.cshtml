@@ -86,6 +86,7 @@
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabResumen" data-hash="resumen" type="button"><i class="fas fa-th-large me-2"></i>@T("Resumen", "Summary")</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBench" data-hash="sector" type="button"><i class="fas fa-bullseye me-2"></i>@T("Frente al sector", "Vs. sector")</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabEstados" data-hash="estados" type="button"><i class="fas fa-file-invoice-dollar me-2"></i>@T("Estados financieros", "Statements")</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabHistoria" data-hash="historia" type="button"><i class="fas fa-history me-2"></i>@T("Historia", "History")</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabPerfil" data-hash="perfil" type="button"><i class="fas fa-id-card me-2"></i>@T("Perfil", "Profile")</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabGlosario" data-hash="glosario" type="button"><i class="fas fa-book me-2"></i>@T("Glosario", "Glossary")</button></li>
         </ul>
@@ -151,6 +152,14 @@
                 </div>
             </div>
 
+            <!-- HISTORIA -->
+            <div class="tab-pane fade" id="tabHistoria">
+                <div class="obs-card">
+                    <div class="obs-card-head"><h3><i class="far fa-clock me-2"></i>@T("Hitos empresariales", "Company milestones")</h3></div>
+                    <div id="histBody"></div>
+                </div>
+            </div>
+
             <!-- PERFIL -->
             <div class="tab-pane fade" id="tabPerfil">
                 <div class="obs-card"><div class="obs-card-head"><h3>@T("Datos generales", "General information")</h3></div><div id="perfilBody"></div></div>
@@ -190,7 +199,7 @@
         </div>
 
         <p class="obs-source">
-            <i class="fas fa-info-circle me-2"></i>@T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>.
+            <i class="fas fa-info-circle me-2"></i>@Html.Partial("_ObsFuentes")
             @T("Cifras reportadas por la empresa a la Supersociedades; los indicadores (EBITDA, capital de trabajo, deuda) son cálculos de Bufins. Información pública con fines informativos; no constituye asesoría financiera.",
                "Figures reported by the company to the Superintendencia de Sociedades; metrics (EBITDA, working capital, debt) are Bufins calculations. Public information, for information only; not financial advice.")
         </p>

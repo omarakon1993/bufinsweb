@@ -9,7 +9,7 @@ namespace bufinsweb.Services
     /// <summary>Parte 3 del servicio: libros de Excel (.xlsx) de la ficha y de las listas de sector.</summary>
     public partial class ObservatorioService
     {
-        private const string Fuente = "Fuente: Superintendencia de Sociedades (datos.gov.co), estados financieros NIIF. Cálculos de Bufins (bufins.com).";
+        private const string Fuente = "Fuente: Superintendencia de Sociedades (datos.gov.co), estados financieros NIIF, licencia CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0). Clasificación CIIU Rev. 4 A.C.: Departamento Administrativo Nacional de Estadística: www.dane.gov.co. Cálculos de Bufins (bufins.com).";
 
         public byte[] XlsxEmpresa(string nit, Func<string, string> etiqueta, IList<string> orden)
         {

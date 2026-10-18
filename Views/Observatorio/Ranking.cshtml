@@ -95,7 +95,7 @@
                 @T("Se excluyen empresas sin ingresos operacionales o con cifras atípicas (utilidad mayor a 3 veces los ingresos)" + (def.MinIngMm > 0 ? " y con ingresos menores a " + def.MinIngMm.ToString("N0") + " millones" : "") + ". ",
                    "Companies without operating revenue or with outlier figures (profit above 3x revenue) are excluded" + (def.MinIngMm > 0 ? " as well as those with revenue below COP " + def.MinIngMm.ToString("N0") + " million" : "") + ". ")
             }
-            @T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>. @T("Cálculos de Bufins; información pública con fines informativos.", "Bufins calculations; public information for information only.")
+            @Html.Partial("_ObsFuentes") @T("Cálculos de Bufins; información pública con fines informativos.", "Bufins calculations; public information for information only.")
         </p>
     </div>
 </section>

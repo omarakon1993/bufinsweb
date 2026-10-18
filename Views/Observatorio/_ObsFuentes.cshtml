@@ -1,0 +1,20 @@
+@* Nota de fuentes del Observatorio: UNA sola, compartida por todas las paginas. Si cambia una fuente (ETL), actualizar aqui.
+   Modelo opcional (bool): false = texto plano sin enlaces (informe imprimible). *@
+@using bufinsweb.Helpers
+@{
+    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var enlaces = !(Model is bool) || (bool)Model;
+    Func<string, string, System.Web.IHtmlString> a = (url, texto) => enlaces
+        ? new System.Web.HtmlString("<a href=\"" + url + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + texto + "</a>")
+        : new System.Web.HtmlString(texto);
+}
+@T("Fuentes", "Sources"): @a("https://www.datos.gov.co/resource/pfdp-zks5", T("Superintendencia de Sociedades", "Superintendencia de Sociedades"))
+(@T("estados financieros NIIF", "IFRS financial statements")),
+@a("https://www.datos.gov.co/resource/jbjy-vk9h", "SECOP II · Colombia Compra Eficiente")
+(@T("contratación pública", "public contracting")),
+@a("https://www.datos.gov.co/resource/32sa-8pi3", T("Superintendencia Financiera de Colombia", "Superintendencia Financiera de Colombia"))
+(@T("TRM", "USD/COP exchange rate")) @T("y", "and")
+@a("https://www.dane.gov.co", "Departamento Administrativo Nacional de Estadística: www.dane.gov.co")
+(@T("IPC y clasificación CIIU Rev. 4 A.C.", "CPI and ISIC-based CIIU Rev. 4 A.C. classification")).
+@T("Datos abiertos de datos.gov.co bajo licencia", "Open data from datos.gov.co under license") @a("https://creativecommons.org/licenses/by-sa/4.0/deed.es", "CC BY-SA 4.0").
+@T("Bufins procesa y calcula los indicadores a partir de estos datos.", "Bufins processes these data and computes the ratios.")

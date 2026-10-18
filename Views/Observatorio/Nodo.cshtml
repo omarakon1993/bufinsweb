@@ -91,7 +91,7 @@
             </div>
         </div>
         @Html.Partial("_ObsTexto")
-        <p class="obs-source"><i class="fas fa-info-circle me-2"></i>@T("Fuente", "Source"): <a href="https://www.datos.gov.co/resource/pfdp-zks5" target="_blank" rel="noopener noreferrer">@datos.Meta.Fuente</a>. @T("Procesado por Bufins.", "Processed by Bufins.")</p>
+        <p class="obs-source"><i class="fas fa-info-circle me-2"></i>@Html.Partial("_ObsFuentes") @T("Procesado por Bufins.", "Processed by Bufins.")</p>
     </div>
 </section>
 

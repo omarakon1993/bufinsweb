@@ -224,7 +224,7 @@ namespace bufinsweb.Controllers
             sb.AppendLine("NIT;Razon social;CIIU;Actividad;Ciudad;Departamento;Estado;Tamano;Ingresos (millones COP);Utilidad bruta;Utilidad operativa;EBITDA;Utilidad neta;Activos;Pasivos;Patrimonio;Deuda financiera;Capital de trabajo neto;Margen bruto %;Margen operativo %;Margen EBITDA %;Margen neto %;Deuda/EBITDA (x);Capital de trabajo/Ingresos %;Crecimiento ingresos %");
             foreach (var f in filas) sb.AppendLine(string.Join(";", f.Select(Csv)));
             sb.AppendLine();
-            sb.AppendLine(Csv("Fuente: Superintendencia de Sociedades (datos.gov.co), estados financieros NIIF del ano " + anio + ". Calculos de Bufins (bufins.com)."));
+            sb.AppendLine(Csv("Fuente: Superintendencia de Sociedades (datos.gov.co), estados financieros NIIF del ano " + anio + ", licencia CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0). Clasificacion CIIU Rev. 4 A.C.: Departamento Administrativo Nacional de Estadistica: www.dane.gov.co. Calculos de Bufins (bufins.com)."));
             return File(ConBom(sb.ToString()), "text/csv", "bufins-sector-" + anio + ".csv");
         }
 
@@ -240,7 +240,7 @@ namespace bufinsweb.Controllers
             sb.AppendLine(Csv(e.Razon + " - NIT " + e.Nit));
             foreach (var f in filas) sb.AppendLine(string.Join(";", f.Select(Csv)));
             sb.AppendLine();
-            sb.AppendLine(Csv("Fuente: Superintendencia de Sociedades (datos.gov.co). Cifras en miles de COP. Calculos de Bufins (bufins.com)."));
+            sb.AppendLine(Csv("Fuente: Superintendencia de Sociedades (datos.gov.co), licencia CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0). Cifras en miles de COP. Calculos de Bufins (bufins.com)."));
             return File(ConBom(sb.ToString()), "text/csv", "bufins-" + e.Nit + ".csv");
         }
 
