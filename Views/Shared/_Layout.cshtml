@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="~/Assets/css/font-awesome.min.css">
     <link href="~/Assets/css/aos.css" rel="stylesheet">
     <link href="~/Assets/css/inter-font.css" rel="stylesheet">
-    <link href="~/Assets/css/bufins-custom.css" rel="stylesheet">
+    <link href="~/Assets/css/bufins-custom.css?v=@(System.IO.File.GetLastWriteTimeUtc(Server.MapPath("~/Assets/css/bufins-custom.css")).Ticks)" rel="stylesheet">
     @RenderSection("head", required: false)
 </head>
 <body>
