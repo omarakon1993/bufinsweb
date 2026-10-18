@@ -214,6 +214,7 @@
     <Content Include="Views\Observatorio\_ObsNav.cshtml" />
     <Content Include="Views\Observatorio\_ObsHead.cshtml" />
     <Content Include="Views\Observatorio\_ObsCta.cshtml" />
+    <Content Include="Views\Observatorio\_ObsFuentes.cshtml" />
     <Content Include="Views\Observatorio\_ObsTexto.cshtml" />
     <Content Include="Views\Observatorio\Ranking.cshtml" />
     <Content Include="Views\Observatorio\RankingHub.cshtml" />
