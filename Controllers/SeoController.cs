@@ -12,11 +12,37 @@ namespace bufinsweb.Controllers
     {
         private const int PorArchivo = 10000;   // empresas por archivo de sitemap (el límite del protocolo es 50.000)
 
+        // Robots de IA (entrenamiento) y de herramientas SEO: consumen mucho trafico y no traen visitas.
+        private static readonly string[] RobotsBloqueados =
+        {
+            "GPTBot", "ClaudeBot", "anthropic-ai", "CCBot", "Google-Extended", "Applebot-Extended", "Bytespider",
+            "Amazonbot", "meta-externalagent", "FacebookBot", "cohere-ai", "Diffbot", "ImagesiftBot", "Omgilibot",
+            "Timpibot", "PetalBot", "AhrefsBot", "SemrushBot", "MJ12bot", "DotBot", "DataForSeoBot", "BLEXBot", "barkrowler"
+        };
+
+        // Previsualizadores de enlaces (WhatsApp, redes sociales): necesitan la imagen /observatorio/og/ al compartir.
+        private static readonly string[] Previsualizadores =
+        {
+            "facebookexternalhit", "WhatsApp", "LinkedInBot", "Twitterbot", "Slackbot", "TelegramBot"
+        };
+
         public ActionResult Robots()
         {
             var baseUrl = BaseUrl();
-            var txt = "User-agent: *\nAllow: /\nDisallow: /observatorio/api/\nDisallow: /observatorio/informe/\n\nSitemap: " + baseUrl + "/sitemap.xml\n";
-            return Content(txt, "text/plain", Encoding.UTF8);
+            var sb = new StringBuilder();
+            foreach (var ua in RobotsBloqueados) sb.Append("User-agent: ").Append(ua).Append('\n');
+            sb.Append("Disallow: /\n\n");
+            foreach (var ua in Previsualizadores) sb.Append("User-agent: ").Append(ua).Append('\n');
+            sb.Append("Disallow: /observatorio/api/\nDisallow: /observatorio/informe/\n\n");
+            // Buscadores: fichas, sectores y rankings nacionales/departamento/seccion; sin imagenes OG,
+            // ni rankings por ciudad o clase CIIU (miles de combinaciones), ni comparaciones con parametros.
+            sb.Append("User-agent: *\nAllow: /\n")
+              .Append("Disallow: /observatorio/api/\nDisallow: /observatorio/informe/\nDisallow: /observatorio/og/\n")
+              .Append("Disallow: /observatorio/comparar?\n")
+              .Append("Disallow: /observatorio/ranking/*/ciudad/\nDisallow: /observatorio/ranking/*/sector/ciiu-\n")
+              .Append("Crawl-delay: 10\n\n");
+            sb.Append("Sitemap: ").Append(baseUrl).Append("/sitemap.xml\n");
+            return Content(sb.ToString(), "text/plain", Encoding.UTF8);
         }
 
         /// <summary>Índice de sitemaps: páginas, sectores, rankings y empresas (en trozos de 10.000).</summary>

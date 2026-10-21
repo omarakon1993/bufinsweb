@@ -252,15 +252,15 @@ namespace bufinsweb.Services
             return h;
         }
 
-        /// <summary>Claves (slug) de ciudades, departamentos y secciones con al menos 15 empresas: páginas de ranking indexables.</summary>
+        /// <summary>Claves (slug) de departamentos con al menos 15 empresas y de secciones: páginas de ranking indexables.
+        /// Los rankings por ciudad y por clase CIIU no van al sitemap y robots.txt los bloquea (ahorro de tráfico).</summary>
         public IEnumerable<string> RutasRanking()
         {
             var d = Datos;
             var act = d.Empresas.Where(e => e.En(d.MaxAnio, d.MinAnio) != null).ToList();
-            var cs = act.Where(e => e.Ciudad.Length > 0).GroupBy(e => Slug(e.Ciudad)).Where(g => g.Key.Length > 0 && g.Count() >= 15).Select(g => "ciudad/" + g.Key);
             var ds = act.Where(e => e.Depto.Length > 0).GroupBy(e => Slug(e.Depto)).Where(g => g.Key.Length > 0 && g.Count() >= 15).Select(g => "departamento/" + g.Key);
             var ss = act.Where(e => e.Seccion.Length > 0).GroupBy(e => e.Seccion).Select(g => "sector/seccion-" + g.Key.ToLowerInvariant());
-            return new[] { "nacional" }.Concat(cs).Concat(ds).Concat(ss).ToList();
+            return new[] { "nacional" }.Concat(ds).Concat(ss).ToList();
         }
 
         // ---------------------------------------------------------------- textos automáticos (contenido único + preguntas frecuentes)
