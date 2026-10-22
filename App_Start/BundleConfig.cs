@@ -8,6 +8,13 @@ namespace bufinsweb
         // Para obtener más información sobre las uniones, visite https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            // Sitio: CSS y JS del layout en bundles para que salgan comprimidos (gzip de Filters/Compresion; el IIS del hosting
+            // no comprime los estáticos) y con caché larga. El CSS vive en ~/Assets/css/ para que sus url(../fonts|../webfonts) sigan valiendo.
+            bundles.Add(new Bundle("~/Assets/css/base").Include("~/Assets/css/bootstrap.min.css", "~/Assets/css/font-awesome.min.css",
+                "~/Assets/css/aos.css", "~/Assets/css/inter-font.css", "~/Assets/css/bufins-custom.css"));
+            bundles.Add(new Bundle("~/bundles/base-js").Include("~/Assets/js/bootstrap.bundle.min.js"));
+            bundles.Add(new Bundle("~/bundles/aos").Include("~/Assets/js/aos.js"));
+
             // Observatorio: paquetes versionados (?v=hash) con caché larga; el JS se minifica y se concatena por página
             bundles.Add(new Bundle("~/bundles/obs-chart").Include("~/Assets/js/chart.umd.min.js"));
             bundles.Add(new Bundle("~/bundles/obs-css").Include("~/Assets/css/observatorio.css"));

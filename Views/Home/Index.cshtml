@@ -420,7 +420,7 @@
 </section>
 
 @section scripts {
-<script src="~/Assets/js/aos.js"></script>
+@System.Web.Optimization.Scripts.Render("~/bundles/aos")
 <script>AOS.init({ duration: 1000, once: true });</script>
 <script>
     (function () {

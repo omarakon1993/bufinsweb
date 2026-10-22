@@ -152,6 +152,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Filters\BotGuard.cs" />
+    <Compile Include="Filters\Compresion.cs" />
     <Compile Include="Filters\ManejoErroresAttribute.cs" />
     <Compile Include="Filters\ThrottleAttribute.cs" />
     <Compile Include="Helpers\CiiuCatalogo.cs" />

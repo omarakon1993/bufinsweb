@@ -15,11 +15,8 @@
     <meta name="description" content="@(ViewBag.MetaDescription ?? Resources.Strings.Meta_Description)">
     <link rel="icon" type="image/png" href="~/Assets/images/Bufins_Favicon.png?v=2">
 
-    <link href="~/Assets/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="~/Assets/css/font-awesome.min.css">
-    <link href="~/Assets/css/aos.css" rel="stylesheet">
-    <link href="~/Assets/css/inter-font.css" rel="stylesheet">
-    <link href="~/Assets/css/bufins-custom.css?v=@(System.IO.File.GetLastWriteTimeUtc(Server.MapPath("~/Assets/css/bufins-custom.css")).Ticks)" rel="stylesheet">
+    @* bootstrap, font-awesome, aos, inter y bufins-custom en un solo archivo comprimido (App_Start/BundleConfig.cs) *@
+    @System.Web.Optimization.Styles.Render("~/Assets/css/base")
     @RenderSection("head", required: false)
 </head>
 <body>
@@ -162,7 +159,7 @@
         <span class="lang-float-label">@switchToLabel</span>
     </a>
 
-    <script src="~/Assets/js/bootstrap.bundle.min.js"></script>
+    @System.Web.Optimization.Scripts.Render("~/bundles/base-js")
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const backToTopButton = document.getElementById('backToTop');

@@ -39,6 +39,12 @@ namespace bufinsweb
             bufinsweb.Filters.BotGuard.Filtrar((HttpApplication)sender);
         }
 
+        // gzip desde la aplicación: el IIS del hosting no comprime
+        protected void Application_PostReleaseRequestState(object sender, EventArgs e)
+        {
+            bufinsweb.Filters.Compresion.Aplicar((HttpApplication)sender);
+        }
+
         // Respaldo fuera de MVC: peticiones inválidas de robots -> 400 sin cuerpo (no 500 ni redirección a la página de error)
         protected void Application_Error(object sender, EventArgs e)
         {
