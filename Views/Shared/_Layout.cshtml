@@ -46,12 +46,12 @@
                         <div class="lang-switcher-wrapper">
                             <i class="fas fa-globe lang-switcher-icon"></i>
                             <div class="lang-switcher">
-                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Request.Url.PathAndQuery })"
+                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
                                    class="lang-btn @(!isEnglish ? "active" : "")" title="Español (Colombia)">
                                     Español
                                 </a>
                                 <span class="lang-sep"></span>
-                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Request.Url.PathAndQuery })"
+                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
                                    class="lang-btn @(isEnglish ? "active" : "")" title="English (US)">
                                     English
                                 </a>
@@ -134,12 +134,12 @@
                     <div class="lang-switcher-wrapper lang-switcher-wrapper-footer">
                         <i class="fas fa-globe lang-switcher-icon"></i>
                         <div class="lang-switcher lang-switcher-footer">
-                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Request.Url.PathAndQuery })"
+                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
                                class="lang-btn @(!isEnglish ? "active" : "")" title="Español (Colombia)">
                                 Español
                             </a>
                             <span class="lang-sep"></span>
-                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Request.Url.PathAndQuery })"
+                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
                                class="lang-btn @(isEnglish ? "active" : "")" title="English (US)">
                                 English
                             </a>
@@ -156,7 +156,7 @@
     </button>
 
     <!-- Botón Flotante de Idioma -->
-    <a href="@Url.Action("SetLanguage", "Home", new { lang = switchToLang, returnUrl = Request.Url.PathAndQuery })"
+    <a href="@Url.Action("SetLanguage", "Home", new { lang = switchToLang, returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
        class="lang-float-btn" title="@switchToTitle" aria-label="@switchToTitle">
         <i class="fas fa-globe lang-float-globe"></i>
         <span class="lang-float-label">@switchToLabel</span>

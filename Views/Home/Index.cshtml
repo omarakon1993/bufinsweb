@@ -3,7 +3,7 @@
 }
 
 <!-- Hero Section -->
-<section class="hero-section" style="background-image: linear-gradient(135deg, rgba(22, 9, 51, 0.85) 0%, rgba(22, 9, 51, 0.78) 50%, rgba(88, 58, 255, 0.6) 100%), url('@Url.Content("~/Assets/images/PortadaDirectivo.jpg")')">
+<section class="hero-section" style="background-image: linear-gradient(135deg, rgba(22, 9, 51, 0.85) 0%, rgba(22, 9, 51, 0.78) 50%, rgba(88, 58, 255, 0.6) 100%), url('@Url.Content("~/Assets/images/PortadaDirectivo.webp")')">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-10 mx-auto text-center" data-aos="fade-up" data-aos-duration="1200">
@@ -111,7 +111,10 @@
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="text-center">
-                    <img src="@Url.Content("~/Assets/images/LaptopSinFondo.jpg")" width="1600" height="1237" loading="lazy" decoding="async" alt="Bufins Dashboard" class="img-fluid bufins-product-image">
+                    <picture>
+                        <source srcset="@Url.Content("~/Assets/images/LaptopSinFondo.webp")" type="image/webp">
+                        <img src="@Url.Content("~/Assets/images/LaptopSinFondo.jpg")" width="1600" height="1237" loading="lazy" decoding="async" alt="Bufins Dashboard" class="img-fluid bufins-product-image">
+                    </picture>
                 </div>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
@@ -213,7 +216,10 @@
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="text-center">
-                    <img src="@Url.Content("~/Assets/images/ImagenVentajas.jpg")" width="1600" height="1066" loading="lazy" decoding="async" alt="Ventajas de Bufins" class="img-fluid bufins-advantages-image">
+                    <picture>
+                        <source srcset="@Url.Content("~/Assets/images/ImagenVentajas.webp")" type="image/webp">
+                        <img src="@Url.Content("~/Assets/images/ImagenVentajas.jpg")" width="1600" height="1066" loading="lazy" decoding="async" alt="Ventajas de Bufins" class="img-fluid bufins-advantages-image">
+                    </picture>
                 </div>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
@@ -351,7 +357,10 @@
         <div class="row align-items-center">
             <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0" data-aos="fade-left">
                 <div class="text-center">
-                    <img src="@Url.Content("~/Assets/images/ImagenParaQuien.jpg")" width="1600" height="1067" loading="lazy" decoding="async" alt="Para quién es Bufins" class="img-fluid bufins-target-image">
+                    <picture>
+                        <source srcset="@Url.Content("~/Assets/images/ImagenParaQuien.webp")" type="image/webp">
+                        <img src="@Url.Content("~/Assets/images/ImagenParaQuien.jpg")" width="1600" height="1067" loading="lazy" decoding="async" alt="Para quién es Bufins" class="img-fluid bufins-target-image">
+                    </picture>
                 </div>
             </div>
             <div class="col-lg-6 order-lg-1" data-aos="fade-right">

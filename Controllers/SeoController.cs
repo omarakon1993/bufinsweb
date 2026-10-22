@@ -13,12 +13,9 @@ namespace bufinsweb.Controllers
         private const int PorArchivo = 10000;   // empresas por archivo de sitemap (el límite del protocolo es 50.000)
 
         // Robots de IA (entrenamiento) y de herramientas SEO: consumen mucho trafico y no traen visitas.
+        // Son los mismos que BotGuard corta en el servidor (403), mas los "tokens" de IA de Google y Apple.
         private static readonly string[] RobotsBloqueados =
-        {
-            "GPTBot", "ClaudeBot", "anthropic-ai", "CCBot", "Google-Extended", "Applebot-Extended", "Bytespider",
-            "Amazonbot", "meta-externalagent", "FacebookBot", "cohere-ai", "Diffbot", "ImagesiftBot", "Omgilibot",
-            "Timpibot", "PetalBot", "AhrefsBot", "SemrushBot", "MJ12bot", "DotBot", "DataForSeoBot", "BLEXBot", "barkrowler"
-        };
+            new[] { "Google-Extended", "Applebot-Extended" }.Concat(bufinsweb.Filters.BotGuard.Bloqueados).ToArray();
 
         // Previsualizadores de enlaces (WhatsApp, redes sociales): necesitan la imagen /observatorio/og/ al compartir.
         private static readonly string[] Previsualizadores =
@@ -37,6 +34,7 @@ namespace bufinsweb.Controllers
             // Buscadores: fichas, sectores y rankings nacionales/departamento/seccion; sin imagenes OG,
             // ni rankings por ciudad o clase CIIU (miles de combinaciones), ni comparaciones con parametros.
             sb.Append("User-agent: *\nAllow: /\n")
+              .Append("Disallow: /Home/SetLanguage\n")   // cambio de idioma: redirige (302) a la misma pagina
               .Append("Disallow: /observatorio/api/\nDisallow: /observatorio/informe/\nDisallow: /observatorio/og/\n")
               .Append("Disallow: /observatorio/comparar?\n")
               .Append("Disallow: /observatorio/ranking/*/ciudad/\nDisallow: /observatorio/ranking/*/sector/ciiu-\n")
@@ -106,7 +104,8 @@ namespace bufinsweb.Controllers
         {
             Response.Cache.SetCacheability(HttpCacheability.Public);
             Response.Cache.SetMaxAge(TimeSpan.FromHours(6));
-            return Content(xml, "application/xml", Encoding.UTF8);
+            // text/xml (valido para sitemaps): IIS lo comprime con gzip; application/xml sale sin comprimir (1,5 MB por archivo)
+            return Content(xml, "text/xml", Encoding.UTF8);
         }
 
         private static string Fecha(ObservatorioDatos d)

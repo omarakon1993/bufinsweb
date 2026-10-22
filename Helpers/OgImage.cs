@@ -8,7 +8,7 @@ using System.IO;
 
 namespace bufinsweb.Helpers
 {
-    /// <summary>Genera la imagen para compartir (1200×630) de una ficha o un sector, con la marca de Bufins.</summary>
+    /// <summary>Genera la imagen para compartir (1200×630, JPEG) de una ficha o un sector, con la marca de Bufins.</summary>
     public static class OgImage
     {
         public class Kpi { public string Etiqueta, Valor; }
@@ -80,9 +80,13 @@ namespace bufinsweb.Helpers
                         }
                 }
                 catch (Exception) { }
+                // JPEG y no PNG: el degradado pesaba ~175 KB en PNG
                 using (var ms = new MemoryStream())
+                using (var prm = new EncoderParameters(1))
                 {
-                    bmp.Save(ms, ImageFormat.Png);
+                    prm.Param[0] = new EncoderParameter(Encoder.Quality, 85L);
+                    var jpeg = Array.Find(ImageCodecInfo.GetImageEncoders(), c => c.FormatID == ImageFormat.Jpeg.Guid);
+                    bmp.Save(ms, jpeg, prm);
                     return ms.ToArray();
                 }
             }

@@ -33,6 +33,23 @@ namespace bufinsweb
             bufinsweb.Services.UsoService.Vaciar();
         }
 
+        // Robots bloqueados y límite por IP: cortan la petición antes de generar la página (ahorro de tráfico)
+        protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+            bufinsweb.Filters.BotGuard.Filtrar((HttpApplication)sender);
+        }
+
+        // Respaldo fuera de MVC: peticiones inválidas de robots -> 400 sin cuerpo (no 500 ni redirección a la página de error)
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            if (!bufinsweb.Filters.ManejoErroresAttribute.EsSolicitudInvalida(Server.GetLastError())) return;
+            Server.ClearError();
+            Response.Clear();
+            Response.StatusCode = 400;
+            Response.TrySkipIisCustomErrors = true;
+            Response.SuppressContent = true;
+        }
+
         protected void Application_AcquireRequestState(object sender, EventArgs e)
         {
             string lang = "es-CO";

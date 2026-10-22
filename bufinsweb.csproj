@@ -151,6 +151,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Filters\BotGuard.cs" />
+    <Compile Include="Filters\ManejoErroresAttribute.cs" />
     <Compile Include="Filters\ThrottleAttribute.cs" />
     <Compile Include="Helpers\CiiuCatalogo.cs" />
     <Compile Include="Helpers\EnvironmentHelper.cs" />
@@ -181,6 +183,10 @@
     <Content Include="Assets\images\ImagenVentajas.jpg" />
     <Content Include="Assets\images\LaptopSinFondo.jpg" />
     <Content Include="Assets\images\PortadaDirectivo.jpg" />
+    <Content Include="Assets\images\ImagenParaQuien.webp" />
+    <Content Include="Assets\images\ImagenVentajas.webp" />
+    <Content Include="Assets\images\LaptopSinFondo.webp" />
+    <Content Include="Assets\images\PortadaDirectivo.webp" />
     <Content Include="Assets\js\bootstrap.bundle.min.js" />
     <Content Include="Assets\js\aos.js" />
     <Content Include="Assets\fonts\inter-300.woff2" />

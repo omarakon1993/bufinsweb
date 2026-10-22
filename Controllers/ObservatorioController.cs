@@ -36,7 +36,8 @@ namespace bufinsweb.Controllers
 
         private ContentResult JsonOut(object o)
         {
-            return Content(JsonConvert.SerializeObject(o, JsonCfg), "application/json", Encoding.UTF8);
+            // text/json (y no application/json): IIS solo comprime text/* en el hosting; el JS lo lee igual con r.json()
+            return Content(JsonConvert.SerializeObject(o, JsonCfg), "text/json", Encoding.UTF8);
         }
 
         // ------------------------------------------------------------ páginas
@@ -45,6 +46,7 @@ namespace bufinsweb.Controllers
         public ActionResult Index()
         {
             Vista("vista_home", "");
+            if (SinCambios()) return NoModificado();
             ViewBag.Datos = _svc.Datos;
             ViewBag.Top = _svc.TopNacional(10);
             return View();
@@ -54,6 +56,7 @@ namespace bufinsweb.Controllers
         public ActionResult Sectores()
         {
             Vista("vista_sectores", "");
+            if (SinCambios()) return NoModificado();
             ViewBag.Datos = _svc.Datos;
             return View();
         }
@@ -62,6 +65,7 @@ namespace bufinsweb.Controllers
         public ActionResult Comparador()
         {
             Vista("vista_comparar", "");
+            if (SinCambios()) return NoModificado();
             ViewBag.Datos = _svc.Datos;
             return View();
         }
@@ -75,6 +79,7 @@ namespace bufinsweb.Controllers
             var canon = ObservatorioService.UrlEmpresa(e);
             if (!string.Equals(Request.Path, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.Url.Query);
             Vista("vista_empresa", e.Ciiu, e.Nit, e.Razon);
+            if (SinCambios()) return NoModificado();
             ViewBag.Datos = _svc.Datos;
             ViewBag.Narrativa = _svc.NarrativaEmpresa(e);
             ViewBag.OgImage = "/observatorio/og/" + e.Nit + "?v=" + _svc.Datos.Version;
@@ -99,12 +104,14 @@ namespace bufinsweb.Controllers
             if (string.IsNullOrEmpty(metrica))
             {
                 Vista("vista_ranking", "indice");
+                if (SinCambios()) return NoModificado();
                 ViewBag.Hub = _svc.HubRankings();
                 return View("RankingHub");
             }
             var r = _svc.Ranking(metrica, tipo, clave, 100);
             if (r == null) return NoEncontrado();
             Vista("vista_ranking", metrica, (tipo ?? "nacional") + "/" + (clave ?? ""));
+            if (SinCambios()) return NoModificado();
             return View(r);
         }
 
@@ -126,8 +133,8 @@ namespace bufinsweb.Controllers
                 new OgImage.Kpi { Etiqueta = "Margen EBITDA", Valor = ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(yv)) },
                 new OgImage.Kpi { Etiqueta = "Score de salud", Valor = sal.Total.ToString("0") + " / 100" }
             };
-            var png = OgImage.Generar(e.Razon, cat.Nombre(e.Ciiu) + " · " + e.Ciudad, kpis, "NIT " + e.Nit + " · Año " + d.MaxAnio + " · bufins.com/observatorio", Server.MapPath("~/Assets/images/Bufins_Logofinal.png"));
-            return File(png, "image/png");
+            var jpg = OgImage.Generar(e.Razon, cat.Nombre(e.Ciiu) + " · " + e.Ciudad, kpis, "NIT " + e.Nit + " · Año " + d.MaxAnio + " · bufins.com/observatorio", Server.MapPath("~/Assets/images/Bufins_Logofinal.png"));
+            return File(jpg, "image/jpeg");
         }
 
         [HttpPost]
@@ -145,6 +152,68 @@ namespace bufinsweb.Controllers
             if (Request.HttpMethod == "GET") UsoService.Registrar(Request, tipo, clave, detalle, nombre, conOrigen: true);
         }
 
+        // ------------------------------------------------------------ 304 Not Modified (ahorro de tráfico)
+
+        private static readonly object FirmaLock = new object();
+        private static DateTime _firmaFecha, _firmaHasta;
+
+        /// <summary>
+        /// Los datos cambian una vez al año: si el buscador o el navegador ya tiene esta versión de la página
+        /// (If-None-Match / If-Modified-Since) se responde 304 sin cuerpo. La versión es la fecha más reciente de
+        /// los datos, el código y las vistas/estilos publicados; se recalcula cada minuto.
+        /// </summary>
+        private bool SinCambios()
+        {
+            if (Request.HttpMethod != "GET") return false;
+            var lm = UltimoCambio();
+            var etag = "W/\"" + lm.Ticks.ToString("x") + "-" + CultureInfo.CurrentUICulture.Name + "\"";
+            Response.Cache.SetCacheability(HttpCacheability.Private);
+            Response.Cache.SetMaxAge(TimeSpan.Zero);   // el navegador revalida siempre (y recibe 304 si nada cambió)
+            Response.AppendHeader("ETag", etag);       // Cache.SetETag no la emite con caché privada
+            Response.Cache.SetLastModified(lm);
+            Response.AppendHeader("Vary", "Cookie");    // el idioma viaja en la cookie "lang"
+
+            var inm = Request.Headers["If-None-Match"];
+            if (inm != null) return inm.Split(',').Any(x => x.Trim() == etag || x.Trim() == etag.Substring(2));
+            DateTime ims;
+            var h = Request.Headers["If-Modified-Since"];
+            return h != null && DateTime.TryParse(h, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out ims) && lm <= ims;
+        }
+
+        private DateTime UltimoCambio()
+        {
+            var ahora = DateTime.UtcNow;
+            if (ahora < _firmaHasta) return _firmaFecha;
+            lock (FirmaLock)
+            {
+                if (ahora < _firmaHasta) return _firmaFecha;
+                var max = new DateTime(ahora.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);   // el pie de página muestra el año
+                Func<string, string, System.IO.SearchOption, DateTime> mas = (ruta, patron, op) =>
+                {
+                    var dir = Server.MapPath(ruta);
+                    if (!System.IO.Directory.Exists(dir)) return DateTime.MinValue;
+                    return System.IO.Directory.EnumerateFiles(dir, patron, op)
+                        .Where(f => !f.EndsWith("etl_status.json", StringComparison.OrdinalIgnoreCase) && !f.EndsWith(".lock", StringComparison.OrdinalIgnoreCase))
+                        .Select(System.IO.File.GetLastWriteTimeUtc).DefaultIfEmpty(DateTime.MinValue).Max();
+                };
+                foreach (var t in new[]
+                {
+                    mas("~/bin", "bufinsweb.dll", System.IO.SearchOption.TopDirectoryOnly),
+                    mas("~/Views", "*.cshtml", System.IO.SearchOption.AllDirectories),
+                    mas("~/Assets/css", "*.css", System.IO.SearchOption.TopDirectoryOnly),
+                    mas("~/Assets/js", "*.js", System.IO.SearchOption.TopDirectoryOnly),
+                    mas("~/App_Data/observatorio", "*.*", System.IO.SearchOption.TopDirectoryOnly)
+                })
+                    if (t > max) max = t;
+                if (max > ahora) max = ahora;
+                _firmaFecha = new DateTime(max.Ticks - max.Ticks % TimeSpan.TicksPerSecond, DateTimeKind.Utc);   // HTTP usa segundos
+                _firmaHasta = ahora.AddMinutes(1);
+                return _firmaFecha;
+            }
+        }
+
+        private static ActionResult NoModificado() { return new HttpStatusCodeResult(304); }
+
         private ActionResult NoEncontrado()
         {
             if (Request.HttpMethod == "GET") UsoService.Registrar(Request, "error_404", Convert.ToString(RouteData.Values["action"]));
@@ -157,6 +226,7 @@ namespace bufinsweb.Controllers
             var s = _svc.Nodo(slug);
             if (s == null) return NoEncontrado();
             Vista("vista_sector", slug);
+            if (SinCambios()) return NoModificado();
             ViewBag.Narrativa = _svc.NarrativaNodo(s);
             ViewBag.Datos = _svc.Datos;
             return View(s);
