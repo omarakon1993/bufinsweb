@@ -13,7 +13,7 @@
     var p = e.En(anio - 1, datos.MinAnio);
     var actividad = cat.Nombre(e.Ciiu);
     ViewBag.ObsActive = "empresa";
-    ViewBag.Title = e.Razon + T(" (NIT ", " (Tax ID ") + e.Nit + T("): estados financieros e indicadores | Bufins", "): financial statements and ratios | Bufins");
+    ViewBag.Title = e.Razon + T(" (NIT ", " (Tax ID ") + e.Nit + T("): estados financieros e indicadores | Bufins Pulso", "): financial statements and ratios | Bufins Pulso");
     ViewBag.MetaDescription = e.Razon + " — " + actividad + ", " + e.Ciudad + ". " + T("Ingresos ", "Revenue ") + ObservatorioFormat.Moneda(v[M.Ing] / 1000.0) + T(", EBITDA ", ", EBITDA ") + ObservatorioFormat.Moneda(v[M.Ebitda] / 1000.0) + " (" + anio + "). " + T("Análisis de rentabilidad, endeudamiento, liquidez y comparación con su sector.", "Profitability, leverage and liquidity analysis versus its sector.");
     var baseUrl = Request.Url.GetLeftPart(UriPartial.Authority);
     var canonical = baseUrl + ObservatorioService.UrlEmpresa(e);
@@ -36,14 +36,14 @@
     @ObservatorioSeo.Faq(narr)
     @ObservatorioSeo.Breadcrumb(new[] {
         new KeyValuePair<string, string>("Bufins", baseUrl + "/"),
-        new KeyValuePair<string, string>(T("Observatorio", "Observatory"), baseUrl + "/observatorio"),
+        new KeyValuePair<string, string>("Bufins Pulso", baseUrl + "/observatorio"),
         new KeyValuePair<string, string>(e.Razon, canonical) })
 }
 
 <section class="obs-hero obs-hero-sm">
     <div class="container">
         <nav class="obs-crumbs" aria-label="breadcrumb">
-            <a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i>
+            <a href="/observatorio">Bufins Pulso</a> <i class="fas fa-chevron-right"></i>
             @if (e.Seccion.Length > 0) { <a href="/observatorio/sector/seccion-@e.Seccion.ToLowerInvariant()">@cat.Nombre(e.Seccion)</a> <i class="fas fa-chevron-right"></i> }
             @if (e.Division.Length > 0) { <a href="/observatorio/sector/ciiu-@e.Division">@cat.Nombre(e.Division)</a> }
         </nav>

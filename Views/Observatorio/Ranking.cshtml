@@ -13,7 +13,7 @@
     Func<string, string> ruta = m => baseRuta + m + (Model.Tipo == "nacional" ? "" : "/" + Model.Tipo + "/" + Model.Clave);
     var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + ruta(def.Clave);
     ViewBag.ObsActive = "ranking";
-    ViewBag.Title = titulo + " " + Model.Anio + " | Bufins";
+    ViewBag.Title = titulo + " " + Model.Anio + " | Bufins Pulso";
     ViewBag.MetaDescription = T("Ranking de las ", "Ranking of the ") + Model.Filas.Count + T(" empresas con ", " companies with ") + etiqueta + " " + ambito + " (" + Model.Anio + T("), de ", "), out of ") + Model.Total.ToString("N0") + T(" que reportaron a la Supersociedades.", " that filed with the Superintendencia de Sociedades.");
     ViewBag.Canonical = canonical;
     Func<double, string> fmt = x =>
@@ -32,7 +32,7 @@
     @Html.Partial("_ObsHead")
     @ObservatorioSeo.Breadcrumb(new[] {
         new KeyValuePair<string, string>("Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/"),
-        new KeyValuePair<string, string>(T("Observatorio", "Observatory"), Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio"),
+        new KeyValuePair<string, string>("Bufins Pulso", Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio"),
         new KeyValuePair<string, string>("Rankings", Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/ranking"),
         new KeyValuePair<string, string>(titulo, canonical) })
 }
@@ -40,7 +40,7 @@
 <section class="obs-hero obs-hero-sm">
     <div class="container">
         <nav class="obs-crumbs" aria-label="breadcrumb">
-            <a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i>
+            <a href="/observatorio">Bufins Pulso</a> <i class="fas fa-chevron-right"></i>
             <a href="/observatorio/ranking">Rankings</a>
         </nav>
         <h1 class="obs-title">@titulo</h1>

@@ -9,7 +9,7 @@
     var s = Model.Suma;
     var prev = Model.Prev;
     ViewBag.ObsActive = "sectores";
-    ViewBag.Title = Model.Titulo + T(" en Colombia: ingresos, EBITDA y empresas líderes | Bufins", " in Colombia: revenue, EBITDA and leading companies | Bufins");
+    ViewBag.Title = Model.Titulo + T(" en Colombia: ingresos, EBITDA y empresas líderes | Bufins Pulso", " in Colombia: revenue, EBITDA and leading companies | Bufins Pulso");
     ViewBag.MetaDescription = Model.Titulo + " (" + Model.Nivel + " CIIU " + Model.Codigo + "): " + Model.Total.ToString("N0") + T(" empresas, ingresos de ", " companies, revenue of ") + ObservatorioFormat.Moneda(s[M.Ing] / 1000.0) + " (" + Model.Anio + "). " + T("Ranking, márgenes y endeudamiento con datos de la Supersociedades.", "Ranking, margins and leverage from Superintendencia de Sociedades data.");
     var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/sector/" + Model.Slug;
     ViewBag.Canonical = canonical; ViewBag.OgType = "article";
@@ -22,14 +22,14 @@
     @ObservatorioSeo.Faq(ViewBag.Narrativa as ObservatorioService.Narrativa)
     @ObservatorioSeo.Breadcrumb(new[] {
         new KeyValuePair<string, string>("Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/"),
-        new KeyValuePair<string, string>(T("Observatorio", "Observatory"), Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio"),
+        new KeyValuePair<string, string>("Bufins Pulso", Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio"),
         new KeyValuePair<string, string>(Model.Titulo, canonical) })
 }
 
 <section class="obs-hero obs-hero-sm">
     <div class="container">
         <nav class="obs-crumbs" aria-label="breadcrumb">
-            <a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i>
+            <a href="/observatorio">Bufins Pulso</a> <i class="fas fa-chevron-right"></i>
             @if (seccion.Length > 0 && Model.Codigo != seccion) { <a href="/observatorio/sector/seccion-@seccion.ToLowerInvariant()">@cat.Nombre(seccion)</a> <i class="fas fa-chevron-right"></i> }
             <span>@Model.Nivel @Model.Codigo</span>
         </nav>

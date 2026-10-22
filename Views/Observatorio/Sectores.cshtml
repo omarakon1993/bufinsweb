@@ -4,7 +4,7 @@
     var datos = (ObservatorioDatos)ViewBag.Datos;
     var T = new Func<string, string, string>(ObservatorioFormat.T);
     ViewBag.ObsActive = "sectores";
-    ViewBag.Title = T("Análisis por sector económico en Colombia: benchmark financiero | Bufins", "Sector analysis in Colombia: financial benchmark | Bufins");
+    ViewBag.Title = T("Análisis por sector económico en Colombia: benchmark financiero | Bufins Pulso", "Sector analysis in Colombia: financial benchmark | Bufins Pulso");
     ViewBag.MetaDescription = T("Compara sectores y actividades CIIU de Colombia: ingresos, EBITDA, capital de trabajo, deuda y márgenes de miles de empresas, año a año y por tamaño, ciudad y estado.", "Compare Colombian sectors and ISIC activities: revenue, EBITDA, working capital, debt and margins of thousands of companies, year by year and by size, region and status.");
     var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/sectores";
     ViewBag.Canonical = canonical; ViewBag.OgType = "website";
@@ -15,7 +15,7 @@
 
 <section class="obs-hero obs-hero-sm">
     <div class="container">
-        <nav class="obs-crumbs" aria-label="breadcrumb"><a href="/observatorio">@T("Observatorio", "Observatory")</a> <i class="fas fa-chevron-right"></i> <span>@T("Análisis por sector", "Sector analysis")</span></nav>
+        <nav class="obs-crumbs" aria-label="breadcrumb"><a href="/observatorio">Bufins Pulso</a> <i class="fas fa-chevron-right"></i> <span>@T("Análisis por sector", "Sector analysis")</span></nav>
         <h1 class="obs-title">@T("Análisis por sector", "Sector analysis")</h1>
         <p class="obs-lead">@T("Elige una o varias actividades económicas (CIIU) y compara su desempeño frente al mercado: tamaño, rentabilidad, endeudamiento y capital de trabajo, año a año.", "Pick one or more economic activities (ISIC) and benchmark their performance against the market: size, profitability, leverage and working capital, year by year.")</p>
     </div>

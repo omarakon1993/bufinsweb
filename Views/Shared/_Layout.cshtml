@@ -34,10 +34,10 @@
                         <a class="nav-link" href="@Url.Action("Index", "Home")">@Resources.Strings.Nav_Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/observatorio">@(isEnglish ? "Observatory" : "Observatorio")</a>
+                        <a class="nav-link" href="@Url.Action("Contact", "Home")">@Resources.Strings.Nav_Contact</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Contact", "Home")">@Resources.Strings.Nav_Contact</a>
+                        <a class="nav-link" href="/observatorio"><i class="fas fa-heart-pulse nav-icon" aria-hidden="true"></i>Bufins Pulso</a>
                     </li>
                     <li class="nav-item ms-lg-2">
                         <div class="lang-switcher-wrapper">
@@ -86,8 +86,8 @@
                     <h5 class="footer-title mb-3">@Resources.Strings.Footer_LinksTitle</h5>
                     <ul class="footer-links list-unstyled">
                         <li class="mb-2"><a href="@Url.Action("Index", "Home")"><i class="fas fa-chevron-right me-2"></i>@Resources.Strings.Nav_Home</a></li>
-                        <li class="mb-2"><a href="/observatorio"><i class="fas fa-chevron-right me-2"></i>@(isEnglish ? "Observatory" : "Observatorio")</a></li>
                         <li class="mb-2"><a href="@Url.Action("Contact", "Home")"><i class="fas fa-chevron-right me-2"></i>@Resources.Strings.Nav_Contact</a></li>
+                        <li class="mb-2"><a href="/observatorio"><i class="fas fa-chevron-right me-2"></i>Bufins Pulso</a></li>
                         <li class="mb-2"><a href="https://customers.bufins.com"><i class="fas fa-chevron-right me-2"></i>@Resources.Strings.Nav_Portal</a></li>
                     </ul>
                 </div>

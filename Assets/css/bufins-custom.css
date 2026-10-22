@@ -91,6 +91,12 @@ body {
     width: 100%;
 }
 
+/* Icono de una opcion del menu (Bufins Pulso) */
+.nav-link .nav-icon {
+    color: var(--color-cyan);
+    margin-right: 0.4rem;
+}
+
 /* Portal Clientes Button */
 .btn-portal {
     background: linear-gradient(135deg, var(--color-cyan) 0%, #00c9c0 100%);

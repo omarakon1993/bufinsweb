@@ -59,7 +59,7 @@ Required keys: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FRO
 
 ## Observatorio financiero (`/observatorio`)
 
-Modulo publico de analisis de ~37 mil empresas colombianas (estados financieros NIIF reportados a la Supersociedades, datos.gov.co). No usa base de datos: lee JSON de `App_Data/observatorio/` en memoria.
+**Nombre publico: «Bufins Pulso»** (menu despues de Contacto, icono `fa-heart-pulse`; titulos `| Bufins Pulso`, migas, subnav, informe e imagen OG). En el codigo, carpetas, clases y URLs sigue llamandose «Observatorio» (`/observatorio`, no se cambio para no perder SEO ni enlaces). Modulo publico de analisis de ~37 mil empresas colombianas (estados financieros NIIF reportados a la Supersociedades, datos.gov.co). No usa base de datos: lee JSON de `App_Data/observatorio/` en memoria.
 
 - Paginas: `Views/Observatorio/` (Index, Sectores, Comparador, Empresa, Nodo). API JSON en `/observatorio/api/{accion}` (`ObservatorioController`). Logica en `Services/ObservatorioService.cs`, indicadores en `Models/Observatorio/ObservatorioModels.cs` (clase `Ratio`), catalogo CIIU en `Helpers/CiiuCatalogo.cs`.
 - Front: `Assets/js/obs-*.js` + Chart.js local; estilos en `Assets/css/observatorio.css`. Textos bilingues inline con `ObservatorioFormat.T(es, en)` (no usan los .resx).
