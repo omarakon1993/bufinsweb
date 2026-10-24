@@ -17,7 +17,7 @@ namespace bufinsweb
 
             // Pulso: paquetes versionados (?v=hash) con caché larga; el JS se minifica y se concatena por página
             bundles.Add(new Bundle("~/bundles/obs-chart").Include("~/Assets/js/chart.umd.min.js"));
-            bundles.Add(new Bundle("~/bundles/obs-css").Include("~/Assets/css/pulso-bufins.css"));
+            bundles.Add(new Bundle("~/bundles/obs-css").Include("~/Assets/css/pulso.css"));
             bundles.Add(new ScriptBundle("~/bundles/obs-core").Include("~/Assets/js/obs-common.js"));
             bundles.Add(new ScriptBundle("~/bundles/obs-sectores").Include("~/Assets/js/obs-common.js", "~/Assets/js/obs-sectores.js"));
             bundles.Add(new ScriptBundle("~/bundles/obs-empresa").Include("~/Assets/js/obs-common.js", "~/Assets/js/obs-empresa.js"));
