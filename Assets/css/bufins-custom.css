@@ -91,7 +91,7 @@ body {
     width: 100%;
 }
 
-/* Icono de una opcion del menu (Bufins Pulso) */
+/* Icono de una opcion del menu (Pulso Bufins) */
 .nav-link .nav-icon {
     color: var(--color-cyan);
     margin-right: 0.4rem;

@@ -1,17 +1,17 @@
 @using bufinsweb.Helpers
 @{
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var T = new Func<string, string, string>(PulsoFormat.T);
     var activo = (string)ViewBag.ObsActive ?? "";
     Func<string, string> cls = k => k == activo ? "active" : "";
 }
 <span id="obsMeta" data-v="@ViewBag.ObsVer" hidden></span>
 <div class="obs-subnav">
     <div class="container-xl obs-subnav-in">
-        <nav class="obs-subnav-links" aria-label="Bufins Pulso">
-            <a href="/observatorio" class="@cls("home")"><i class="fas fa-heart-pulse"></i><span>Bufins Pulso</span></a>
-            <a href="/observatorio/sectores" class="@cls("sectores")"><i class="fas fa-industry"></i><span>@T("Análisis por sector", "Sector analysis")</span></a>
-            <a href="/observatorio/ranking" class="@cls("ranking")"><i class="fas fa-trophy"></i><span>@T("Rankings", "Rankings")</span></a>
-            <a href="/observatorio/comparar" class="@cls("comparar")"><i class="fas fa-balance-scale"></i><span>@T("Comparar empresas", "Compare companies")</span></a>
+        <nav class="obs-subnav-links" aria-label="Pulso Bufins">
+            <a href="/pulso-bufins" class="@cls("home")"><i class="fas fa-heart-pulse"></i><span>Pulso Bufins</span></a>
+            <a href="/pulso-bufins/sectores" class="@cls("sectores")"><i class="fas fa-industry"></i><span>@T("Análisis por sector", "Sector analysis")</span></a>
+            <a href="/pulso-bufins/ranking" class="@cls("ranking")"><i class="fas fa-trophy"></i><span>@T("Rankings", "Rankings")</span></a>
+            <a href="/pulso-bufins/comparar" class="@cls("comparar")"><i class="fas fa-balance-scale"></i><span>@T("Comparar empresas", "Compare companies")</span></a>
             <span class="obs-subnav-tag @cls("empresa")"><i class="fas fa-building"></i><span>@T("Análisis individual", "Company profile")</span></span>
         </nav>
         <label class="obs-unit" title="@T("Unidad en la que se muestran las cifras en pesos", "Unit used for peso figures")">

@@ -1,4 +1,4 @@
-/* Observatorio Bufins – comparación de hasta 4 empresas */
+/* Pulso Bufins – comparación de hasta 4 empresas */
 (function () {
     'use strict';
     var root = document.getElementById('cmpApp');

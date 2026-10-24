@@ -6,8 +6,8 @@ using Newtonsoft.Json.Linq;
 
 namespace bufinsweb.Helpers
 {
-    /// <summary>Datos estructurados (JSON-LD) del Observatorio: FAQPage y BreadcrumbList.</summary>
-    public static class ObservatorioSeo
+    /// <summary>Datos estructurados (JSON-LD) de Pulso Bufins: FAQPage y BreadcrumbList.</summary>
+    public static class PulsoSeo
     {
         private static IHtmlString Script(JObject o)
         {
@@ -16,7 +16,7 @@ namespace bufinsweb.Helpers
             return new HtmlString("<script type=\"application/ld+json\">" + json + "</script>");
         }
 
-        public static IHtmlString Faq(ObservatorioService.Narrativa n)
+        public static IHtmlString Faq(PulsoService.Narrativa n)
         {
             if (n == null || n.Faqs.Count == 0) return new HtmlString("");
             return Script(new JObject

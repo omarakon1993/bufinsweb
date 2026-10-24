@@ -4,8 +4,8 @@ using System.Threading;
 
 namespace bufinsweb.Helpers
 {
-    /// <summary>Formato de cifras (entrada en MILLONES de COP) para las vistas del Observatorio.</summary>
-    public static class ObservatorioFormat
+    /// <summary>Formato de cifras (entrada en MILLONES de COP) para las vistas de Pulso Bufins.</summary>
+    public static class PulsoFormat
     {
         private static bool En { get { return Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "en"; } }
         private static CultureInfo Cul { get { return CultureInfo.GetCultureInfo(En ? "en-US" : "es-CO"); } }
@@ -35,7 +35,7 @@ namespace bufinsweb.Helpers
             return (v >= 0 ? "▲ " : "▼ ") + Math.Abs(v).ToString("0.0", Cul) + "%";
         }
 
-        /// <summary>Texto bilingüe en línea para las vistas del Observatorio.</summary>
+        /// <summary>Texto bilingüe en línea para las vistas de Pulso Bufins.</summary>
         public static string T(string es, string en) { return En ? en : es; }
     }
 }

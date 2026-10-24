@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using bufinsweb.Helpers;
-using bufinsweb.Models.Observatorio;
+using bufinsweb.Models.Pulso;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace bufinsweb.Services
 {
     /// <summary>Parte 2 del servicio: URLs con nombre, señales de prospecto, rankings, textos automáticos y datos complementarios.</summary>
-    public partial class ObservatorioService
+    public partial class PulsoService
     {
         // ---------------------------------------------------------------- slugs y URLs
 
@@ -32,8 +32,8 @@ namespace bufinsweb.Services
             return s;
         }
 
-        /// <summary>URL canónica de la ficha: /observatorio/empresa/{nit}-{nombre}.</summary>
-        public static string UrlEmpresa(Empresa e) { return "/observatorio/empresa/" + e.Nit + (string.IsNullOrEmpty(e.Slug) ? "" : "-" + SlugCorto(e.Razon)); }
+        /// <summary>URL canónica de la ficha: /pulso-bufins/empresa/{nit}-{nombre}.</summary>
+        public static string UrlEmpresa(Empresa e) { return "/pulso-bufins/empresa/" + e.Nit + (string.IsNullOrEmpty(e.Slug) ? "" : "-" + SlugCorto(e.Razon)); }
 
         /// <summary>Extrae el NIT de "860076919-crepes-y-waffles" (o de "860076919").</summary>
         public static string NitDeId(string id)
@@ -45,7 +45,7 @@ namespace bufinsweb.Services
 
         // ---------------------------------------------------------------- datos complementarios
 
-        private static void CargarComplementos(ObservatorioDatos d)
+        private static void CargarComplementos(PulsoDatos d)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace bufinsweb.Services
 
         // ---------------------------------------------------------------- señales y potencial de prospecto
 
-        public object SenalesDefs(ObservatorioDatos d)
+        public object SenalesDefs(PulsoDatos d)
         {
             return d.Reglas.Senales.Select(kv => new { clave = kv.Key, es = kv.Value.Es, en = kv.Value.En, tipo = kv.Value.Tipo, regla = kv.Value.Regla, puntos = kv.Value.Puntos }).ToList();
         }
@@ -96,7 +96,7 @@ namespace bufinsweb.Services
         }
 
         /// <summary>Detecta las señales de la empresa en el año y suma el potencial (0-100) según reglas.json. Solo usa cifras públicas de la empresa.</summary>
-        public SenalesInfo CalcularSenales(ObservatorioDatos d, Empresa e, long[] v, long[] p, long[] p2)
+        public SenalesInfo CalcularSenales(PulsoDatos d, Empresa e, long[] v, long[] p, long[] p2)
         {
             var si = new SenalesInfo();
             var liq = Ratio.Liquidez(v);
@@ -268,9 +268,9 @@ namespace bufinsweb.Services
         public class Faq { public string P, R; }
         public class Narrativa { public List<string> Parrafos = new List<string>(); public List<Faq> Faqs = new List<Faq>(); public string Resumen; }
 
-        private static string T(string es, string en) { return ObservatorioFormat.T(es, en); }
-        private static string Mn(double millones) { return ObservatorioFormat.Moneda(millones); }
-        private static string Pc(double? v) { return ObservatorioFormat.Porcentaje(v); }
+        private static string T(string es, string en) { return PulsoFormat.T(es, en); }
+        private static string Mn(double millones) { return PulsoFormat.Moneda(millones); }
+        private static string Pc(double? v) { return PulsoFormat.Porcentaje(v); }
         private static string Nx(double? v) { return v.HasValue ? v.Value.ToString("0.0", CultureInfo.CurrentCulture) + "x" : "—"; }
 
         public Narrativa NarrativaEmpresa(Empresa e)

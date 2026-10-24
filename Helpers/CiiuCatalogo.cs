@@ -12,11 +12,11 @@ namespace bufinsweb.Helpers
 {
     /// <summary>
     /// Catálogo CIIU Rev. 4 A.C. (DANE): sección (letra) > división (2) > grupo (3) > clase (4).
-    /// Se carga de App_Data/observatorio/ciiu.json (generado por Tools/ObservatorioEtl/build_ciiu.py).
+    /// Se carga de App_Data/pulso/ciiu.json (generado por Tools/PulsoEtl/build_ciiu.py).
     /// </summary>
     public class CiiuCatalogo
     {
-        private const string CacheKey = "observatorio:ciiu";
+        private const string CacheKey = "pulso:ciiu";
 
         public class DivisionInfo { [JsonProperty("n")] public string N; [JsonProperty("s")] public string S; }
 
@@ -32,7 +32,7 @@ namespace bufinsweb.Helpers
         {
             var c = HttpRuntime.Cache[CacheKey] as CiiuCatalogo;
             if (c != null) return c;
-            var path = HostingEnvironment.MapPath("~/App_Data/observatorio/ciiu.json");
+            var path = HostingEnvironment.MapPath("~/App_Data/pulso/ciiu.json");
             c = File.Exists(path) ? JsonConvert.DeserializeObject<CiiuCatalogo>(File.ReadAllText(path, Encoding.UTF8)) : new CiiuCatalogo();
             HttpRuntime.Cache.Insert(CacheKey, c, File.Exists(path) ? new CacheDependency(path) : null);
             return c;

@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- ETL del Observatorio Bufins. Sin dependencias externas. Compilar:  msbuild Tools\ObservatorioEtl\ObservatorioEtl.csproj /p:Configuration=Release -->
+  <!-- ETL de Pulso Bufins. Sin dependencias externas. Compilar:  msbuild Tools\PulsoEtl\PulsoEtl.csproj /p:Configuration=Release -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <LangVersion>7.3</LangVersion>
-    <AssemblyName>ObservatorioEtl</AssemblyName>
-    <RootNamespace>ObservatorioEtl</RootNamespace>
+    <AssemblyName>PulsoEtl</AssemblyName>
+    <RootNamespace>PulsoEtl</RootNamespace>
     <Nullable>disable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ImplicitUsings>disable</ImplicitUsings>

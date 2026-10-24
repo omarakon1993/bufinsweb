@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using bufinsweb.Models.Observatorio;
+using bufinsweb.Models.Pulso;
 using bufinsweb.Services;
 
 namespace bufinsweb.Controllers
@@ -17,7 +17,7 @@ namespace bufinsweb.Controllers
         private static readonly string[] RobotsBloqueados =
             new[] { "Google-Extended", "Applebot-Extended" }.Concat(bufinsweb.Filters.BotGuard.Bloqueados).ToArray();
 
-        // Previsualizadores de enlaces (WhatsApp, redes sociales): necesitan la imagen /observatorio/og/ al compartir.
+        // Previsualizadores de enlaces (WhatsApp, redes sociales): necesitan la imagen /pulso-bufins/og/ al compartir.
         private static readonly string[] Previsualizadores =
         {
             "facebookexternalhit", "WhatsApp", "LinkedInBot", "Twitterbot", "Slackbot", "TelegramBot"
@@ -30,14 +30,14 @@ namespace bufinsweb.Controllers
             foreach (var ua in RobotsBloqueados) sb.Append("User-agent: ").Append(ua).Append('\n');
             sb.Append("Disallow: /\n\n");
             foreach (var ua in Previsualizadores) sb.Append("User-agent: ").Append(ua).Append('\n');
-            sb.Append("Disallow: /observatorio/api/\nDisallow: /observatorio/informe/\n\n");
+            sb.Append("Disallow: /pulso-bufins/api/\nDisallow: /pulso-bufins/informe/\n\n");
             // Buscadores: fichas, sectores y rankings nacionales/departamento/seccion; sin imagenes OG,
             // ni rankings por ciudad o clase CIIU (miles de combinaciones), ni comparaciones con parametros.
             sb.Append("User-agent: *\nAllow: /\n")
               .Append("Disallow: /Home/SetLanguage\n")   // cambio de idioma: redirige (302) a la misma pagina
-              .Append("Disallow: /observatorio/api/\nDisallow: /observatorio/informe/\nDisallow: /observatorio/og/\n")
-              .Append("Disallow: /observatorio/comparar?\n")
-              .Append("Disallow: /observatorio/ranking/*/ciudad/\nDisallow: /observatorio/ranking/*/sector/ciiu-\n")
+              .Append("Disallow: /pulso-bufins/api/\nDisallow: /pulso-bufins/informe/\nDisallow: /pulso-bufins/og/\n")
+              .Append("Disallow: /pulso-bufins/comparar?\n")
+              .Append("Disallow: /pulso-bufins/ranking/*/ciudad/\nDisallow: /pulso-bufins/ranking/*/sector/ciiu-\n")
               .Append("Crawl-delay: 10\n\n");
             sb.Append("Sitemap: ").Append(baseUrl).Append("/sitemap.xml\n");
             return Content(sb.ToString(), "text/plain", Encoding.UTF8);
@@ -46,7 +46,7 @@ namespace bufinsweb.Controllers
         /// <summary>Índice de sitemaps: páginas, sectores, rankings y empresas (en trozos de 10.000).</summary>
         public ActionResult Sitemap()
         {
-            var svc = new ObservatorioService();
+            var svc = new PulsoService();
             var d = svc.Datos;
             var b = BaseUrl();
             var lm = Fecha(d);
@@ -62,7 +62,7 @@ namespace bufinsweb.Controllers
 
         public ActionResult SitemapParte(string archivo)
         {
-            var svc = new ObservatorioService();
+            var svc = new PulsoService();
             var d = svc.Datos;
             var b = BaseUrl();
             var lm = Fecha(d);
@@ -72,20 +72,20 @@ namespace bufinsweb.Controllers
                 Add(sb, b + "/", null, "1.0");
                 Add(sb, b + "/Home/About", null, "0.6");
                 Add(sb, b + "/Home/Contact", null, "0.6");
-                Add(sb, b + "/observatorio", lm, "0.9");
-                Add(sb, b + "/observatorio/sectores", lm, "0.8");
-                Add(sb, b + "/observatorio/comparar", lm, "0.7");
-                Add(sb, b + "/observatorio/ranking", lm, "0.8");
+                Add(sb, b + "/pulso-bufins", lm, "0.9");
+                Add(sb, b + "/pulso-bufins/sectores", lm, "0.8");
+                Add(sb, b + "/pulso-bufins/comparar", lm, "0.7");
+                Add(sb, b + "/pulso-bufins/ranking", lm, "0.8");
             }
             else if (archivo == "sitemap-sectores")
             {
-                foreach (var s in svc.SlugsSector()) Add(sb, b + "/observatorio/sector/" + s, lm, "0.7");
+                foreach (var s in svc.SlugsSector()) Add(sb, b + "/pulso-bufins/sector/" + s, lm, "0.7");
             }
             else if (archivo == "sitemap-rankings")
             {
-                foreach (var m in ObservatorioService.Rankings)
+                foreach (var m in PulsoService.Rankings)
                     foreach (var r in svc.RutasRanking())
-                        Add(sb, b + "/observatorio/ranking/" + m.Clave + (r == "nacional" ? "" : "/" + r), lm, r == "nacional" ? "0.8" : "0.6");
+                        Add(sb, b + "/pulso-bufins/ranking/" + m.Clave + (r == "nacional" ? "" : "/" + r), lm, r == "nacional" ? "0.8" : "0.6");
             }
             else if (archivo.StartsWith("sitemap-empresas-", StringComparison.Ordinal))
             {
@@ -93,7 +93,7 @@ namespace bufinsweb.Controllers
                 if (!int.TryParse(archivo.Substring(17), out i) || i < 1) return HttpNotFound();
                 var lista = d.Empresas.Where(x => x.En(d.MaxAnio, d.MinAnio) != null).Skip((i - 1) * PorArchivo).Take(PorArchivo).ToList();
                 if (lista.Count == 0) return HttpNotFound();
-                foreach (var e in lista) Add(sb, b + ObservatorioService.UrlEmpresa(e), lm, "0.5");
+                foreach (var e in lista) Add(sb, b + PulsoService.UrlEmpresa(e), lm, "0.5");
             }
             else return HttpNotFound();
             sb.Append("</urlset>");
@@ -108,7 +108,7 @@ namespace bufinsweb.Controllers
             return Content(xml, "text/xml", Encoding.UTF8);
         }
 
-        private static string Fecha(ObservatorioDatos d)
+        private static string Fecha(PulsoDatos d)
         {
             DateTime t;
             return DateTime.TryParse(d.Meta.FuenteActualizado, out t) ? t.ToString("yyyy-MM-dd") : DateTime.UtcNow.ToString("yyyy-MM-dd");

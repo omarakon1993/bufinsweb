@@ -1,4 +1,4 @@
-/* Observatorio financiero Bufins – usa las variables de bufins-custom.css (:root) */
+/* Pulso Bufins – usa las variables de bufins-custom.css (:root) */
 .obs-hero {
     background: linear-gradient(135deg, var(--color-primary) 0%, #2a1566 60%, #3b1fa8 100%);
     color: #fff;
@@ -195,7 +195,7 @@
 .obs-state.ok i { color: #2ee6a6; font-size: .6rem; }
 .obs-state.warn i { color: #ffb020; font-size: .6rem; }
 
-/* Sub-menú del Observatorio */
+/* Sub-menú de Pulso Bufins */
 .obs-subnav { position: sticky; top: 70px; z-index: 30; background: #fff; border-bottom: 1px solid var(--color-medium-gray); box-shadow: 0 4px 14px rgba(22,9,51,.05); }
 .obs-subnav-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: .55rem; padding-bottom: .55rem; }
 .obs-subnav-links { display: flex; gap: .25rem; overflow-x: auto; scrollbar-width: none; }

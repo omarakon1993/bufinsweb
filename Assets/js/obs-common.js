@@ -1,4 +1,4 @@
-/* Observatorio Bufins – utilidades compartidas (formato, API, buscador de empresas, gráficos) */
+/* Pulso Bufins – utilidades compartidas (formato, API, buscador de empresas, gráficos) */
 (function () {
     'use strict';
     var ES = document.documentElement.lang !== 'en';
@@ -83,8 +83,8 @@
             if (x) p.x = String(x).slice(0, 100);
             if (extra) for (var n in extra) if (extra[n] != null && extra[n] !== '') p[n] = String(extra[n]);
             var body = new URLSearchParams(p);
-            if (navigator.sendBeacon) navigator.sendBeacon('/observatorio/api/evento', body);
-            else fetch('/observatorio/api/evento', { method: 'POST', body: body, keepalive: true });
+            if (navigator.sendBeacon) navigator.sendBeacon('/pulso-bufins/api/evento', body);
+            else fetch('/pulso-bufins/api/evento', { method: 'POST', body: body, keepalive: true });
         } catch (e) { /* la analítica nunca debe romper la página */ }
     };
     document.addEventListener('click', function (e) {
@@ -125,7 +125,7 @@
     var VER = META ? META.getAttribute('data-v') : '';
     OBS.api = function (path, qs, opts) {
         var q = (qs ? qs + '&' : '') + 'v=' + encodeURIComponent(VER);
-        return fetch('/observatorio/api/' + path + '?' + q, opts || {}).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+        return fetch('/pulso-bufins/api/' + path + '?' + q, opts || {}).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
     };
 
 
@@ -174,7 +174,7 @@
             var it = items[i]; if (!it) return;
             OBS.addRecent(it); close();
             if (opts.onSelect) { input.value = opts.clear === false ? it.razon : ''; opts.onSelect(it); }
-            else { OBS.track('busqueda_sel', it.nit || '', '', null); location.href = it.url || ('/observatorio/empresa/' + it.nit); }
+            else { OBS.track('busqueda_sel', it.nit || '', '', null); location.href = it.url || ('/pulso-bufins/empresa/' + it.nit); }
         }
         function paint() {
             box.innerHTML = items.map(function (it, i) {

@@ -374,12 +374,12 @@ secretsSettings.config
 SemanticSymbols.db-shm
 CodeChunks.db-shm
 
-# Observatorio: datos generados por Tools/ObservatorioEtl (se despliegan como contenido, no se versionan)
-App_Data/observatorio/empresas.bin
-App_Data/observatorio/meta.json
-App_Data/observatorio/detalle.*
-App_Data/observatorio/etl.lock
-App_Data/observatorio/etl_status.json
-Tools/ObservatorioEtl/bin/
-Tools/ObservatorioEtl/obj/
-App_Data/observatorio/uso/
+# Pulso Bufins: datos generados por Tools/PulsoEtl (se despliegan como contenido, no se versionan)
+App_Data/pulso/empresas.bin
+App_Data/pulso/meta.json
+App_Data/pulso/detalle.*
+App_Data/pulso/etl.lock
+App_Data/pulso/etl_status.json
+Tools/PulsoEtl/bin/
+Tools/PulsoEtl/obj/
+App_Data/pulso/uso/

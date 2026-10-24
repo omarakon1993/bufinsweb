@@ -1,8 +1,8 @@
-@* Nota de fuentes del Observatorio: UNA sola, compartida por todas las paginas. Si cambia una fuente (ETL), actualizar aqui.
+@* Nota de fuentes de Pulso Bufins: UNA sola, compartida por todas las paginas. Si cambia una fuente (ETL), actualizar aqui.
    Modelo opcional (bool): false = texto plano sin enlaces (informe imprimible). *@
 @using bufinsweb.Helpers
 @{
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var T = new Func<string, string, string>(PulsoFormat.T);
     var enlaces = !(Model is bool) || (bool)Model;
     Func<string, string, System.Web.IHtmlString> a = (url, texto) => enlaces
         ? new System.Web.HtmlString("<a href=\"" + url + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + texto + "</a>")

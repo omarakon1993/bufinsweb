@@ -1,16 +1,16 @@
 @using bufinsweb.Helpers
-@using bufinsweb.Models.Observatorio
+@using bufinsweb.Models.Pulso
 @{
-    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var datos = (PulsoDatos)ViewBag.Datos;
     var top = (List<KeyValuePair<Empresa, long[]>>)ViewBag.Top;
     var cat = CiiuCatalogo.Actual;
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var T = new Func<string, string, string>(PulsoFormat.T);
     ViewBag.ObsActive = "home";
-    ViewBag.Title = T("Análisis financiero de empresas en Colombia | Bufins Pulso", "Financial analysis of Colombian companies | Bufins Pulso");
+    ViewBag.Title = T("Análisis financiero de empresas en Colombia | Pulso Bufins", "Financial analysis of Colombian companies | Pulso Bufins");
     ViewBag.MetaDescription = T(
         "Consulta estados financieros, indicadores y benchmark de más de " + (datos.Meta.Empresas / 1000) + " mil empresas colombianas que reportan a la Supersociedades: ingresos, EBITDA, deuda, capital de trabajo y flujo de caja.",
         "Financial statements, ratios and benchmarks for over " + (datos.Meta.Empresas / 1000) + " thousand Colombian companies reporting to the Superintendencia de Sociedades.");
-    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio";
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins";
     ViewBag.Canonical = canonical; ViewBag.OgType = "website";
     var secciones = datos.Empresas.Where(e => e.En(datos.MaxAnio, datos.MinAnio) != null && e.Seccion.Length > 0)
                          .GroupBy(e => e.Seccion).Select(g => new { cod = g.Key, n = g.Count() }).OrderByDescending(x => x.n).ToList();
@@ -57,13 +57,13 @@
 <section class="obs-main">
     <div class="container-xl">
         <div class="obs-modules">
-            <a class="obs-module" href="/observatorio/sectores">
+            <a class="obs-module" href="/pulso-bufins/sectores">
                 <span class="obs-module-ico"><i class="fas fa-industry"></i></span>
                 <h2>@T("Análisis por sector", "Sector analysis")</h2>
                 <p>@T("Elige una o varias actividades CIIU, filtra por tamaño, departamento y estado, y compara el desempeño del sector año a año contra la mediana del mercado.", "Pick one or more ISIC activities, filter by size, region and status, and benchmark the sector year by year against the market median.")</p>
                 <span class="obs-module-cta">@T("Explorar sectores", "Explore sectors") <i class="fas fa-arrow-right"></i></span>
             </a>
-            <a class="obs-module" href="/observatorio/comparar">
+            <a class="obs-module" href="/pulso-bufins/comparar">
                 <span class="obs-module-ico"><i class="fas fa-balance-scale"></i></span>
                 <h2>@T("Comparar empresas", "Compare companies")</h2>
                 <p>@T("Pon hasta 4 empresas lado a lado: rentabilidad, endeudamiento, liquidez y ciclo de caja. Útil para evaluar competidores, clientes o proveedores.", "Put up to 4 companies side by side: profitability, leverage, liquidity and cash cycle. Great to assess competitors, customers or suppliers.")</p>
@@ -89,19 +89,19 @@
                     @foreach (var kv in top)
                     {
                         <li>
-                            <a href="@bufinsweb.Services.ObservatorioService.UrlEmpresa(kv.Key)">@kv.Key.Razon</a>
-                            <span>@ObservatorioFormat.Moneda(kv.Value[M.Ing] / 1000.0) · @cat.Nombre(kv.Key.Ciiu)</span>
+                            <a href="@bufinsweb.Services.PulsoService.UrlEmpresa(kv.Key)">@kv.Key.Razon</a>
+                            <span>@PulsoFormat.Moneda(kv.Value[M.Ing] / 1000.0) · @cat.Nombre(kv.Key.Ciiu)</span>
                         </li>
                     }
                 </ol>
-                <p class="mt-3"><a class="obs-more" href="/observatorio/ranking">@T("Ver rankings por tema, sector, departamento y ciudad", "See rankings by topic, sector, department and city") <i class="fas fa-arrow-right ms-1"></i></a></p>
+                <p class="mt-3"><a class="obs-more" href="/pulso-bufins/ranking">@T("Ver rankings por tema, sector, departamento y ciudad", "See rankings by topic, sector, department and city") <i class="fas fa-arrow-right ms-1"></i></a></p>
             </div>
             <div class="col-lg-5">
                 <h2 class="obs-h2">@T("Explora por sector económico", "Browse by economic sector")</h2>
                 <div class="obs-sector-links">
                     @foreach (var s in secciones)
                     {
-                        <a href="/observatorio/sector/seccion-@s.cod.ToLowerInvariant()"><i class="fas fa-chevron-right me-2"></i>@s.cod · @cat.Nombre(s.cod) <small>(@s.n.ToString("N0"))</small></a>
+                        <a href="/pulso-bufins/sector/seccion-@s.cod.ToLowerInvariant()"><i class="fas fa-chevron-right me-2"></i>@s.cod · @cat.Nombre(s.cod) <small>(@s.n.ToString("N0"))</small></a>
                     }
                 </div>
             </div>

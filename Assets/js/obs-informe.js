@@ -1,4 +1,4 @@
-/* Observatorio Bufins – informe imprimible de una empresa (se guarda como PDF desde el navegador) */
+/* Pulso Bufins – informe imprimible de una empresa (se guarda como PDF desde el navegador) */
 (function () {
     'use strict';
     var root = document.getElementById('infApp');

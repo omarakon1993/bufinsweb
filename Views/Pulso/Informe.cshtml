@@ -1,13 +1,13 @@
 @using bufinsweb.Helpers
-@using bufinsweb.Models.Observatorio
+@using bufinsweb.Models.Pulso
 @using bufinsweb.Services
 @model Empresa
 @{
     Layout = null;
-    var datos = (ObservatorioDatos)ViewBag.Datos;
-    var n = (ObservatorioService.Narrativa)ViewBag.Narrativa;
+    var datos = (PulsoDatos)ViewBag.Datos;
+    var n = (PulsoService.Narrativa)ViewBag.Narrativa;
     var cat = CiiuCatalogo.Actual;
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var T = new Func<string, string, string>(PulsoFormat.T);
     var e = Model;
     var anios = datos.Meta.Anios.OrderBy(a => a).Where(a => e.En(a, datos.MinAnio) != null).ToList();
     var anio = anios.Last();
@@ -24,7 +24,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>@e.Razon — @T("Informe financiero", "Financial report") @anio | Bufins Pulso</title>
+    <title>@e.Razon — @T("Informe financiero", "Financial report") @anio | Pulso Bufins</title>
     <link rel="icon" type="image/png" href="~/Assets/images/Bufins_Favicon.png?v=2">
     <link href="~/Assets/css/inter-font.css" rel="stylesheet" />
     @Styles.Render("~/bundles/obs-informe-css")
@@ -32,7 +32,7 @@
 <body>
     <span id="obsMeta" data-v="@ViewBag.ObsVer" hidden></span>
     <div class="inf-bar no-print">
-        <a href="@ObservatorioService.UrlEmpresa(e)">&larr; @T("Volver a la ficha", "Back to profile")</a>
+        <a href="@PulsoService.UrlEmpresa(e)">&larr; @T("Volver a la ficha", "Back to profile")</a>
         <button type="button" id="infPrint">@T("Guardar como PDF", "Save as PDF")</button>
         <span>@T("En el cuadro de impresión elige «Guardar como PDF».", "In the print dialog choose “Save as PDF”.")</span>
     </div>
@@ -40,18 +40,18 @@
     <main class="inf" id="infApp" data-nit="@e.Nit" data-anio="@anio">
         <header class="inf-head">
             <img src="~/Assets/images/Bufins_Logofinal.png" alt="Bufins" class="inf-logo" />
-            <div><strong>Bufins Pulso</strong><br />bufins.com/observatorio</div>
+            <div><strong>Pulso Bufins</strong><br />bufins.com/pulso-bufins</div>
         </header>
 
         <h1>@e.Razon</h1>
-        <p class="inf-sub">NIT @e.Nit · @cat.Nombre(e.Ciiu) (CIIU @e.Ciiu) · @e.Ciudad, @e.Depto · @T("Tamaño", "Size") @ObservatorioService.Tamano(v[M.Ing])</p>
+        <p class="inf-sub">NIT @e.Nit · @cat.Nombre(e.Ciiu) (CIIU @e.Ciiu) · @e.Ciudad, @e.Depto · @T("Tamaño", "Size") @PulsoService.Tamano(v[M.Ing])</p>
 
         <div class="inf-kpis">
-            <div><span>@T("Ingresos", "Revenue") @anio</span><strong>@ObservatorioFormat.Moneda(v[M.Ing] / 1000.0)</strong><em>@(p != null ? ObservatorioFormat.Variacion(v[M.Ing], p[M.Ing]) : "")</em></div>
-            <div><span>EBITDA</span><strong>@ObservatorioFormat.Moneda(v[M.Ebitda] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(v))</em></div>
-            <div><span>@T("Utilidad neta", "Net profit")</span><strong>@ObservatorioFormat.Moneda(v[M.Un] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenNeto(v))</em></div>
-            <div><span>@T("Activos", "Assets")</span><strong>@ObservatorioFormat.Moneda(v[M.Act] / 1000.0)</strong><em>ROA @ObservatorioFormat.Porcentaje(Ratio.Roa(v))</em></div>
-            <div><span>@T("Deuda financiera", "Financial debt")</span><strong>@ObservatorioFormat.Moneda(v[M.Deuda] / 1000.0)</strong><em>@T("Deuda/EBITDA", "Debt/EBITDA") @(Ratio.DeudaEbitda(v).HasValue ? Ratio.DeudaEbitda(v).Value.ToString("0.0") + "x" : "—")</em></div>
+            <div><span>@T("Ingresos", "Revenue") @anio</span><strong>@PulsoFormat.Moneda(v[M.Ing] / 1000.0)</strong><em>@(p != null ? PulsoFormat.Variacion(v[M.Ing], p[M.Ing]) : "")</em></div>
+            <div><span>EBITDA</span><strong>@PulsoFormat.Moneda(v[M.Ebitda] / 1000.0)</strong><em>@T("Margen", "Margin") @PulsoFormat.Porcentaje(Ratio.MargenEbitda(v))</em></div>
+            <div><span>@T("Utilidad neta", "Net profit")</span><strong>@PulsoFormat.Moneda(v[M.Un] / 1000.0)</strong><em>@T("Margen", "Margin") @PulsoFormat.Porcentaje(Ratio.MargenNeto(v))</em></div>
+            <div><span>@T("Activos", "Assets")</span><strong>@PulsoFormat.Moneda(v[M.Act] / 1000.0)</strong><em>ROA @PulsoFormat.Porcentaje(Ratio.Roa(v))</em></div>
+            <div><span>@T("Deuda financiera", "Financial debt")</span><strong>@PulsoFormat.Moneda(v[M.Deuda] / 1000.0)</strong><em>@T("Deuda/EBITDA", "Debt/EBITDA") @(Ratio.DeudaEbitda(v).HasValue ? Ratio.DeudaEbitda(v).Value.ToString("0.0") + "x" : "—")</em></div>
         </div>
 
         <section class="inf-score">
@@ -81,7 +81,7 @@
                 @foreach (var a in anios.OrderByDescending(x => x))
                 {
                     var y = e.En(a, datos.MinAnio);
-                    <tr><td>@a</td><td>@ObservatorioFormat.Entero(y[M.Ing] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Ebitda] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Un] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Act] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Pas] / 1000.0)</td><td>@ObservatorioFormat.Entero(y[M.Pat] / 1000.0)</td></tr>
+                    <tr><td>@a</td><td>@PulsoFormat.Entero(y[M.Ing] / 1000.0)</td><td>@PulsoFormat.Entero(y[M.Ebitda] / 1000.0)</td><td>@PulsoFormat.Entero(y[M.Un] / 1000.0)</td><td>@PulsoFormat.Entero(y[M.Act] / 1000.0)</td><td>@PulsoFormat.Entero(y[M.Pas] / 1000.0)</td><td>@PulsoFormat.Entero(y[M.Pat] / 1000.0)</td></tr>
                 }
             </tbody>
         </table>

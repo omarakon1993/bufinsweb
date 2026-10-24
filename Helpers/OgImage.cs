@@ -43,7 +43,7 @@ namespace bufinsweb.Helpers
                 using (var suave = new SolidBrush(Color.FromArgb(200, 255, 255, 255)))
                 using (var cian = new SolidBrush(ColorTranslator.FromHtml("#01E1D7")))
                 {
-                    g.DrawString("Bufins Pulso", fs, cian, 70, 60);
+                    g.DrawString("Pulso Bufins", fs, cian, 70, 60);
                     var altoTit = g.MeasureString(titulo ?? "", ft, 1060).Height;
                     g.DrawString(titulo ?? "", ft, blanco, new RectangleF(70, 108, 1060, 140), f);
                     g.DrawString(subtitulo ?? "", fs, suave, new RectangleF(70, Math.Min(250, 108 + altoTit + 12), 1060, 70), f);

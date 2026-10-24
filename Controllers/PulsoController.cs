@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,14 +7,14 @@ using System.Web;
 using bufinsweb.Helpers;
 using System.Web.Mvc;
 using bufinsweb.Filters;
-using bufinsweb.Models.Observatorio;
+using bufinsweb.Models.Pulso;
 using bufinsweb.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace bufinsweb.Controllers
 {
-    public class ObservatorioController : Controller
+    public class PulsoController : Controller
     {
         private static readonly JsonSerializerSettings JsonCfg = new JsonSerializerSettings
         {
@@ -22,7 +22,7 @@ namespace bufinsweb.Controllers
             FloatFormatHandling = FloatFormatHandling.DefaultValue
         };
 
-        private readonly ObservatorioService _svc = new ObservatorioService();
+        private readonly PulsoService _svc = new PulsoService();
         private static readonly HashSet<string> PaginasBot = new HashSet<string> { "Index", "Sectores", "Comparador", "Empresa", "Informe", "Ranking", "Nodo", "Og" };
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -41,6 +41,13 @@ namespace bufinsweb.Controllers
         }
 
         // ------------------------------------------------------------ páginas
+
+        /// <summary>Redirige (301) las URLs anteriores del modulo a /pulso-bufins conservando ruta y parametros.</summary>
+        public ActionResult Antigua(string resto)
+        {
+            var qs = Request.Url.Query;
+            return RedirectPermanent("/pulso-bufins" + (string.IsNullOrEmpty(resto) ? "" : "/" + resto) + qs);
+        }
 
         /// <summary>Inicio: buscador de empresas y acceso a los tres módulos.</summary>
         public ActionResult Index()
@@ -73,23 +80,23 @@ namespace bufinsweb.Controllers
         /// <summary>Análisis individual de una empresa.</summary>
         public ActionResult Empresa(string id)
         {
-            var e = _svc.PorNit(ObservatorioService.NitDeId(id));
+            var e = _svc.PorNit(PulsoService.NitDeId(id));
             if (e == null) return NoEncontrado();
-            // una sola URL por empresa: /observatorio/empresa/{nit}-{nombre}; las demás redirigen (301)
-            var canon = ObservatorioService.UrlEmpresa(e);
+            // una sola URL por empresa: /pulso-bufins/empresa/{nit}-{nombre}; las demás redirigen (301)
+            var canon = PulsoService.UrlEmpresa(e);
             if (!string.Equals(Request.Path, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.Url.Query);
             Vista("vista_empresa", e.Ciiu, e.Nit, e.Razon);
             if (SinCambios()) return NoModificado();
             ViewBag.Datos = _svc.Datos;
             ViewBag.Narrativa = _svc.NarrativaEmpresa(e);
-            ViewBag.OgImage = "/observatorio/og/" + e.Nit + "?v=" + _svc.Datos.Version;
+            ViewBag.OgImage = "/pulso-bufins/og/" + e.Nit + "?v=" + _svc.Datos.Version;
             return View(e);
         }
 
         /// <summary>Informe imprimible (A4) de una empresa: se guarda como PDF desde el navegador.</summary>
         public ActionResult Informe(string id)
         {
-            var e = _svc.PorNit(ObservatorioService.NitDeId(id));
+            var e = _svc.PorNit(PulsoService.NitDeId(id));
             if (e == null) return NoEncontrado();
             Vista("informe_pdf", e.Ciiu, e.Nit, e.Razon);
             ViewBag.Datos = _svc.Datos;
@@ -120,7 +127,7 @@ namespace bufinsweb.Controllers
         public ActionResult Og(string id)
         {
             var d = _svc.Datos;
-            var e = _svc.PorNit(ObservatorioService.NitDeId(id));
+            var e = _svc.PorNit(PulsoService.NitDeId(id));
             if (e == null) return NoEncontrado();
             var yv = e.En(d.MaxAnio, d.MinAnio) ?? e.Y.LastOrDefault(z => z != null);
             if (yv == null) return NoEncontrado();
@@ -128,12 +135,12 @@ namespace bufinsweb.Controllers
             var sal = Salud.Calcular(yv);
             var kpis = new List<OgImage.Kpi>
             {
-                new OgImage.Kpi { Etiqueta = "Ingresos", Valor = ObservatorioFormat.Moneda(yv[M.Ing] / 1000.0) },
-                new OgImage.Kpi { Etiqueta = "EBITDA", Valor = ObservatorioFormat.Moneda(yv[M.Ebitda] / 1000.0) },
-                new OgImage.Kpi { Etiqueta = "Margen EBITDA", Valor = ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(yv)) },
+                new OgImage.Kpi { Etiqueta = "Ingresos", Valor = PulsoFormat.Moneda(yv[M.Ing] / 1000.0) },
+                new OgImage.Kpi { Etiqueta = "EBITDA", Valor = PulsoFormat.Moneda(yv[M.Ebitda] / 1000.0) },
+                new OgImage.Kpi { Etiqueta = "Margen EBITDA", Valor = PulsoFormat.Porcentaje(Ratio.MargenEbitda(yv)) },
                 new OgImage.Kpi { Etiqueta = "Score de salud", Valor = sal.Total.ToString("0") + " / 100" }
             };
-            var jpg = OgImage.Generar(e.Razon, cat.Nombre(e.Ciiu) + " · " + e.Ciudad, kpis, "NIT " + e.Nit + " · Año " + d.MaxAnio + " · bufins.com/observatorio", Server.MapPath("~/Assets/images/Bufins_Logofinal.png"));
+            var jpg = OgImage.Generar(e.Razon, cat.Nombre(e.Ciiu) + " · " + e.Ciudad, kpis, "NIT " + e.Nit + " · Año " + d.MaxAnio + " · bufins.com/pulso-bufins", Server.MapPath("~/Assets/images/Bufins_Logofinal.png"));
             return File(jpg, "image/jpeg");
         }
 
@@ -202,7 +209,7 @@ namespace bufinsweb.Controllers
                     mas("~/Views", "*.cshtml", System.IO.SearchOption.AllDirectories),
                     mas("~/Assets/css", "*.css", System.IO.SearchOption.TopDirectoryOnly),
                     mas("~/Assets/js", "*.js", System.IO.SearchOption.TopDirectoryOnly),
-                    mas("~/App_Data/observatorio", "*.*", System.IO.SearchOption.TopDirectoryOnly)
+                    mas("~/App_Data/pulso", "*.*", System.IO.SearchOption.TopDirectoryOnly)
                 })
                     if (t > max) max = t;
                 if (max > ahora) max = ahora;
@@ -278,7 +285,7 @@ namespace bufinsweb.Controllers
             var e = _svc.PorNit(nit);
             if (e == null) return NoEncontrado();
             Vista2("export_xlsx", "empresa", e.Nit);
-            var bytes = _svc.XlsxEmpresa(nit, ObservatorioRubros.Etiqueta, ObservatorioRubros.Orden.ToList());
+            var bytes = _svc.XlsxEmpresa(nit, PulsoRubros.Etiqueta, PulsoRubros.Orden.ToList());
             return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "bufins-" + e.Nit + ".xlsx");
         }
 
@@ -304,8 +311,8 @@ namespace bufinsweb.Controllers
             var e = _svc.PorNit(nit);
             if (e == null) return NoEncontrado();
             Vista2("export_csv", "empresa");
-            var orden = ObservatorioRubros.Orden;
-            var filas = _svc.ExportarEmpresa(nit, ObservatorioRubros.Etiqueta, orden);
+            var orden = PulsoRubros.Orden;
+            var filas = _svc.ExportarEmpresa(nit, PulsoRubros.Etiqueta, orden);
             var sb = new StringBuilder();
             sb.AppendLine(Csv(e.Razon + " - NIT " + e.Nit));
             foreach (var f in filas) sb.AppendLine(string.Join(";", f.Select(Csv)));
@@ -367,7 +374,7 @@ namespace bufinsweb.Controllers
     }
 
     /// <summary>Rubros del detalle (claves del ETL) con su etiqueta en español, solo para exportaciones CSV.</summary>
-    public static class ObservatorioRubros
+    public static class PulsoRubros
     {
         private static readonly string[][] Defs =
         {

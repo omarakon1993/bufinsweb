@@ -10,19 +10,19 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.Hosting;
 using bufinsweb.Helpers;
-using bufinsweb.Models.Observatorio;
+using bufinsweb.Models.Pulso;
 using Newtonsoft.Json;
 
 namespace bufinsweb.Services
 {
     /// <summary>
-    /// Observatorio financiero: estados financieros NIIF (Supersociedades) en memoria.
-    /// Lee App_Data/observatorio/empresas.json (índice: perfil + 22 métricas por año) y, bajo demanda,
-    /// detalle.bin (rubros completos por empresa, bloques gzip). Los archivos los genera Tools/ObservatorioEtl/build_dataset.py.
+    /// Pulso financiero: estados financieros NIIF (Supersociedades) en memoria.
+    /// Lee App_Data/pulso/empresas.json (índice: perfil + 22 métricas por año) y, bajo demanda,
+    /// detalle.bin (rubros completos por empresa, bloques gzip). Los archivos los genera Tools/PulsoEtl/build_dataset.py.
     /// </summary>
-    public partial class ObservatorioService
+    public partial class PulsoService
     {
-        private const string CacheKey = "observatorio:datos";
+        private const string CacheKey = "pulso:datos";
         private static readonly object Lock = new object();
         private static readonly ConcurrentDictionary<string, double[][]> CacheBench = new ConcurrentDictionary<string, double[][]>();
 
@@ -33,17 +33,17 @@ namespace bufinsweb.Services
         // ---------------------------------------------------------------- carga
 
         // HostingEnvironment (no HttpContext) para poder precargar desde Application_Start en un hilo de fondo
-        private static string Ruta(string archivo) { return HostingEnvironment.MapPath("~/App_Data/observatorio/" + archivo); }
+        private static string Ruta(string archivo) { return HostingEnvironment.MapPath("~/App_Data/pulso/" + archivo); }
 
-        public ObservatorioDatos Datos
+        public PulsoDatos Datos
         {
             get
             {
-                var cached = HttpRuntime.Cache[CacheKey] as ObservatorioDatos;
+                var cached = HttpRuntime.Cache[CacheKey] as PulsoDatos;
                 if (cached != null) return cached;
                 lock (Lock)
                 {
-                    cached = HttpRuntime.Cache[CacheKey] as ObservatorioDatos;
+                    cached = HttpRuntime.Cache[CacheKey] as PulsoDatos;
                     if (cached != null) return cached;
                     var path = Ruta("empresas.bin");
                     var datos = Cargar(path, Ruta("meta.json"));
@@ -57,19 +57,19 @@ namespace bufinsweb.Services
         /// <summary>Precarga datos e índices (se llama desde Application_Start para que la primera visita no espere).</summary>
         public static void Precargar()
         {
-            var s = new ObservatorioService();
+            var s = new PulsoService();
             var d = s.Datos;
             CiiuCatalogo.Cargar();
         }
 
-        private static ObservatorioDatos Cargar(string path, string metaPath)
+        private static PulsoDatos Cargar(string path, string metaPath)
         {
             if (!File.Exists(path) || !File.Exists(metaPath))
-                throw new FileNotFoundException("Faltan empresas.bin / meta.json. Ejecute Tools/ObservatorioEtl/build_dataset.py");
+                throw new FileNotFoundException("Faltan empresas.bin / meta.json. Ejecute Tools/PulsoEtl/build_dataset.py");
 
             var cat = CiiuCatalogo.Cargar();
-            var d = new ObservatorioDatos();
-            d.Meta = JsonConvert.DeserializeObject<ObservatorioMeta>(File.ReadAllText(metaPath, Encoding.UTF8));
+            var d = new PulsoDatos();
+            d.Meta = JsonConvert.DeserializeObject<PulsoMeta>(File.ReadAllText(metaPath, Encoding.UTF8));
             d.MinAnio = d.Meta.Anios.Min();
             d.MaxAnio = d.Meta.Anios.Max();
             d.Version = File.GetLastWriteTimeUtc(path).Ticks.ToString("x");
@@ -144,7 +144,7 @@ namespace bufinsweb.Services
         }
 
         /// <summary>Clases CIIU (4 dígitos) que pertenecen a alguno de los nodos dados.</summary>
-        private static HashSet<string> ClasesDe(ObservatorioDatos d, IEnumerable<string> nodos)
+        private static HashSet<string> ClasesDe(PulsoDatos d, IEnumerable<string> nodos)
         {
             var cat = CiiuCatalogo.Actual;
             var lista = nodos.ToList();
@@ -174,7 +174,7 @@ namespace bufinsweb.Services
 
         private class Fila { public Empresa E; public long[] V, V1, V2; public double? Crec; public SenalesInfo Sen; }
 
-        private IEnumerable<Fila> Filtrar(ObservatorioDatos d, FiltroSector f, int anio)
+        private IEnumerable<Fila> Filtrar(PulsoDatos d, FiltroSector f, int anio)
         {
             var q = Normalizar(f.Q ?? "").Trim();
             var qDigitos = new string((f.Q ?? "").Where(char.IsDigit).ToArray());
@@ -359,7 +359,7 @@ namespace bufinsweb.Services
             };
         }
 
-        private object FilaTabla(ObservatorioDatos d, Fila r)
+        private object FilaTabla(PulsoDatos d, Fila r)
         {
             var v = r.V;
             var sen = r.Sen ?? CalcularSenales(d, r.E, v, r.V1, r.V2);
@@ -416,7 +416,7 @@ namespace bufinsweb.Services
 
         // ---------------------------------------------------------------- benchmark (cuartiles por grupo y año)
 
-        private double[][] Cuartiles(ObservatorioDatos d, string nivel, string codigo, int anio, out int n)
+        private double[][] Cuartiles(PulsoDatos d, string nivel, string codigo, int anio, out int n)
         {
             n = Contar(d, codigo, anio);
             var key = nivel + "|" + codigo + "|" + anio;
@@ -435,7 +435,7 @@ namespace bufinsweb.Services
         }
 
         /// <summary>Número de empresas de un nodo CIIU en un año (precalculado al cargar).</summary>
-        private static int Contar(ObservatorioDatos d, string codigo, int anio)
+        private static int Contar(PulsoDatos d, string codigo, int anio)
         {
             if (string.IsNullOrEmpty(codigo)) return d.Empresas.Count(e => e.En(anio, d.MinAnio) != null);
             int[] cnt;
@@ -444,7 +444,7 @@ namespace bufinsweb.Services
         }
 
         /// <summary>Elige el grupo de comparación más específico con al menos 15 empresas: clase, grupo, división o sección.</summary>
-        private void GrupoComparable(ObservatorioDatos d, Empresa e, int anio, out string nivel, out string codigo)
+        private void GrupoComparable(PulsoDatos d, Empresa e, int anio, out string nivel, out string codigo)
         {
             var candidatos = new[] { Tuple.Create("clase", e.Ciiu), Tuple.Create("grupo", e.Ciiu.Length == 4 ? e.Ciiu.Substring(0, 3) : ""), Tuple.Create("division", e.Division), Tuple.Create("seccion", e.Seccion) };
             foreach (var c in candidatos)
@@ -491,7 +491,7 @@ namespace bufinsweb.Services
             return !string.IsNullOrEmpty(nit) && Datos.PorNit.TryGetValue(nit, out e) ? e : null;
         }
 
-        private static object Serie(Empresa e, ObservatorioDatos d)
+        private static object Serie(Empresa e, PulsoDatos d)
         {
             var anios = d.Meta.Anios.OrderBy(a => a).ToList();
             Func<Func<long[], double?>, List<double?>> s = f => anios.Select(a => { var v = e.En(a, d.MinAnio); return v == null ? null : f(v); }).ToList();

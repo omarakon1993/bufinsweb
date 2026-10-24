@@ -18,18 +18,21 @@ namespace bufinsweb
             routes.MapRoute("Sitemap", "sitemap.xml", new { controller = "Seo", action = "Sitemap" });
             routes.MapRoute("SitemapParte", "{archivo}.xml", new { controller = "Seo", action = "SitemapParte" }, new { archivo = @"sitemap-[a-z0-9-]+" });
 
-            // Observatorio financiero
-            routes.MapRoute("ObsApi", "observatorio/api/{action}", new { controller = "Observatorio" });
-            routes.MapRoute("ObsSectores", "observatorio/sectores", new { controller = "Observatorio", action = "Sectores" });
-            routes.MapRoute("ObsComparar", "observatorio/comparar", new { controller = "Observatorio", action = "Comparador" });
-            routes.MapRoute("ObsNodo", "observatorio/sector/{slug}", new { controller = "Observatorio", action = "Nodo" });
-            routes.MapRoute("ObsEmpresa", "observatorio/empresa/{id}", new { controller = "Observatorio", action = "Empresa" });
-            routes.MapRoute("ObsInforme", "observatorio/informe/{id}", new { controller = "Observatorio", action = "Informe" });
-            routes.MapRoute("ObsOg", "observatorio/og/{id}", new { controller = "Observatorio", action = "Og" });
-            routes.MapRoute("ObsRankingHub", "observatorio/ranking", new { controller = "Observatorio", action = "Ranking" });
-            routes.MapRoute("ObsRankingAmbito", "observatorio/ranking/{metrica}/{tipo}/{clave}", new { controller = "Observatorio", action = "Ranking" });
-            routes.MapRoute("ObsRanking", "observatorio/ranking/{metrica}", new { controller = "Observatorio", action = "Ranking" });
-            routes.MapRoute("ObsIndex", "observatorio", new { controller = "Observatorio", action = "Index" });
+            // Pulso financiero
+            routes.MapRoute("ObsApi", "pulso-bufins/api/{action}", new { controller = "Pulso" });
+            routes.MapRoute("ObsSectores", "pulso-bufins/sectores", new { controller = "Pulso", action = "Sectores" });
+            routes.MapRoute("ObsComparar", "pulso-bufins/comparar", new { controller = "Pulso", action = "Comparador" });
+            routes.MapRoute("ObsNodo", "pulso-bufins/sector/{slug}", new { controller = "Pulso", action = "Nodo" });
+            routes.MapRoute("ObsEmpresa", "pulso-bufins/empresa/{id}", new { controller = "Pulso", action = "Empresa" });
+            routes.MapRoute("ObsInforme", "pulso-bufins/informe/{id}", new { controller = "Pulso", action = "Informe" });
+            routes.MapRoute("ObsOg", "pulso-bufins/og/{id}", new { controller = "Pulso", action = "Og" });
+            routes.MapRoute("ObsRankingHub", "pulso-bufins/ranking", new { controller = "Pulso", action = "Ranking" });
+            routes.MapRoute("ObsRankingAmbito", "pulso-bufins/ranking/{metrica}/{tipo}/{clave}", new { controller = "Pulso", action = "Ranking" });
+            routes.MapRoute("ObsRanking", "pulso-bufins/ranking/{metrica}", new { controller = "Pulso", action = "Ranking" });
+            routes.MapRoute("ObsIndex", "pulso-bufins", new { controller = "Pulso", action = "Index" });
+            // URLs anteriores del modulo: 301 hacia la direccion actual (conserva SEO y enlaces compartidos)
+            routes.MapRoute("ObsAntigua", "observatorio/{*resto}", new { controller = "Pulso", action = "Antigua" });
+            routes.MapRoute("ObsAntiguaRaiz", "observatorio", new { controller = "Pulso", action = "Antigua", resto = "" });
 
             routes.MapRoute(
                 name: "Default",

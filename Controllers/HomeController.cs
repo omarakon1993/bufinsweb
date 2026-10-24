@@ -20,8 +20,8 @@ namespace bufinsweb.Controllers
 
         public ActionResult Contact()
         {
-            // Embudo anónimo: ¿llegan a «Contacto» desde el Observatorio o de otro lado?
-            var desde = Request.UrlReferrer != null && Request.UrlReferrer.AbsolutePath.StartsWith("/observatorio", StringComparison.OrdinalIgnoreCase) ? "observatorio" : "otro";
+            // Embudo anónimo: ¿llegan a «Contacto» desde Pulso Bufins o de otro lado?
+            var desde = Request.UrlReferrer != null && Request.UrlReferrer.AbsolutePath.StartsWith("/pulso-bufins", StringComparison.OrdinalIgnoreCase) ? "pulso" : "otro";
             UsoService.Registrar(Request, "vista_contacto", desde, conOrigen: true);
             return View();
         }

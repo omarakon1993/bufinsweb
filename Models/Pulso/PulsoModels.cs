@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace bufinsweb.Models.Observatorio
+namespace bufinsweb.Models.Pulso
 {
     /// <summary>Posición de cada métrica en el vector por empresa-año (valores en MILES de COP). Debe coincidir con METRICAS del ETL.</summary>
     public static class M
@@ -143,7 +143,7 @@ namespace bufinsweb.Models.Observatorio
         public long[] En(int anio, int minAnio) { var i = anio - minAnio; return i >= 0 && i < Y.Length ? Y[i] : null; }
     }
 
-    public class ObservatorioMeta
+    public class PulsoMeta
     {
         [JsonProperty("fuente")] public string Fuente;
         [JsonProperty("fuenteActualizado")] public string FuenteActualizado;
@@ -156,7 +156,7 @@ namespace bufinsweb.Models.Observatorio
         [JsonProperty("indice")] public string Indice;
     }
 
-    // ---- Reglas del puntaje de prospecto (App_Data/observatorio/reglas.json, editable) ----
+    // ---- Reglas del puntaje de prospecto (App_Data/pulso/reglas.json, editable) ----
     public class Senal
     {
         [JsonProperty("puntos")] public double Puntos;
@@ -179,9 +179,9 @@ namespace bufinsweb.Models.Observatorio
         public int Potencial;
     }
 
-    public class ObservatorioDatos
+    public class PulsoDatos
     {
-        public ObservatorioMeta Meta;
+        public PulsoMeta Meta;
         public List<Empresa> Empresas = new List<Empresa>();
         public Dictionary<string, Empresa> PorNit = new Dictionary<string, Empresa>();
         public Dictionary<string, long[]> Indice = new Dictionary<string, long[]>();   // NIT -> [offset, longitud] en detalle.bin

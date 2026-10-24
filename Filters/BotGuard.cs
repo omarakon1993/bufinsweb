@@ -49,7 +49,7 @@ namespace bufinsweb.Filters
 
             // solo páginas: los estáticos y la API ya tienen caché/límites propios
             if (ruta.StartsWith("/Assets/", StringComparison.OrdinalIgnoreCase) || ruta.StartsWith("/bundles/", StringComparison.OrdinalIgnoreCase)
-                || ruta.StartsWith("/observatorio/api/", StringComparison.OrdinalIgnoreCase) || RxBuscadores.IsMatch(ua))
+                || ruta.StartsWith("/pulso-bufins/api/", StringComparison.OrdinalIgnoreCase) || RxBuscadores.IsMatch(ua))
                 return false;
 
             var ip = req.UserHostAddress ?? "desconocida";

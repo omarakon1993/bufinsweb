@@ -1,12 +1,12 @@
 @using bufinsweb.Helpers
-@using bufinsweb.Models.Observatorio
+@using bufinsweb.Models.Pulso
 @{
-    var datos = (ObservatorioDatos)ViewBag.Datos;
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var datos = (PulsoDatos)ViewBag.Datos;
+    var T = new Func<string, string, string>(PulsoFormat.T);
     ViewBag.ObsActive = "comparar";
-    ViewBag.Title = T("Comparar empresas en Colombia: rentabilidad, deuda y liquidez | Bufins Pulso", "Compare companies in Colombia: profitability, debt and liquidity | Bufins Pulso");
+    ViewBag.Title = T("Comparar empresas en Colombia: rentabilidad, deuda y liquidez | Pulso Bufins", "Compare companies in Colombia: profitability, debt and liquidity | Pulso Bufins");
     ViewBag.MetaDescription = T("Compara hasta 4 empresas colombianas lado a lado con sus estados financieros: ingresos, EBITDA, márgenes, endeudamiento, liquidez y ciclo de caja.", "Compare up to 4 Colombian companies side by side: revenue, EBITDA, margins, leverage, liquidity and cash cycle.");
-    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/comparar";
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins/comparar";
     ViewBag.Canonical = canonical; ViewBag.OgType = "website";
 }
 @section head {
@@ -15,7 +15,7 @@
 
 <section class="obs-hero obs-hero-sm">
     <div class="container">
-        <nav class="obs-crumbs" aria-label="breadcrumb"><a href="/observatorio">Bufins Pulso</a> <i class="fas fa-chevron-right"></i> <span>@T("Comparar empresas", "Compare companies")</span></nav>
+        <nav class="obs-crumbs" aria-label="breadcrumb"><a href="/pulso-bufins">Pulso Bufins</a> <i class="fas fa-chevron-right"></i> <span>@T("Comparar empresas", "Compare companies")</span></nav>
         <h1 class="obs-title">@T("Comparar empresas", "Compare companies")</h1>
         <p class="obs-lead">@T("Evalúa un competidor, un cliente o un proveedor: pon hasta 4 empresas lado a lado y mira quién gana en rentabilidad, endeudamiento, liquidez y ciclo de caja.", "Assess a competitor, customer or supplier: put up to 4 companies side by side and see who wins on profitability, leverage, liquidity and cash cycle.")</p>
     </div>
@@ -23,7 +23,7 @@
 
 @Html.Partial("_ObsNav")
 
-<section class="obs-main" id="cmpApp" data-empresa-url="/observatorio/empresa/">
+<section class="obs-main" id="cmpApp" data-empresa-url="/pulso-bufins/empresa/">
     <div class="container-xl">
         <div class="obs-slots" id="cmpSlots"></div>
 

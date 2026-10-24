@@ -1,4 +1,4 @@
-/* Observatorio Bufins – análisis individual de una empresa */
+/* Pulso Bufins – análisis individual de una empresa */
 (function () {
     'use strict';
     var root = document.getElementById('empApp');

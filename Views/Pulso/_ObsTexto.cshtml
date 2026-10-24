@@ -2,8 +2,8 @@
 @using bufinsweb.Helpers
 @using bufinsweb.Services
 @{
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
-    var n = ViewBag.Narrativa as ObservatorioService.Narrativa;
+    var T = new Func<string, string, string>(PulsoFormat.T);
+    var n = ViewBag.Narrativa as PulsoService.Narrativa;
 }
 @if (n != null)
 {

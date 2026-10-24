@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using bufinsweb.Helpers;
-using bufinsweb.Models.Observatorio;
+using bufinsweb.Models.Pulso;
 
 namespace bufinsweb.Services
 {
     /// <summary>Parte 3 del servicio: libros de Excel (.xlsx) de la ficha y de las listas de sector.</summary>
-    public partial class ObservatorioService
+    public partial class PulsoService
     {
         private const string Fuente = "Fuente: Superintendencia de Sociedades (datos.gov.co), estados financieros NIIF, licencia CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0). Clasificación CIIU Rev. 4 A.C.: Departamento Administrativo Nacional de Estadística: www.dane.gov.co. Cálculos de Bufins (bufins.com).";
 

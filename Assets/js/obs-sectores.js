@@ -1,4 +1,4 @@
-/* Observatorio Bufins – análisis por sector */
+/* Pulso Bufins – análisis por sector */
 (function () {
     'use strict';
     var root = document.getElementById('obs-app');
@@ -197,8 +197,8 @@
     var kpi = O.kpi;
     function render(d) {
         renderKpis(d); renderMedians(d); renderCharts(d); renderDist(d); renderTable(d);
-        $('obsExport').href = '/observatorio/api/exportar?' + query(false, false);
-        $('obsExportX').href = '/observatorio/api/exportarxlsx?' + query(false, false);
+        $('obsExport').href = '/pulso-bufins/api/exportar?' + query(false, false);
+        $('obsExportX').href = '/pulso-bufins/api/exportarxlsx?' + query(false, false);
         $('obsTotal').textContent = O.int(d.total);
     }
     function renderKpis(d) {
@@ -410,7 +410,7 @@
             if (c.checked && i < 0 && st.c.length < 4) st.c.push(nit); else if (!c.checked && i >= 0) st.c.splice(i, 1);
             refresh();
         };
-        var b = $('obsCompare'); b.hidden = st.c.length < 2; b.href = '/observatorio/comparar?nits=' + st.c.join('|');
+        var b = $('obsCompare'); b.hidden = st.c.length < 2; b.href = '/pulso-bufins/comparar?nits=' + st.c.join('|');
         b.querySelector('span').textContent = L('Comparar (', 'Compare (') + st.c.length + ')';
     }
 

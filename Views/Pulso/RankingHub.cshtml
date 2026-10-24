@@ -1,15 +1,15 @@
 @using bufinsweb.Helpers
-@using bufinsweb.Models.Observatorio
+@using bufinsweb.Models.Pulso
 @using bufinsweb.Services
 @{
-    var datos = (ObservatorioDatos)ViewBag.Datos;
-    var hub = (ObservatorioService.HubRanking)ViewBag.Hub;
+    var datos = (PulsoDatos)ViewBag.Datos;
+    var hub = (PulsoService.HubRanking)ViewBag.Hub;
     var cat = CiiuCatalogo.Actual;
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var T = new Func<string, string, string>(PulsoFormat.T);
     ViewBag.ObsActive = "ranking";
-    ViewBag.Title = T("Rankings de empresas colombianas por ingresos, EBITDA y crecimiento | Bufins Pulso", "Rankings of Colombian companies by revenue, EBITDA and growth | Bufins Pulso");
+    ViewBag.Title = T("Rankings de empresas colombianas por ingresos, EBITDA y crecimiento | Pulso Bufins", "Rankings of Colombian companies by revenue, EBITDA and growth | Pulso Bufins");
     ViewBag.MetaDescription = T("Rankings de las principales empresas de Colombia por ingresos, crecimiento, margen EBITDA, utilidad, endeudamiento y salud financiera, por sector, departamento y ciudad.", "Rankings of Colombia's top companies by revenue, growth, EBITDA margin, profit, leverage and financial health, by sector, department and city.");
-    ViewBag.Canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/ranking";
+    ViewBag.Canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins/ranking";
 }
 @section head {
     @Html.Partial("_ObsHead")
@@ -28,10 +28,10 @@
     <div class="container-xl">
         <h2 class="obs-h3 mb-3">@T("Por tema, en todo el país", "By topic, nationwide")</h2>
         <div class="obs-rank-grid">
-            @foreach (var m in ObservatorioService.Rankings)
+            @foreach (var m in PulsoService.Rankings)
             {
                 var et = T(m.Es, m.En);
-                <a class="obs-rank-card" href="/observatorio/ranking/@m.Clave">
+                <a class="obs-rank-card" href="/pulso-bufins/ranking/@m.Clave">
                     <strong>@(char.ToUpper(et[0]) + et.Substring(1))</strong>
                     <span>@T("Top 100 nacional", "National top 100")</span>
                 </a>
@@ -42,7 +42,7 @@
         <div class="obs-chips">
             @foreach (var s in hub.Secciones)
             {
-                <a href="/observatorio/ranking/ingresos/sector/seccion-@s.Key.ToLowerInvariant()">@cat.Nombre(s.Key)<small>@s.Value.ToString("N0")</small></a>
+                <a href="/pulso-bufins/ranking/ingresos/sector/seccion-@s.Key.ToLowerInvariant()">@cat.Nombre(s.Key)<small>@s.Value.ToString("N0")</small></a>
             }
         </div>
 
@@ -50,7 +50,7 @@
         <div class="obs-chips">
             @foreach (var s in hub.Departamentos)
             {
-                <a href="/observatorio/ranking/ingresos/departamento/@s.Key">@hub.NombreDepto[s.Key]<small>@s.Value.ToString("N0")</small></a>
+                <a href="/pulso-bufins/ranking/ingresos/departamento/@s.Key">@hub.NombreDepto[s.Key]<small>@s.Value.ToString("N0")</small></a>
             }
         </div>
 
@@ -58,7 +58,7 @@
         <div class="obs-chips">
             @foreach (var s in hub.Ciudades)
             {
-                <a href="/observatorio/ranking/ingresos/ciudad/@s.Key">@hub.NombreCiudad[s.Key]<small>@s.Value.ToString("N0")</small></a>
+                <a href="/pulso-bufins/ranking/ingresos/ciudad/@s.Key">@hub.NombreCiudad[s.Key]<small>@s.Value.ToString("N0")</small></a>
             }
         </div>
     </div>

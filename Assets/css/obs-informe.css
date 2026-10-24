@@ -1,4 +1,4 @@
-/* Informe imprimible del Observatorio (A4). Pantalla: hoja centrada; impresión: sin barra ni márgenes extra. */
+/* Informe imprimible de Pulso Bufins (A4). Pantalla: hoja centrada; impresión: sin barra ni márgenes extra. */
 :root { --ink: #160933; --brand: #583AFF; --cyan: #01B3AB; --muted: #5b5670; --line: #e4e1ee; --soft: #f6f4fd; }
 * { box-sizing: border-box; }
 body { margin: 0; background: #ecebf3; color: var(--ink); font-family: Inter, system-ui, "Segoe UI", Arial, sans-serif; font-size: 13px; line-height: 1.5; }

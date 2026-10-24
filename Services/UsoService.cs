@@ -14,11 +14,11 @@ using Newtonsoft.Json;
 namespace bufinsweb.Services
 {
     /// <summary>
-    /// Analítica propia y ANÓNIMA del sitio público (Observatorio y su embudo de contacto). Nunca guarda IP, cookies, User-Agent,
+    /// Analítica propia y ANÓNIMA del sitio público (Pulso y su embudo de contacto). Nunca guarda IP, cookies, User-Agent,
     /// textos escritos por la persona ni datos personales. Tiene dos capas:
     ///
-    ///  1. Contadores agregados día | tipo | clave (App_Data/observatorio/uso/yyyy-MM.json) — formato histórico, lo lee el portal.
-    ///  2. Registro de eventos anónimos, una línea JSON por evento (App_Data/observatorio/uso/eventos/yyyy-MM-dd.jsonl), con:
+    ///  1. Contadores agregados día | tipo | clave (App_Data/pulso/uso/yyyy-MM.json) — formato histórico, lo lee el portal.
+    ///  2. Registro de eventos anónimos, una línea JSON por evento (App_Data/pulso/uso/eventos/yyyy-MM-dd.jsonl), con:
     ///     · un identificador de visitante que se RENUEVA CADA DÍA (HMAC de IP + navegador con una sal diaria que se descarta):
     ///       permite contar visitantes y recorridos dentro del día, pero no reconocer a la misma persona otro día ni volver a la IP;
     ///     · contexto grueso: tipo de dispositivo, familia de navegador y sistema, idioma, zona horaria, origen de la visita
@@ -314,7 +314,7 @@ namespace bufinsweb.Services
 
         // ------------------------------------------------------------------ volcado a disco
 
-        private static string CarpetaUso { get { return HostingEnvironment.MapPath("~/App_Data/observatorio/uso"); } }
+        private static string CarpetaUso { get { return HostingEnvironment.MapPath("~/App_Data/pulso/uso"); } }
 
         public static void Vaciar()
         {

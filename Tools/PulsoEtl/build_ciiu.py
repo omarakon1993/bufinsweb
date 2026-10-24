@@ -1,10 +1,10 @@
 """
-Genera App_Data/observatorio/ciiu.json (secciones, divisiones, grupos y clases) a partir del texto del PDF oficial
+Genera App_Data/pulso/ciiu.json (secciones, divisiones, grupos y clases) a partir del texto del PDF oficial
 del DANE "CIIU Rev. 4 A.C. (2022)" -> https://www.dane.gov.co/files/sen/nomenclatura/ciiu/CIIU_Rev_4_AC2022.pdf
 
 Uso (una sola vez; el resultado se versiona en el repo):
     pdftotext -layout -enc UTF-8 CIIU_Rev_4_AC2022.pdf ciiu.txt
-    python -I Tools/ObservatorioEtl/build_ciiu.py ciiu.txt
+    python -I Tools/PulsoEtl/build_ciiu.py ciiu.txt
 """
 import json
 import os
@@ -118,7 +118,7 @@ secciones["K"] = "Actividades financieras y de seguros"
 secciones["S"] = "Otras actividades de servicios"
 
 out = {"fuente": "DANE - CIIU Rev. 4 A.C. (2022)", "secciones": secciones, "divisiones": divisiones, "grupos": grupos, "clases": clases}
-dest = os.path.join(os.path.dirname(__file__), "..", "..", "App_Data", "observatorio", "ciiu.json")
+dest = os.path.join(os.path.dirname(__file__), "..", "..", "App_Data", "pulso", "ciiu.json")
 os.makedirs(os.path.dirname(dest), exist_ok=True)
 with open(dest, "w", encoding="utf-8") as f:
     json.dump(out, f, ensure_ascii=False, separators=(",", ":"))

@@ -1,36 +1,36 @@
 @using bufinsweb.Helpers
-@using bufinsweb.Models.Observatorio
+@using bufinsweb.Models.Pulso
 @using bufinsweb.Services
-@model ObservatorioService.ResumenNodo
+@model PulsoService.ResumenNodo
 @{
-    var datos = (ObservatorioDatos)ViewBag.Datos;
+    var datos = (PulsoDatos)ViewBag.Datos;
     var cat = CiiuCatalogo.Actual;
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var T = new Func<string, string, string>(PulsoFormat.T);
     var s = Model.Suma;
     var prev = Model.Prev;
     ViewBag.ObsActive = "sectores";
-    ViewBag.Title = Model.Titulo + T(" en Colombia: ingresos, EBITDA y empresas líderes | Bufins Pulso", " in Colombia: revenue, EBITDA and leading companies | Bufins Pulso");
-    ViewBag.MetaDescription = Model.Titulo + " (" + Model.Nivel + " CIIU " + Model.Codigo + "): " + Model.Total.ToString("N0") + T(" empresas, ingresos de ", " companies, revenue of ") + ObservatorioFormat.Moneda(s[M.Ing] / 1000.0) + " (" + Model.Anio + "). " + T("Ranking, márgenes y endeudamiento con datos de la Supersociedades.", "Ranking, margins and leverage from Superintendencia de Sociedades data.");
-    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/sector/" + Model.Slug;
+    ViewBag.Title = Model.Titulo + T(" en Colombia: ingresos, EBITDA y empresas líderes | Pulso Bufins", " in Colombia: revenue, EBITDA and leading companies | Pulso Bufins");
+    ViewBag.MetaDescription = Model.Titulo + " (" + Model.Nivel + " CIIU " + Model.Codigo + "): " + Model.Total.ToString("N0") + T(" empresas, ingresos de ", " companies, revenue of ") + PulsoFormat.Moneda(s[M.Ing] / 1000.0) + " (" + Model.Anio + "). " + T("Ranking, márgenes y endeudamiento con datos de la Supersociedades.", "Ranking, margins and leverage from Superintendencia de Sociedades data.");
+    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins/sector/" + Model.Slug;
     ViewBag.Canonical = canonical; ViewBag.OgType = "article";
-    var explorar = "/observatorio/sectores?k=" + Model.Codigo;
-    var rankUrl = "/observatorio/ranking/ingresos/sector/" + Model.Slug;
+    var explorar = "/pulso-bufins/sectores?k=" + Model.Codigo;
+    var rankUrl = "/pulso-bufins/ranking/ingresos/sector/" + Model.Slug;
     var seccion = Model.Codigo.Length == 1 ? Model.Codigo : cat.Seccion(Model.Codigo.Substring(0, 2));
 }
 @section head {
     @Html.Partial("_ObsHead")
-    @ObservatorioSeo.Faq(ViewBag.Narrativa as ObservatorioService.Narrativa)
-    @ObservatorioSeo.Breadcrumb(new[] {
+    @PulsoSeo.Faq(ViewBag.Narrativa as PulsoService.Narrativa)
+    @PulsoSeo.Breadcrumb(new[] {
         new KeyValuePair<string, string>("Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/"),
-        new KeyValuePair<string, string>("Bufins Pulso", Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio"),
+        new KeyValuePair<string, string>("Pulso Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins"),
         new KeyValuePair<string, string>(Model.Titulo, canonical) })
 }
 
 <section class="obs-hero obs-hero-sm">
     <div class="container">
         <nav class="obs-crumbs" aria-label="breadcrumb">
-            <a href="/observatorio">Bufins Pulso</a> <i class="fas fa-chevron-right"></i>
-            @if (seccion.Length > 0 && Model.Codigo != seccion) { <a href="/observatorio/sector/seccion-@seccion.ToLowerInvariant()">@cat.Nombre(seccion)</a> <i class="fas fa-chevron-right"></i> }
+            <a href="/pulso-bufins">Pulso Bufins</a> <i class="fas fa-chevron-right"></i>
+            @if (seccion.Length > 0 && Model.Codigo != seccion) { <a href="/pulso-bufins/sector/seccion-@seccion.ToLowerInvariant()">@cat.Nombre(seccion)</a> <i class="fas fa-chevron-right"></i> }
             <span>@Model.Nivel @Model.Codigo</span>
         </nav>
         <h1 class="obs-title">@Model.Titulo</h1>
@@ -43,11 +43,11 @@
 <section class="obs-main">
     <div class="container-xl">
         <div class="obs-kpis">
-            <div class="obs-kpi"><span>@T("Ingresos", "Revenue")</span><strong>@ObservatorioFormat.Moneda(s[M.Ing] / 1000.0)</strong><em>@ObservatorioFormat.Variacion(s[M.Ing], prev[M.Ing]) @T("vs. año anterior", "vs. prior year")</em></div>
-            <div class="obs-kpi"><span>EBITDA</span><strong>@ObservatorioFormat.Moneda(s[M.Ebitda] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(s))</em></div>
-            <div class="obs-kpi"><span>@T("Utilidad neta", "Net profit")</span><strong>@ObservatorioFormat.Moneda(s[M.Un] / 1000.0)</strong><em>@T("Margen", "Margin") @ObservatorioFormat.Porcentaje(Ratio.MargenNeto(s))</em></div>
-            <div class="obs-kpi"><span>@T("Deuda financiera", "Financial debt")</span><strong>@ObservatorioFormat.Moneda(s[M.Deuda] / 1000.0)</strong><em>@T("Deuda/EBITDA", "Debt/EBITDA") @(Ratio.DeudaEbitda(s).HasValue ? Ratio.DeudaEbitda(s).Value.ToString("0.0") + "x" : "—")</em></div>
-            <div class="obs-kpi"><span>@T("Endeudamiento", "Leverage")</span><strong>@ObservatorioFormat.Porcentaje(Ratio.Endeudamiento(s))</strong><em>ROA @ObservatorioFormat.Porcentaje(Ratio.Roa(s))</em></div>
+            <div class="obs-kpi"><span>@T("Ingresos", "Revenue")</span><strong>@PulsoFormat.Moneda(s[M.Ing] / 1000.0)</strong><em>@PulsoFormat.Variacion(s[M.Ing], prev[M.Ing]) @T("vs. año anterior", "vs. prior year")</em></div>
+            <div class="obs-kpi"><span>EBITDA</span><strong>@PulsoFormat.Moneda(s[M.Ebitda] / 1000.0)</strong><em>@T("Margen", "Margin") @PulsoFormat.Porcentaje(Ratio.MargenEbitda(s))</em></div>
+            <div class="obs-kpi"><span>@T("Utilidad neta", "Net profit")</span><strong>@PulsoFormat.Moneda(s[M.Un] / 1000.0)</strong><em>@T("Margen", "Margin") @PulsoFormat.Porcentaje(Ratio.MargenNeto(s))</em></div>
+            <div class="obs-kpi"><span>@T("Deuda financiera", "Financial debt")</span><strong>@PulsoFormat.Moneda(s[M.Deuda] / 1000.0)</strong><em>@T("Deuda/EBITDA", "Debt/EBITDA") @(Ratio.DeudaEbitda(s).HasValue ? Ratio.DeudaEbitda(s).Value.ToString("0.0") + "x" : "—")</em></div>
+            <div class="obs-kpi"><span>@T("Endeudamiento", "Leverage")</span><strong>@PulsoFormat.Porcentaje(Ratio.Endeudamiento(s))</strong><em>ROA @PulsoFormat.Porcentaje(Ratio.Roa(s))</em></div>
         </div>
 
         <div class="row g-4">
@@ -79,10 +79,10 @@
                             var d1 = Ratio.DeudaEbitda(kv.Value);
                             <tr>
                                 <td>@(i++)</td>
-                                <td><a href="@ObservatorioService.UrlEmpresa(kv.Key)" class="obs-co">@kv.Key.Razon</a><small>@kv.Key.Ciudad</small></td>
-                                <td class="text-end">@ObservatorioFormat.Moneda(kv.Value[M.Ing] / 1000.0)</td>
-                                <td class="text-end @(kv.Value[M.Ebitda] < 0 ? "obs-neg" : "")">@ObservatorioFormat.Moneda(kv.Value[M.Ebitda] / 1000.0)</td>
-                                <td class="text-end">@ObservatorioFormat.Porcentaje(Ratio.MargenEbitda(kv.Value))</td>
+                                <td><a href="@PulsoService.UrlEmpresa(kv.Key)" class="obs-co">@kv.Key.Razon</a><small>@kv.Key.Ciudad</small></td>
+                                <td class="text-end">@PulsoFormat.Moneda(kv.Value[M.Ing] / 1000.0)</td>
+                                <td class="text-end @(kv.Value[M.Ebitda] < 0 ? "obs-neg" : "")">@PulsoFormat.Moneda(kv.Value[M.Ebitda] / 1000.0)</td>
+                                <td class="text-end">@PulsoFormat.Porcentaje(Ratio.MargenEbitda(kv.Value))</td>
                                 <td class="text-end">@(d1.HasValue ? d1.Value.ToString("0.0") + "x" : "—")</td>
                             </tr>
                         }

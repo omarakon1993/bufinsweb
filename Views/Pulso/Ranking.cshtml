@@ -1,27 +1,27 @@
 @using bufinsweb.Helpers
-@using bufinsweb.Models.Observatorio
+@using bufinsweb.Models.Pulso
 @using bufinsweb.Services
-@model ObservatorioService.RankingResultado
+@model PulsoService.RankingResultado
 @{
-    var datos = (ObservatorioDatos)ViewBag.Datos;
-    var T = new Func<string, string, string>(ObservatorioFormat.T);
+    var datos = (PulsoDatos)ViewBag.Datos;
+    var T = new Func<string, string, string>(PulsoFormat.T);
     var def = Model.Def;
     var ambito = Model.Tipo == "nacional" ? T("en Colombia", "in Colombia") : T("en ", "in ") + Model.Titulo;
     var etiqueta = T(def.Es, def.En);
     var titulo = T("Empresas con ", "Companies with ") + etiqueta + " " + ambito;
-    var baseRuta = "/observatorio/ranking/";
+    var baseRuta = "/pulso-bufins/ranking/";
     Func<string, string> ruta = m => baseRuta + m + (Model.Tipo == "nacional" ? "" : "/" + Model.Tipo + "/" + Model.Clave);
     var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + ruta(def.Clave);
     ViewBag.ObsActive = "ranking";
-    ViewBag.Title = titulo + " " + Model.Anio + " | Bufins Pulso";
+    ViewBag.Title = titulo + " " + Model.Anio + " | Pulso Bufins";
     ViewBag.MetaDescription = T("Ranking de las ", "Ranking of the ") + Model.Filas.Count + T(" empresas con ", " companies with ") + etiqueta + " " + ambito + " (" + Model.Anio + T("), de ", "), out of ") + Model.Total.ToString("N0") + T(" que reportaron a la Supersociedades.", " that filed with the Superintendencia de Sociedades.");
     ViewBag.Canonical = canonical;
     Func<double, string> fmt = x =>
     {
         switch (def.Unidad)
         {
-            case "mm": return ObservatorioFormat.Moneda(x);
-            case "%": return ObservatorioFormat.Porcentaje(x);
+            case "mm": return PulsoFormat.Moneda(x);
+            case "%": return PulsoFormat.Porcentaje(x);
             case "x": return x.ToString("0.0") + "x";
             default: return x.ToString("0");
         }
@@ -30,18 +30,18 @@
 }
 @section head {
     @Html.Partial("_ObsHead")
-    @ObservatorioSeo.Breadcrumb(new[] {
+    @PulsoSeo.Breadcrumb(new[] {
         new KeyValuePair<string, string>("Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/"),
-        new KeyValuePair<string, string>("Bufins Pulso", Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio"),
-        new KeyValuePair<string, string>("Rankings", Request.Url.GetLeftPart(UriPartial.Authority) + "/observatorio/ranking"),
+        new KeyValuePair<string, string>("Pulso Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins"),
+        new KeyValuePair<string, string>("Rankings", Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins/ranking"),
         new KeyValuePair<string, string>(titulo, canonical) })
 }
 
 <section class="obs-hero obs-hero-sm">
     <div class="container">
         <nav class="obs-crumbs" aria-label="breadcrumb">
-            <a href="/observatorio">Bufins Pulso</a> <i class="fas fa-chevron-right"></i>
-            <a href="/observatorio/ranking">Rankings</a>
+            <a href="/pulso-bufins">Pulso Bufins</a> <i class="fas fa-chevron-right"></i>
+            <a href="/pulso-bufins/ranking">Rankings</a>
         </nav>
         <h1 class="obs-title">@titulo</h1>
         <p class="obs-lead">@T("Top ", "Top ")@Model.Filas.Count @T("de ", "of ")@Model.Total.ToString("N0") @T("empresas · cifras ", "companies · figures ")@Model.Anio</p>
@@ -53,7 +53,7 @@
 <section class="obs-main">
     <div class="container-xl">
         <div class="obs-seg obs-seg-wrap" role="navigation" aria-label="@T("Cambiar ranking", "Change ranking")">
-            @foreach (var m in ObservatorioService.Rankings)
+            @foreach (var m in PulsoService.Rankings)
             {
                 <a href="@ruta(m.Clave)" class="@(m.Clave == def.Clave ? "active" : "")">@(char.ToUpper(T(m.Es, m.En)[0]) + T(m.Es, m.En).Substring(1))</a>
             }
@@ -76,9 +76,9 @@
                         {
                             <tr>
                                 <td>@f.Pos</td>
-                                <td><a href="@ObservatorioService.UrlEmpresa(f.E)" class="obs-co">@f.E.Razon</a><small>@f.E.Ciudad · @CiiuCatalogo.Actual.Nombre(f.E.Ciiu)</small></td>
+                                <td><a href="@PulsoService.UrlEmpresa(f.E)" class="obs-co">@f.E.Razon</a><small>@f.E.Ciudad · @CiiuCatalogo.Actual.Nombre(f.E.Ciiu)</small></td>
                                 <td class="text-end"><strong>@fmt(f.Valor)</strong></td>
-                                <td class="text-end d-none d-md-table-cell">@ObservatorioFormat.Moneda(f.IngMm)</td>
+                                <td class="text-end d-none d-md-table-cell">@PulsoFormat.Moneda(f.IngMm)</td>
                                 <td class="text-center d-none d-md-table-cell">@f.Tam</td>
                                 <td class="text-end d-none d-lg-table-cell">@f.Score.ToString("0")</td>
                             </tr>

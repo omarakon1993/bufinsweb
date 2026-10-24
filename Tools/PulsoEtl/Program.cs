@@ -13,13 +13,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
-namespace ObservatorioEtl
+namespace PulsoEtl
 {
     /// <summary>
-    /// ETL del Observatorio Bufins: estados financieros NIIF de las sociedades que reportan a la Supersociedades
+    /// ETL de Pulso Bufins: estados financieros NIIF de las sociedades que reportan a la Supersociedades
     /// (API abierta Socrata de datos.gov.co, sin llave).
     ///
-    ///   ObservatorioEtl.exe --out "C:\...\bufinsweb\App_Data\observatorio" [--force] [--years 2024 2025] [--cache DIR] [--workers 5]
+    ///   PulsoEtl.exe --out "C:\...\bufinsweb\App_Data\pulso" [--force] [--years 2024 2025] [--cache DIR] [--workers 5]
     ///
     /// Genera en --out: empresas.bin, meta.json, detalle.{version}.bin, detalle.{version}.idx.json y escribe el avance en etl_status.json.
     /// La publicación es atómica: los archivos nuevos se escriben con nombre temporal/versionado y empresas.bin se reemplaza al final;
@@ -83,7 +83,7 @@ namespace ObservatorioEtl
                     default: throw new ArgumentException("Argumento desconocido: " + a[i]);
                 }
             }
-            if (string.IsNullOrEmpty(o.Salida)) throw new ArgumentException("Falta --out <carpeta App_Data\\observatorio>");
+            if (string.IsNullOrEmpty(o.Salida)) throw new ArgumentException("Falta --out <carpeta App_Data\\pulso>");
             if (o.EstadoArchivo == null) o.EstadoArchivo = Path.Combine(o.Salida, "etl_status.json");
             o.Anios.Sort();
             return o;
@@ -211,7 +211,7 @@ namespace ObservatorioEtl
                 { "concepto del revisor fiscal en su informe", "rfop" }, { "la compania esta obligada a tener revisor fiscal?", "rf" } } }
         };
 
-        // Métricas del índice (miles de COP), en este orden: debe coincidir con M en Models/Observatorio/ObservatorioModels.cs
+        // Métricas del índice (miles de COP), en este orden: debe coincidir con M en Models/Pulso/PulsoModels.cs
         public static readonly string[] Metricas =
         {
             "ing", "ub", "gop", "uop", "ebitda", "un", "act", "pas", "pat", "ktn", "deuda", "cxc", "inv", "cxp", "fco",
@@ -356,7 +356,7 @@ namespace ObservatorioEtl
                     var req = (HttpWebRequest)WebRequest.Create(url);
                     req.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
                     req.Timeout = 180000; req.ReadWriteTimeout = 180000;
-                    req.UserAgent = "BufinsObservatorioETL/2.0";
+                    req.UserAgent = "PulsoBufinsETL/2.0";
                     if (!string.IsNullOrEmpty(_token)) req.Headers.Add("X-App-Token", _token);
                     using (var resp = (HttpWebResponse)req.GetResponse())
                     using (var s = resp.GetResponseStream())
@@ -776,7 +776,7 @@ namespace ObservatorioEtl
             idx.Append('}');
             File.WriteAllText(Ruta(idxNombre + ".tmp"), idx.ToString(), new UTF8Encoding(false));
 
-            // empresas.bin (formato binario; ver Services/ObservatorioService.Cargar)
+            // empresas.bin (formato binario; ver Services/PulsoService.Cargar)
             using (var f = new FileStream(Ruta("empresas.bin.tmp"), FileMode.Create, FileAccess.Write))
             using (var w = new BinaryWriter(f, Encoding.UTF8))
             {
