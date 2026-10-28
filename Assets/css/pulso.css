@@ -735,3 +735,17 @@ a.obs-module:hover { transform: translateY(-6px); border-color: var(--color-seco
 
 #cobertura { scroll-margin-top: 9rem; }
 #empKpis .obs-kpi span i { margin-right: .4rem; color: var(--color-secondary-1); }
+
+/* Pestañas de la ficha de empresa: mismo estilo segmentado del menú superior */
+#empTabs { display: flex; flex-wrap: nowrap; gap: .15rem; width: fit-content; max-width: 100%; margin-bottom: 1.25rem; padding: .22rem; background: #fff; border: 1px solid var(--color-medium-gray); border-radius: 14px; box-shadow: 0 2px 8px rgba(22, 9, 51, .05); overflow-x: auto; scrollbar-width: none; }
+#empTabs::-webkit-scrollbar { display: none; }
+#empTabs .nav-item { flex: none; }
+#empTabs .nav-link { margin: 0; border: 0; border-radius: 11px; padding: .45rem .85rem; font-size: .88rem; font-weight: 600; white-space: nowrap; color: var(--color-text-muted) !important; transition: background .15s, color .15s, box-shadow .15s; }
+#empTabs .nav-link i { font-size: .85rem; opacity: .75; transition: transform .2s; }
+#empTabs .nav-link:hover { background: var(--color-light-gray); color: var(--color-primary) !important; }
+#empTabs .nav-link:hover i { opacity: 1; transform: translateY(-1px); }
+#empTabs .nav-link.active { background: rgba(88, 58, 255, .1); color: var(--color-secondary-1) !important; box-shadow: 0 0 0 1px rgba(88, 58, 255, .15); }
+#empTabs .nav-link.active i { opacity: 1; }
+#empTabs .nav-link:focus-visible { outline: 2px solid var(--color-secondary-1); outline-offset: 1px; }
+@media (max-width: 575.98px) { #empTabs { width: 100%; } #empTabs .nav-link { padding: .45rem .7rem; font-size: .84rem; } }
+@media (prefers-reduced-motion: reduce) { #empTabs .nav-link:hover i { transform: none; } }
