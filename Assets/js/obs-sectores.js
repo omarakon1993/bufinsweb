@@ -5,7 +5,7 @@
     if (!root || typeof Chart === 'undefined' || !window.OBS) return;
     var O = OBS, L = O.L, $ = O.$, esc = O.esc, EMP = root.getAttribute('data-empresa-url');
 
-    var DEF = { anio: '', k: [], t: [], d: '', e: '', q: '', imin: '', imax: '', res: '', sn: [], pot: 0, o: 'ing', asc: false, p: 1, c: [] };
+    var DEF = { anio: '', k: [], t: [], d: '', e: '', q: '', imin: '', imax: '', res: '', sn: [], pot: 0, top: 0, o: 'ing', asc: false, p: 1, c: [] };
     var st = JSON.parse(JSON.stringify(DEF)), opc = null, ctrl = null, LAST = null;
     document.addEventListener('obs:unit', function () { if (LAST) render(LAST); });
 
@@ -17,6 +17,7 @@
         st.d = u.get('d') || ''; st.e = u.get('e') || ''; st.q = u.get('q') || '';
         st.imin = u.get('imin') || ''; st.imax = u.get('imax') || ''; st.res = u.get('res') || '';
         st.sn = list('sn'); st.pot = Math.max(0, Math.min(100, parseInt(u.get('pot') || '0', 10) || 0));
+        st.top = Math.max(0, Math.min(10000, parseInt(u.get('top') || '0', 10) || 0));
         st.o = u.get('o') || 'ing'; st.asc = u.get('asc') === '1'; st.p = parseInt(u.get('p') || '1', 10) || 1;
     }
     function query(paging, cmp) {
@@ -32,6 +33,7 @@
         if (st.res) u.set('res', st.res);
         if (st.sn.length) u.set('sn', st.sn.join('|'));
         if (st.pot > 0) u.set('pot', st.pot);
+        if (st.top > 0) u.set('top', st.top);
         if (st.o !== 'ing') u.set('o', st.o);
         if (st.asc) u.set('asc', '1');
         if (paging && st.p > 1) u.set('p', st.p);
@@ -39,7 +41,7 @@
         return u.toString();
     }
     function activeCount() {
-        return (st.k.length ? 1 : 0) + (st.t.length ? 1 : 0) + (st.d ? 1 : 0) + (st.e ? 1 : 0) + (st.q ? 1 : 0) + (st.imin !== '' || st.imax !== '' ? 1 : 0) + (st.res ? 1 : 0) + (st.sn.length || st.pot > 0 ? 1 : 0);
+        return (st.k.length ? 1 : 0) + (st.t.length ? 1 : 0) + (st.d ? 1 : 0) + (st.e ? 1 : 0) + (st.q ? 1 : 0) + (st.imin !== '' || st.imax !== '' ? 1 : 0) + (st.res ? 1 : 0) + (st.sn.length || st.pot > 0 ? 1 : 0) + (st.top > 0 ? 1 : 0);
     }
 
     // ---------- árbol CIIU ----------
@@ -130,12 +132,19 @@
         if (n) $('fSigBox').open = true;
     }
     function syncControls() {
+        $('fTop').value = st.top > 0 ? st.top : '';
         $('fQ').value = st.q; $('fIMin').value = st.imin; $('fIMax').value = st.imax;
         Array.prototype.forEach.call($('fRes').querySelectorAll('button'), function (b) { b.classList.toggle('active', b.getAttribute('data-v') === st.res); });
         Array.prototype.forEach.call($('fTam').querySelectorAll('button'), function (b) { b.classList.toggle('active', st.t.indexOf(b.getAttribute('data-t')) >= 0); });
         if (opc) { $('fAnio').value = st.anio || opc.anioActual; $('fDepto').value = st.d; $('fEstado').value = st.e; renderTree(); renderSignals(); }
     }
     function reset() { var keep = st.c; st = JSON.parse(JSON.stringify(DEF)); st.c = keep; syncControls(); refresh(); }
+    $('fTop').oninput = O.debounce(function () {
+        var n = parseInt($('fTop').value, 10);
+        st.top = n > 0 ? Math.min(n, 10000) : 0;
+        if (st.top && st.o === 'ing' && !st.asc) st.o = 'potencial';   // «mejores» = mayor potencial, salvo que ya se haya elegido otro orden
+        st.p = 1; refresh();
+    }, 400);
 
     // ---------- atajos de prospectos ----------
     var PRESETS = {
@@ -147,8 +156,8 @@
     $('obsPresets').addEventListener('click', function (e) {
         var b = e.target.closest('button[data-p]'); if (!b) return;
         var p = PRESETS[b.getAttribute('data-p')]; if (!p) return;
-        var keep = st.c, anio = st.anio; st = JSON.parse(JSON.stringify(DEF)); st.c = keep; st.anio = anio;
-        st.t = p.t.slice(); st.sn = p.sn.slice(); st.o = 'ing'; st.asc = false;
+        var keep = st.c, anio = st.anio, top = st.top; st = JSON.parse(JSON.stringify(DEF)); st.c = keep; st.anio = anio; st.top = top;
+        st.t = p.t.slice(); st.sn = p.sn.slice(); st.o = top ? 'potencial' : 'ing'; st.asc = false;
         O.track('filtro_sector', 'atajo-' + b.getAttribute('data-p'));
         syncControls(); refresh();
         var tab = document.querySelector('[data-bs-target="#tabEmpresas"]'); if (tab) new bootstrap.Tab(tab).show();
@@ -166,6 +175,7 @@
         if (st.imin !== '' || st.imax !== '') add(L('Ingresos ', 'Revenue ') + (st.imin || '0') + '–' + (st.imax || '∞'), function () { st.imin = ''; st.imax = ''; });
         st.sn.forEach(function (c) { var s = (opc.senales || []).filter(function (x) { return x.clave === c; })[0]; add(s ? L(s.es, s.en) : c, function () { st.sn = st.sn.filter(function (x) { return x !== c; }); }); });
         if (st.pot > 0) add(L('Potencial ≥ ', 'Potential ≥ ') + st.pot, function () { st.pot = 0; });
+        if (st.top > 0) add('Top ' + O.int(st.top), function () { st.top = 0; });
         if (st.res) add(st.res === 'utilidad' ? L('Con utilidad', 'Profitable') : L('Con pérdida', 'Loss-making'), function () { st.res = ''; });
         var el = $('obsChips');
         el.innerHTML = chips.map(function (c, i) { return '<button type="button" class="obs-chip" data-i="' + i + '">' + esc(c.label) + ' <i class="fas fa-times"></i></button>'; }).join('') +
@@ -199,7 +209,7 @@
         renderKpis(d); renderMedians(d); renderCharts(d); renderDist(d); renderTable(d);
         $('obsExport').href = '/pulso-bufins/api/exportar?' + query(false, false);
         $('obsExportX').href = '/pulso-bufins/api/exportarxlsx?' + query(false, false);
-        $('obsTotal').textContent = O.int(d.total);
+        $('obsTotal').textContent = O.int(d.visibles != null ? d.visibles : d.total) + (d.visibles != null && d.visibles < d.total ? L(' de ', ' of ') + O.int(d.total) : '');
     }
     function renderKpis(d) {
         var k = d.kpis, t = d.tendencia, i = t.length - 1, idx = t.map(function (x) { return x.anio; }).indexOf(d.anio), p = idx > 0 ? t[idx - 1] : null;

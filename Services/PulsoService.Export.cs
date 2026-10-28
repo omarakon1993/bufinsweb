@@ -89,7 +89,7 @@ namespace bufinsweb.Services
             h.Filas.Add(new object[] { "NIT", "Razón social", "CIIU", "Actividad", "Ciudad", "Departamento", "Estado", "Tamaño", "Ingresos (millones COP)", "Utilidad bruta", "Utilidad operativa", "EBITDA", "Utilidad neta",
                 "Activos", "Pasivos", "Patrimonio", "Deuda financiera", "Margen bruto %", "Margen operativo %", "Margen EBITDA %", "Margen neto %", "Deuda/EBITDA (x)", "KT/Ingresos %", "Crecimiento %", "Score salud", "Potencial", "Señales" });
             var conSen = true;
-            foreach (var r in Ordenar(Filtrar(d, f, anio), f.Orden, f.Desc).Take(MaxExportar))
+            foreach (var r in Ordenar(Filtrar(d, f, anio), f.Orden, f.Desc).Take(f.Top > 0 ? Math.Min(f.Top, MaxExportar) : MaxExportar))
             {
                 var v = r.V;
                 var sen = r.Sen ?? (conSen ? CalcularSenales(d, r.E, v, r.V1, r.V2) : null);

@@ -121,6 +121,9 @@
                     <button type="button" data-p="recurrente" title="@T("Pérdida neta este año y el anterior", "Net loss this year and last")">@T("Pérdida dos años seguidos", "Two years of losses")</button>
                     <button type="button" data-p="presion" title="@T("Pérdida, liquidez baja y deuda alta a la vez", "Loss, low liquidity and high debt together")">@T("Pérdida con presión de caja", "Loss with cash pressure")</button>
                     <button type="button" data-p="reorg" title="@T("En reorganización o reestructuración", "In restructuring")">@T("En reorganización", "In restructuring")</button>
+                    <label class="obs-top" for="fTop" title="@T("Muestra solo los N mejores según el orden de la tabla (por defecto, Potencial). Vacío = todos.", "Shows only the top N by the table order (Potential by default). Empty = all.")">
+                        Top <input id="fTop" type="number" min="1" max="10000" step="1" inputmode="numeric" class="form-control form-control-sm" placeholder="@T("todos", "all")" style="width:5.5rem;display:inline-block" />
+                    </label>
                 </div>
                 <div class="obs-chips" id="obsChips" aria-live="polite"></div>
                 <div class="obs-kpis" id="obsKpis"></div>

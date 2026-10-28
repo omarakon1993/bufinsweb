@@ -332,7 +332,8 @@ namespace bufinsweb.Services
 
             var orden = Ordenar(filas, f.Orden, f.Desc).ToList();
             var tam = Math.Max(5, Math.Min(f.Tamano, 100));
-            var paginas = Math.Max(1, (int)Math.Ceiling(filas.Count / (double)tam));
+            var visibles = f.Top > 0 ? Math.Min(f.Top, filas.Count) : filas.Count;
+            var paginas = Math.Max(1, (int)Math.Ceiling(visibles / (double)tam));
             var pagina = Math.Max(1, Math.Min(f.Pagina, paginas));
 
             var dispersion = filas.OrderByDescending(x => x.V[M.Ing]).Take(300).Where(x => Ratio.MargenEbitda(x.V).HasValue && Ratio.Endeudamiento(x.V).HasValue)
@@ -354,7 +355,8 @@ namespace bufinsweb.Services
                 departamentos = agrupar(x => x.E.Depto, k => k, 40),
                 cajas = Cajas(filas.Select(x => x.V).ToList(), filas.Select(x => Tamano(x.V[M.Ing])).ToList()),
                 dispersion,
-                tabla = orden.Skip((pagina - 1) * tam).Take(tam).Select(r => FilaTabla(d, r)),
+                tabla = orden.Take(visibles).Skip((pagina - 1) * tam).Take(tam).Select(r => FilaTabla(d, r)),
+                visibles,
                 pagina, paginas, tamano = tam
             };
         }
@@ -405,7 +407,7 @@ namespace bufinsweb.Services
             var es = CultureInfo.GetCultureInfo("es-CO");
             Func<double?, string> n1 = v => v.HasValue ? v.Value.ToString("0.0", es) : "";
             Func<long, string> mm = v => (v / 1000.0).ToString("0.0", es);
-            return Ordenar(Filtrar(d, f, anio), f.Orden, f.Desc).Take(MaxExportar).Select(r => new[]
+            return Ordenar(Filtrar(d, f, anio), f.Orden, f.Desc).Take(f.Top > 0 ? Math.Min(f.Top, MaxExportar) : MaxExportar).Select(r => new[]
             {
                 r.E.Nit, r.E.Razon, r.E.Ciiu, cat.Nombre(r.E.Ciiu), r.E.Ciudad, r.E.Depto, r.E.Estado, Tamano(r.V[M.Ing]),
                 mm(r.V[M.Ing]), mm(r.V[M.Ub]), mm(r.V[M.Uop]), mm(r.V[M.Ebitda]), mm(r.V[M.Un]), mm(r.V[M.Act]), mm(r.V[M.Pas]), mm(r.V[M.Pat]), mm(r.V[M.Deuda]), mm(r.V[M.Ktn]),

@@ -220,5 +220,6 @@ namespace bufinsweb.Models.Pulso
         public bool Desc = true;
         public int Pagina = 1;
         public int Tamano = 25;
+        public int Top;                                      // 0 = sin límite; N = solo las N primeras según el orden (tabla y descargas)
     }
 }

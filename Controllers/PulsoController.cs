@@ -351,6 +351,7 @@ namespace bufinsweb.Controllers
             f.Desc = q["asc"] != "1";
             f.Pagina = Entero(q["p"]) ?? 1;
             f.Tamano = Entero(q["ps"]) ?? 25;
+            f.Top = Math.Max(0, Math.Min(Entero(q["top"]) ?? 0, PulsoService.MaxExportar));
             return f;
         }
 
