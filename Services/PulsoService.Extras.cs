@@ -34,6 +34,7 @@ namespace bufinsweb.Services
 
         /// <summary>URL canónica de la ficha: /pulso-bufins/empresa/{nit}-{nombre}.</summary>
         public static string UrlEmpresa(Empresa e) { return "/pulso-bufins/empresa/" + e.Nit + (string.IsNullOrEmpty(e.Slug) ? "" : "-" + SlugCorto(e.Razon)); }
+        public static string UrlEmpresa(Complementaria c) { return "/pulso-bufins/empresa/" + c.Nit + (string.IsNullOrEmpty(c.Slug) ? "" : "-" + SlugCorto(c.Razon)); }
 
         /// <summary>Extrae el NIT de "860076919-crepes-y-waffles" (o de "860076919").</summary>
         public static string NitDeId(string id)
@@ -74,6 +75,32 @@ namespace bufinsweb.Services
                 }
             }
             catch (Exception) { }
+            try
+            {
+                // «10.000 más grandes»: solo las empresas que no tienen estados NIIF (el ETL ya las filtra; aquí se vuelve a comprobar)
+                var rg = Ruta("grandes.json");
+                if (File.Exists(rg))
+                {
+                    var j = JObject.Parse(File.ReadAllText(rg, Encoding.UTF8));
+                    d.ComplFuente = (string)j["fuente"]; d.ComplGenerado = (string)j["generado"];
+                    foreach (JObject x in (JArray)j["d"])
+                    {
+                        var nit = (string)x["n"];
+                        if (string.IsNullOrEmpty(nit) || d.PorNit.ContainsKey(nit)) continue;
+                        var c = new Complementaria
+                        {
+                            Nit = nit, Razon = (string)x["r"], Ciiu = CiiuCatalogo.Clase((string)x["k"] ?? ""), Ciudad = (string)x["c"] ?? "", Depto = (string)x["e"] ?? "",
+                            Supervisor = (string)x["s"] ?? "", Macrosector = (string)x["m"] ?? ""
+                        };
+                        foreach (var y in ((JObject)x["y"]).Properties()) c.Y[int.Parse(y.Name)] = y.Value.Select(t => (long)t).ToArray();
+                        if (c.Y.Count == 0) continue;
+                        c.RankIng = c.Y.Last().Value[Complementaria.Ing];
+                        c.Busqueda = Normalizar(c.Razon); c.Slug = Slug(c.Razon);
+                        d.Compl[nit] = c;
+                    }
+                }
+            }
+            catch (Exception) { d.Compl.Clear(); /* dato complementario: si falla se ignora */ }
             try
             {
                 var rr = Ruta("reglas.json");

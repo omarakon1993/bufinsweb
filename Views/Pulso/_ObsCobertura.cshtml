@@ -1,0 +1,65 @@
+@* Nota de cobertura de Pulso Bufins: UNA sola, compartida (Home y Análisis por sector). Si cambian las fuentes o lo que se muestra, actualizar aquí.
+   Modelo opcional (string): "compacto" = desplegable de una línea; otro valor = tarjeta completa. Requiere ViewBag.Datos. *@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Pulso
+@{
+    var T = new Func<string, string, string>(PulsoFormat.T);
+    var d = (PulsoDatos)ViewBag.Datos;
+    var compacto = (Model as string) == "compacto";
+    var nNiif = d.Empresas.Count.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("es-CO"));
+    var nGr = d.Compl.Count.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("es-CO"));
+    var anios = d.MinAnio + "–" + d.MaxAnio;
+}
+@helper Contenido(string nNiif, string nGr, string anios, PulsoDatos d)
+{
+    var T = new Func<string, string, string>(PulsoFormat.T);
+    <div class="obs-cob-cols">
+        <div class="obs-cob-col obs-cob-si">
+            <h3><i class="fas fa-circle-check"></i>@T("Qué cubre", "What it covers")</h3>
+            <ul>
+                <li><strong>@T(nNiif + " empresas con estados financieros completos.", nNiif + " companies with full financial statements.")</strong>
+                    @T("Son las que reportan a la Superintendencia de Sociedades (NIIF), años " + anios + ". Con ellas se calculan todos los indicadores, el análisis por sector, los rankings y el comparador.",
+                       "Those reporting to the Superintendencia de Sociedades (IFRS), years " + anios + ". All ratios, sector analysis, rankings and the comparison tool use them.")</li>
+                <li><strong>@T(nGr + " empresas grandes con ficha reducida.", nGr + " large companies with a basic profile.")</strong>
+                    @T("Empresas de la lista «10.000 empresas más grandes del país» que no reportan a Sociedades, como Ecopetrol S.A. (Superfinanciera) o entidades vigiladas por Supersalud, Supertransporte, Superservicios y Supervigilancia. Solo traen ingresos, utilidad, activos, pasivos y patrimonio por año (cifras redondeadas a 0,01 billones).",
+                       "Companies in the «10,000 largest companies» list that do not report to Sociedades, such as Ecopetrol S.A. (Superfinanciera) or entities supervised by Supersalud, Supertransporte, Superservicios and Supervigilancia. They only carry revenue, profit, assets, liabilities and equity per year (rounded to 0.01 trillion).")</li>
+            </ul>
+        </div>
+        <div class="obs-cob-col obs-cob-no">
+            <h3><i class="fas fa-circle-xmark"></i>@T("Qué no cubre", "What it does not cover")</h3>
+            <ul>
+                <li>@T("Las empresas que no aparecen en ninguna de esas dos fuentes: la gran mayoría de las pequeñas y microempresas, personas naturales, entidades públicas, cooperativas y entidades de la economía solidaria. Que una empresa antigua no salga no significa que no exista.",
+                       "Companies in neither source: most small and micro companies, individuals, public entities, cooperatives and solidarity-economy entities. A long-established company missing here does not mean it does not exist.")</li>
+                <li>@T("Las fichas reducidas no tienen EBITDA, deuda, capital de trabajo, flujo de caja ni Bufins Score, y no entran en el análisis por sector, los rankings ni el comparador.",
+                       "Basic profiles have no EBITDA, debt, working capital, cash flow or Bufins Score, and are left out of sector analysis, rankings and the comparison tool.")</li>
+                <li>@T("Grupos empresariales: no relaciona matrices con filiales ni consolida cifras; cada empresa se muestra por separado con su NIT.",
+                       "Business groups: it does not link parents with subsidiaries nor consolidate figures; each company is shown separately by tax ID.")</li>
+                <li>@T("Información que no es financiera: representantes, accionistas, sucursales, procesos judiciales o sanciones (esos datos están en el RUES y otras fuentes, no aquí).",
+                       "Non-financial information: legal representatives, shareholders, branches, lawsuits or sanctions (those live in the RUES and other sources, not here).")</li>
+                <li>@T("Datos en tiempo real: la información se carga de forma periódica. Los datos de Sociedades se actualizaron en la fuente el " + d.Meta.FuenteActualizado + " y se cargaron aquí el " + d.Meta.Generado + "; lo que se publique después no aparece hasta la siguiente carga.",
+                       "Real-time data: information is loaded periodically. Sociedades data was updated at the source on " + d.Meta.FuenteActualizado + " and loaded here on " + d.Meta.Generado + "; anything published later will not show until the next load.")</li>
+            </ul>
+        </div>
+    </div>
+}
+
+@if (compacto)
+{
+    <details class="obs-cob obs-cob-compact" id="cobertura">
+        <summary><i class="fas fa-circle-info"></i><span>@T("¿Qué empresas incluye esta información (y cuáles no)?", "Which companies does this cover (and which not)?")</span><em><span class="o">@T("Ocultar", "Hide")</span><span class="c">@T("Ver detalle", "See details")</span></em></summary>
+        @Contenido(nNiif, nGr, anios, d)
+    </details>
+}
+else
+{
+    <div class="obs-cob" id="cobertura">
+        <div class="obs-cob-head">
+            <i class="fas fa-circle-info"></i>
+            <div>
+                <h2>@T("Qué cubre Pulso Bufins (y qué no)", "What Pulso Bufins covers (and what it does not)")</h2>
+                <p>@T("Para que sepas qué esperar cuando busques una empresa.", "So you know what to expect when you look up a company.")</p>
+            </div>
+        </div>
+        @Contenido(nNiif, nGr, anios, d)
+    </div>
+}

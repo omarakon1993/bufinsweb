@@ -40,6 +40,10 @@
     OBS.unitLabel = function () { var x = UNITS[UNIT === 'auto' ? 'millones' : UNIT]; return ES ? x.es : x.en; };
     OBS.syncUnitUi = function () {
         var sel = document.getElementById('obsUnit'); if (sel) sel.value = UNIT;
+        var w = sel && sel.closest('.obs-unit'), bt = w && w.querySelector('.obs-unit-btn');
+        if (bt) { if (!bt.getAttribute('data-t')) bt.setAttribute('data-t', bt.title); bt.title = bt.getAttribute('data-t') + ': ' + sel.options[sel.selectedIndex].text; }
+        if (w) w.classList.toggle('on', UNIT !== 'auto');
+        if (OBS.markUnit) OBS.markUnit();
         Array.prototype.forEach.call(document.querySelectorAll('[data-unit-label]'), function (el) { el.textContent = OBS.unitLabel(); });
     };
     function digits(v) { var a = Math.abs(v); return a >= 1000 ? 0 : a >= 100 ? 1 : 2; }
@@ -145,8 +149,8 @@
     };
 
     // Tarjeta de indicador (KPI)
-    OBS.kpi = function (label, value, sub, cls) {
-        return '<div class="obs-kpi ' + (cls || '') + '"><span>' + label + '</span><strong>' + value + '</strong>' + (sub || '') + '</div>';
+    OBS.kpi = function (label, value, sub, cls, icon) {
+        return '<div class="obs-kpi ' + (cls || '') + '"><span>' + (icon ? '<i class="fas ' + icon + '"></i>' : '') + label + '</span><strong>' + value + '</strong>' + (sub || '') + '</div>';
     };
 
     // ---------- almacenamiento local seguro ----------
@@ -180,9 +184,9 @@
             box.innerHTML = items.map(function (it, i) {
                 var meta = [it.nit ? 'NIT ' + it.nit : '', it.actividad, it.ciudad].filter(Boolean).map(OBS.esc).join(' · ');
                 return '<div class="obs-sg-item' + (i === sel ? ' on' : '') + '" role="option" data-i="' + i + '">' +
-                    '<strong>' + OBS.esc(it.razon) + '</strong><small>' + meta + '</small>' +
+                    '<strong>' + OBS.esc(it.razon) + (it.parcial ? ' <em class="obs-sg-tag" title="' + OBS.esc(OBS.L('Supervisada por ', 'Supervised by ') + it.fuente + OBS.L('. Solo ingresos, utilidad, activos, pasivos y patrimonio.', '. Only revenue, profit, assets, liabilities and equity.')) + '">' + OBS.L('Ficha reducida', 'Basic profile') + '</em>' : '') + '</strong><small>' + meta + '</small>' +
                     (it.ing != null ? '<span class="obs-sg-ing">' + OBS.money(it.ing) + '<i>' + (it.tam || '') + '</i></span>' : '') + '</div>';
-            }).join('') || '<div class="obs-sg-empty">' + OBS.L('Sin resultados. Prueba con el NIT o parte del nombre.', 'No results. Try the tax ID or part of the name.') + '</div>';
+            }).join('') || '<div class="obs-sg-empty">' + OBS.L('Sin resultados. Prueba con el NIT o parte del nombre.', 'No results. Try the tax ID or part of the name.') + ' <a href="/pulso-bufins#cobertura">' + OBS.L('¿Qué empresas cubre?', 'Which companies are covered?') + '</a></div>';
             box.hidden = false; input.setAttribute('aria-expanded', 'true');
         }
         function showRecent() {
@@ -196,7 +200,7 @@
         var run = OBS.debounce(function () {
             var q = input.value.trim(), my = ++seq;
             if (q.length < 2) { showRecent(); return; }
-            OBS.api('buscar', 'q=' + encodeURIComponent(q) + '&n=8').then(function (r) { if (my !== seq) return; items = r; sel = r.length ? 0 : -1; paint(); }).catch(close);
+            OBS.api('buscar', 'q=' + encodeURIComponent(q) + '&n=8' + (opts.onSelect ? '&np=1' : '')).then(function (r) { if (my !== seq) return; items = r; sel = r.length ? 0 : -1; paint(); }).catch(close);
         }, 180);
 
         input.addEventListener('input', run);
@@ -314,9 +318,52 @@
     // Selector de unidad del sub-menú: se aplica a todas las cifras en pesos y se recuerda entre páginas
     var us = OBS.$('obsUnit');
     if (us) us.addEventListener('change', function () { OBS.setUnit(us.value); });
+    // Desplegable propio de la unidad (el <select> queda oculto como respaldo y fuente de las opciones)
+    var ubox = OBS.$('obsUnitBox');
+    if (us && ubox) {
+        var ubtn = ubox.querySelector('.obs-unit-btn'), umenu = ubox.querySelector('.obs-unit-menu');
+        var EJ = ES ? { auto: 'Se ajusta a cada cifra', pesos: '$ 1.234.567.890', miles: '1.234.568 miles', millones: '1.235 millones', milmillones: '1,2 miles de millones', billones: '0,0012 billones' }
+                    : { auto: 'Adapts to each figure', pesos: '$ 1,234,567,890', miles: '1,234,568 thousand', millones: '1,235 million', milmillones: '1.2 billion', billones: '0.0012 trillion' };
+        umenu.innerHTML = '<div class="obs-unit-h"><strong>' + OBS.esc(ubox.getAttribute('data-head')) + '</strong><small>' + OBS.esc(ubox.getAttribute('data-sub')) + '</small></div>' +
+            Array.prototype.map.call(us.options, function (o) {
+                return '<button type="button" role="option" class="obs-unit-o" data-u="' + o.value + '"><i class="fas fa-check"></i><span><b>' + OBS.esc(o.text) + '</b><small>' + OBS.esc(EJ[o.value] || '') + '</small></span></button>';
+            }).join('');
+        OBS.markUnit = function () {
+            Array.prototype.forEach.call(umenu.querySelectorAll('.obs-unit-o'), function (b) {
+                var on = b.getAttribute('data-u') === UNIT; b.classList.toggle('sel', on); b.setAttribute('aria-selected', on);
+            });
+        };
+        var uopen = function (v) {
+            umenu.hidden = !v; ubtn.setAttribute('aria-expanded', v ? 'true' : 'false');
+            if (v) { var cur = umenu.querySelector('.sel') || umenu.querySelector('.obs-unit-o'); if (cur) cur.focus(); }
+        };
+        ubtn.addEventListener('click', function () { uopen(umenu.hidden); });
+        umenu.addEventListener('click', function (e) {
+            var b = e.target.closest('.obs-unit-o'); if (!b) return;
+            OBS.setUnit(b.getAttribute('data-u')); uopen(false); ubtn.focus();
+        });
+        document.addEventListener('click', function (e) { if (!umenu.hidden && !ubox.contains(e.target)) uopen(false); });
+        ubox.addEventListener('keydown', function (e) {
+            if (umenu.hidden) return;
+            var items = Array.prototype.slice.call(umenu.querySelectorAll('.obs-unit-o')), i = items.indexOf(document.activeElement);
+            if (e.key === 'Escape') { uopen(false); ubtn.focus(); }
+            else if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+        });
+    }
     OBS.syncUnitUi();
 
     // Buscador global del sub-menú
     var g = OBS.$('obsGlobalSearch');
     if (g) OBS.search(g);
+    // atajo «/» para ir al buscador (si no se está escribiendo en otro campo)
+    document.addEventListener('keydown', function (e) {
+        if (!g || e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+        var t = e.target, tag = t && t.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+        e.preventDefault(); g.focus(); g.select();
+    });
+    // en pantallas angostas, deja visible la sección activa del sub-menú
+    var act = document.querySelector('.obs-subnav-links .active');
+    if (act && act.scrollIntoView) { try { act.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (e) { } }
 })();

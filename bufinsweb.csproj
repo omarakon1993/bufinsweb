@@ -222,6 +222,8 @@
     <Content Include="Views\Pulso\_ObsHead.cshtml" />
     <Content Include="Views\Pulso\_ObsCta.cshtml" />
     <Content Include="Views\Pulso\_ObsFuentes.cshtml" />
+    <Content Include="Views\Pulso\_ObsCobertura.cshtml" />
+    <Content Include="Views\Pulso\EmpresaGrande.cshtml" />
     <Content Include="Views\Pulso\_ObsTexto.cshtml" />
     <Content Include="Views\Pulso\Ranking.cshtml" />
     <Content Include="Views\Pulso\RankingHub.cshtml" />
@@ -234,6 +236,7 @@
     <Content Include="App_Data\pulso\ciiu.json" />
     <Content Include="App_Data\pulso\meta.json" />
     <Content Include="App_Data\pulso\contratos.json" />
+    <Content Include="App_Data\pulso\grandes.json" />
     <Content Include="App_Data\pulso\macro.json" />
     <Content Include="App_Data\pulso\ipc.json" />
     <Content Include="App_Data\pulso\reglas.json" />

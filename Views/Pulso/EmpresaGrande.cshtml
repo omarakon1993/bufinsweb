@@ -1,0 +1,159 @@
+@using bufinsweb.Helpers
+@using bufinsweb.Models.Pulso
+@using bufinsweb.Services
+@using Newtonsoft.Json
+@model Complementaria
+@* Ficha reducida: empresa grande que NO reporta NIIF a la Supersociedades (dataset «10.000 más grandes»). Solo 5 cifras por año. *@
+@{
+    var datos = (PulsoDatos)ViewBag.Datos;
+    var cat = CiiuCatalogo.Actual;
+    var T = new Func<string, string, string>(PulsoFormat.T);
+    var g = Model;
+    var anios = g.Y.Keys.OrderBy(a => a).ToList();
+    var anio = anios.Last();
+    var v = g.Y[anio];
+    var p = g.Y.ContainsKey(anio - 1) ? g.Y[anio - 1] : null;
+    var actividad = string.IsNullOrEmpty(g.Ciiu) ? "" : cat.Nombre(g.Ciiu);
+    ViewBag.ObsActive = "empresa";
+    ViewBag.Title = g.Razon + T(" (NIT ", " (Tax ID ") + g.Nit + T("): ingresos, utilidad y activos | Pulso Bufins", "): revenue, profit and assets | Pulso Bufins");
+    ViewBag.MetaDescription = g.Razon + " — " + actividad + ", " + g.Ciudad + ". " + T("Ingresos ", "Revenue ") + PulsoFormat.Moneda(v[Complementaria.Ing] / 1000.0) + T(", utilidad ", ", profit ") + PulsoFormat.Moneda(v[Complementaria.Un] / 1000.0) + T(" en ", " in ") + anio + T(". Ficha reducida: empresa supervisada por ", ". Basic profile: company supervised by ") + g.Supervisor + ".";
+    var baseUrl = Request.Url.GetLeftPart(UriPartial.Authority);
+    var canonical = baseUrl + PulsoService.UrlEmpresa(g);
+    ViewBag.Canonical = canonical; ViewBag.OgType = "article";
+    Func<string, string> js = s => (s ?? "").Replace("\"", "'");
+    Func<long[], double?> mneto = y => y[Complementaria.Ing] > 0 ? (double?)(y[Complementaria.Un] / (double)y[Complementaria.Ing] * 100) : null;
+    Func<long[], double?> roa = y => y[Complementaria.Act] > 0 ? (double?)(y[Complementaria.Un] / (double)y[Complementaria.Act] * 100) : null;
+    Func<long[], double?> roe = y => y[Complementaria.Pat] > 0 ? (double?)(y[Complementaria.Un] / (double)y[Complementaria.Pat] * 100) : null;
+    Func<long[], double?> endeud = y => y[Complementaria.Act] > 0 ? (double?)(y[Complementaria.Pas] / (double)y[Complementaria.Act] * 100) : null;
+    Func<long[], double?> rotacion = y => y[Complementaria.Act] > 0 ? (double?)(y[Complementaria.Ing] / (double)y[Complementaria.Act]) : null;
+    var supervisor = g.Supervisor;
+}
+@section head {
+    @Html.Partial("_ObsHead")
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "Organization",
+      "name": "@js(g.Razon)",
+      "taxID": "@g.Nit",
+      "address": { "@@type": "PostalAddress", "addressLocality": "@js(g.Ciudad)", "addressRegion": "@js(g.Depto)", "addressCountry": "CO" },
+      "url": "@canonical"
+    }
+    </script>
+    @PulsoSeo.Breadcrumb(new[] {
+        new KeyValuePair<string, string>("Bufins", baseUrl + "/"),
+        new KeyValuePair<string, string>("Pulso Bufins", baseUrl + "/pulso-bufins"),
+        new KeyValuePair<string, string>(g.Razon, canonical) })
+}
+
+<section class="obs-hero obs-hero-sm">
+    <div class="container">
+        <nav class="obs-crumbs" aria-label="breadcrumb">
+            <a href="/pulso-bufins">Pulso Bufins</a> <i class="fas fa-chevron-right"></i> <span>@T("Ficha reducida", "Basic profile")</span>
+        </nav>
+        <h1 class="obs-title obs-title-co">@g.Razon</h1>
+        <p class="obs-lead">NIT @g.Nit@(actividad.Length > 0 ? " · " + actividad + " (CIIU " + g.Ciiu + ")" : "") · @g.Ciudad@(g.Depto.Length > 0 && g.Depto != g.Ciudad ? ", " + g.Depto : "")</p>
+        <div class="obs-hero-meta">
+            <span><i class="fas fa-shield-halved me-2"></i>@T("Supervisada por", "Supervised by") @supervisor</span>
+            @if (g.Macrosector.Length > 0) { <span><i class="fas fa-layer-group me-2"></i>@T("Macrosector", "Macro-sector") @g.Macrosector</span> }
+            <span><i class="fas fa-ruler-combined me-2"></i>@T("Tamaño", "Size") @PulsoService.Tamano(v[Complementaria.Ing])</span>
+            <span><i class="fas fa-calendar-alt me-2"></i>@T("Datos", "Data") @anios.First()–@anios.Last()</span>
+        </div>
+    </div>
+</section>
+
+@Html.Partial("_ObsNav")
+
+<section class="obs-main obs-sec">
+    <div class="container-xl">
+        <div class="obs-aviso" role="note">
+            <i class="fas fa-triangle-exclamation"></i>
+            <div>
+                <strong>@T("Ficha reducida: esta empresa no reporta estados financieros NIIF a la Superintendencia de Sociedades.", "Basic profile: this company does not file IFRS financial statements with the Superintendencia de Sociedades.")</strong>
+                <p>@T("Estas cifras vienen de la lista «10.000 empresas más grandes del país» y están redondeadas a 0,01 billones (unos 10.000 millones de pesos), así que los indicadores derivados son aproximados. No hay EBITDA, deuda, capital de trabajo, flujo de caja ni Bufins Score, y la empresa no entra en el análisis por sector, los rankings ni el comparador.",
+                      "These figures come from the «10,000 largest companies» list and are rounded to 0.01 trillion (about COP 10,000 million), so derived ratios are approximate. There is no EBITDA, debt, working capital, cash flow or Bufins Score, and the company is left out of sector analysis, rankings and the comparison tool.")
+                    <a href="/pulso-bufins#cobertura">@T("Ver qué cubre Pulso Bufins", "See what Pulso Bufins covers")</a></p>
+            </div>
+        </div>
+
+        <div class="obs-toolbar">
+            <h2 class="obs-h3">@T("Cifras del año", "Figures for")  @anio</h2>
+            <div class="obs-actions">
+                <button type="button" class="btn obs-btn-ghost btn-sm" id="empShare"><i class="fas fa-link me-2"></i>@T("Copiar enlace", "Copy link")</button>
+            </div>
+        </div>
+
+        <div class="obs-kpis" id="empKpis">
+            <div class="obs-kpi"><span><i class="fas fa-coins"></i>@T("Ingresos operacionales", "Operating revenue")</span><strong>@PulsoFormat.Moneda(v[Complementaria.Ing] / 1000.0)</strong><em>@(p != null ? PulsoFormat.Variacion(v[Complementaria.Ing], p[Complementaria.Ing]) : "")</em></div>
+            <div class="obs-kpi @(v[Complementaria.Un] < 0 ? "neg" : "")"><span><i class="fas fa-chart-line"></i>@T("Ganancia (pérdida)", "Profit (loss)")</span><strong>@PulsoFormat.Moneda(v[Complementaria.Un] / 1000.0)</strong><em>@T("Margen neto", "Net margin") @PulsoFormat.Porcentaje(mneto(v))</em></div>
+            <div class="obs-kpi"><span><i class="fas fa-building"></i>@T("Activos", "Assets")</span><strong>@PulsoFormat.Moneda(v[Complementaria.Act] / 1000.0)</strong><em>ROA @PulsoFormat.Porcentaje(roa(v))</em></div>
+            <div class="obs-kpi"><span><i class="fas fa-file-invoice-dollar"></i>@T("Pasivos", "Liabilities")</span><strong>@PulsoFormat.Moneda(v[Complementaria.Pas] / 1000.0)</strong><em>@T("Endeudamiento", "Leverage") @PulsoFormat.Porcentaje(endeud(v))</em></div>
+            <div class="obs-kpi"><span><i class="fas fa-scale-balanced"></i>@T("Patrimonio", "Equity")</span><strong>@PulsoFormat.Moneda(v[Complementaria.Pat] / 1000.0)</strong><em>ROE @PulsoFormat.Porcentaje(roe(v))</em></div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Ingresos y margen neto", "Revenue and net margin")</h3></div><div class="obs-chart"><canvas id="chIngG"></canvas></div></div></div>
+            <div class="col-lg-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Activos y endeudamiento", "Assets and leverage")</h3></div><div class="obs-chart"><canvas id="chActG"></canvas></div></div></div>
+        </div>
+
+        <div class="obs-card">
+            <div class="obs-card-head"><h3>@T("Cifras por año", "Figures by year")</h3><span class="obs-hint">@T("Millones de pesos (COP) · los indicadores son aproximados", "COP millions · ratios are approximate")</span></div>
+            <div class="table-responsive">
+                <table class="table obs-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>@T("Concepto", "Item")</th>
+                            @foreach (var a in anios) { <th class="text-end">@a</th> }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var fila in new[] {
+                            Tuple.Create(T("Ingresos operacionales", "Operating revenue"), Complementaria.Ing),
+                            Tuple.Create(T("Ganancia (pérdida)", "Profit (loss)"), Complementaria.Un),
+                            Tuple.Create(T("Total activos", "Total assets"), Complementaria.Act),
+                            Tuple.Create(T("Total pasivos", "Total liabilities"), Complementaria.Pas),
+                            Tuple.Create(T("Total patrimonio", "Total equity"), Complementaria.Pat) })
+                        {
+                            <tr>
+                                <td>@fila.Item1</td>
+                                @foreach (var a in anios) { var x = g.Y[a][fila.Item2]; <td class="text-end @(x < 0 ? "obs-neg" : "")">@PulsoFormat.Entero(x / 1000.0)</td> }
+                            </tr>
+                        }
+                        <tr class="obs-sub"><td colspan="@(anios.Count + 1)">@T("Indicadores aproximados", "Approximate ratios")</td></tr>
+                        <tr><td>@T("Margen neto", "Net margin")</td>@foreach (var a in anios) { <td class="text-end">@PulsoFormat.Porcentaje(mneto(g.Y[a]))</td> }</tr>
+                        <tr><td>ROA</td>@foreach (var a in anios) { <td class="text-end">@PulsoFormat.Porcentaje(roa(g.Y[a]))</td> }</tr>
+                        <tr><td>ROE</td>@foreach (var a in anios) { <td class="text-end">@PulsoFormat.Porcentaje(roe(g.Y[a]))</td> }</tr>
+                        <tr><td>@T("Endeudamiento (pasivo/activo)", "Leverage (liabilities/assets)")</td>@foreach (var a in anios) { <td class="text-end">@PulsoFormat.Porcentaje(endeud(g.Y[a]))</td> }</tr>
+                        <tr><td>@T("Rotación de activos (ingresos/activos)", "Asset turnover (revenue/assets)")</td>@foreach (var a in anios) { var r = rotacion(g.Y[a]); <td class="text-end">@(r.HasValue ? r.Value.ToString("0.00", System.Globalization.CultureInfo.GetCultureInfo(T("es-CO", "en-US"))) + "x" : "—")</td> }</tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <p class="obs-source">
+            <i class="fas fa-info-circle me-2"></i>@Html.Partial("_ObsFuentes")
+            @T("Cifras de la lista «10.000 empresas más grandes del país» de la Superintendencia de Sociedades (actualizada el " + datos.ComplGenerado + "); los indicadores son cálculos aproximados de Bufins. Información pública con fines informativos; no constituye asesoría financiera.",
+               "Figures from the Superintendencia de Sociedades «10,000 largest companies» list (loaded on " + datos.ComplGenerado + "); ratios are approximate Bufins calculations. Public information, for information only; not financial advice.")
+        </p>
+    </div>
+</section>
+
+@Html.Partial("_ObsCta")
+
+@section scripts {
+    @Scripts.Render("~/bundles/obs-chart")
+    @Scripts.Render("~/bundles/obs-core")
+    <script>
+    (function () {
+        var O = window.OBS; if (!O || typeof Chart === 'undefined') return;
+        var a = @Html.Raw(JsonConvert.SerializeObject(anios));
+        var ing = @Html.Raw(JsonConvert.SerializeObject(anios.Select(y => g.Y[y][Complementaria.Ing] / 1000.0)));
+        var act = @Html.Raw(JsonConvert.SerializeObject(anios.Select(y => g.Y[y][Complementaria.Act] / 1000.0)));
+        var mn = @Html.Raw(JsonConvert.SerializeObject(anios.Select(y => mneto(g.Y[y]).HasValue ? Math.Round(mneto(g.Y[y]).Value, 1) : (double?)null)));
+        var en = @Html.Raw(JsonConvert.SerializeObject(anios.Select(y => endeud(g.Y[y]).HasValue ? Math.Round(endeud(g.Y[y]).Value, 1) : (double?)null)));
+        O.combo('chIngG', a, { label: O.L('Ingresos', 'Revenue'), data: ing }, { label: O.L('Margen neto %', 'Net margin %'), data: mn }, @anio, '#583AFF');
+        O.combo('chActG', a, { label: O.L('Activos', 'Assets'), data: act }, { label: O.L('Endeudamiento %', 'Leverage %'), data: en }, @anio, '#0EA5E9');
+        var sh = document.getElementById('empShare'); if (sh && O.share) O.share(sh);
+    })();
+    </script>
+}

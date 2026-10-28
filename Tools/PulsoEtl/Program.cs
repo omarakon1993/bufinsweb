@@ -19,7 +19,8 @@ namespace PulsoEtl
     /// ETL de Pulso Bufins: estados financieros NIIF de las sociedades que reportan a la Supersociedades
     /// (API abierta Socrata de datos.gov.co, sin llave).
     ///
-    ///   PulsoEtl.exe --out "C:\...\bufinsweb\App_Data\pulso" [--force] [--years 2024 2025] [--cache DIR] [--workers 5]
+    ///   PulsoEtl.exe --out "C:\...\bufinsweb\App_Data\pulso" [--force] [--years 2024 2025] [--cache DIR] [--workers 5] [--solo-grandes]
+    ///   --solo-grandes: solo regenera grandes.json (empresas de «10.000 más grandes» que no están en los NIIF); tarda segundos.
     ///
     /// Genera en --out: empresas.bin, meta.json, detalle.{version}.bin, detalle.{version}.idx.json y escribe el avance en etl_status.json.
     /// La publicación es atómica: los archivos nuevos se escriben con nombre temporal/versionado y empresas.bin se reemplaza al final;
@@ -61,7 +62,7 @@ namespace PulsoEtl
     internal class Opciones
     {
         public string Salida, Cache, EstadoArchivo;
-        public bool Forzar;
+        public bool Forzar, SoloGrandes;
         public int Workers = 5;
         public List<int> Anios = new List<int>();
 
@@ -77,6 +78,7 @@ namespace PulsoEtl
                     case "--status": o.EstadoArchivo = Path.GetFullPath(a[++i]); break;
                     case "--workers": o.Workers = Math.Max(1, Math.Min(12, int.Parse(a[++i]))); break;
                     case "--force": o.Forzar = true; break;
+                    case "--solo-grandes": o.SoloGrandes = true; break;
                     case "--years":
                         while (i + 1 < a.Length && !a[i + 1].StartsWith("--")) o.Anios.Add(int.Parse(a[++i]));
                         break;
@@ -504,6 +506,7 @@ namespace PulsoEtl
 
         public void Ejecutar()
         {
+            if (_o.SoloGrandes) { SoloGrandes(); return; }
             var sw = Stopwatch.StartNew();
             _e.Paso("Revisando la fuente", 1, "Consultando datos.gov.co");
 
@@ -824,6 +827,7 @@ namespace PulsoEtl
             _e.Paso("Contratación estatal y TRM", 96);
             try { Contratos(lista, years); } catch (Exception ex) { _e.Log("SECOP II no disponible (se conserva el archivo anterior): " + ex.GetBaseException().Message); }
             try { Trm(years); } catch (Exception ex) { _e.Log("TRM no disponible (se conserva el archivo anterior): " + ex.GetBaseException().Message); }
+            try { Grandes(new HashSet<string>(lista.Select(e => e.Nit))); } catch (Exception ex) { _e.Log("10.000 más grandes no disponible (se conserva el archivo anterior): " + ex.GetBaseException().Message); }
         }
 
         /// <summary>Contratos con el Estado (SECOP II) por NIT de proveedor, de los últimos 3 años calendario.</summary>
@@ -876,6 +880,109 @@ namespace PulsoEtl
             File.WriteAllText(Ruta("macro.json.tmp"), json, new UTF8Encoding(false));
             Mover(Ruta("macro.json.tmp"), Ruta("macro.json"));
             _e.Log("TRM: " + partes.Count + " años");
+        }
+
+
+        // ---------------------------------------------------------------- «10.000 empresas más grandes» (empresas que no reportan NIIF a la Supersociedades)
+
+        private const string GrandesId = "6cat-2gcs";
+
+        /// <summary>Solo regenera grandes.json: toma los NIT que ya hay en empresas.bin y no vuelve a descargar los estados financieros.</summary>
+        private void SoloGrandes()
+        {
+            _e.Paso("Empresas grandes fuera de los NIIF", 5, "Leyendo empresas.bin");
+            var bin = Ruta("empresas.bin");
+            if (!File.Exists(bin)) throw new FileNotFoundException("No hay empresas.bin en " + _o.Salida + ". Ejecute primero la actualización completa.");
+            var nits = NitsDeEmpresasBin(bin);
+            _e.Log("empresas.bin: " + nits.Count.ToString("N0") + " NIT con estados NIIF");
+            Grandes(nits);
+            _e.Termina("ok", "grandes.json actualizado.");
+        }
+
+        private static HashSet<string> NitsDeEmpresasBin(string ruta)
+        {
+            var nits = new HashSet<string>();
+            using (var f = new FileStream(ruta, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var r = new BinaryReader(f, Encoding.UTF8))
+            {
+                if (new string(r.ReadChars(4)) != "BOBS") throw new InvalidDataException("empresas.bin no es un archivo válido.");
+                r.ReadInt32();
+                int nA = r.ReadInt32(), nM = r.ReadInt32(), nE = r.ReadInt32();
+                for (var i = 0; i < nA; i++) r.ReadInt32();
+                Func<string> leer = () => { var n = r.ReadUInt16(); return n == 0 ? "" : Encoding.UTF8.GetString(r.ReadBytes(n)); };
+                for (var k = 0; k < nE; k++)
+                {
+                    nits.Add(leer());
+                    for (var j = 0; j < 8; j++) leer();                 // razón, CIIU, ciudad, departamento, estado, fecha, tipo, grupo
+                    var mask = r.ReadUInt16(); var anios = 0;
+                    for (var i = 0; i < 16; i++) if ((mask >> i & 1) != 0) anios++;
+                    r.BaseStream.Seek((long)anios * nM * 8, SeekOrigin.Current);
+                }
+            }
+            return nits;
+        }
+
+        /// <summary>
+        /// Descarga «10.000 Empresas más Grandes del País» (Supersociedades, datos.gov.co; cifras en billones de COP con 2 decimales) y guarda en
+        /// grandes.json las empresas cuyo NIT NO está en los estados NIIF (p. ej. las vigiladas por la Superfinanciera, como Ecopetrol).
+        /// Solo trae ingresos, ganancia, activos, pasivos y patrimonio: la ficha es reducida y no entra en los análisis por sector.
+        /// </summary>
+        private void Grandes(HashSet<string> nitsNiif)
+        {
+            _e.Paso("Empresas grandes de otras superintendencias", 50, "Descargando " + GrandesId);
+            var filas = new List<Dictionary<string, object>>();
+            for (var offset = 0; ; offset += 50000)
+            {
+                var pag = (object[])_s.JsonId(GrandesId, "$order", "a_o_de_corte,nit", "$limit", "50000", "$offset", offset.ToString());
+                foreach (Dictionary<string, object> r in pag) filas.Add(r);
+                if (pag.Length < 50000) break;
+            }
+            Func<Dictionary<string, object>, string, string> S = (r, k) => r.ContainsKey(k) && r[k] != null ? Convert.ToString(r[k], CultureInfo.InvariantCulture).Trim() : "";
+            // «$ 100.59» (billones de COP) -> miles de COP; los negativos pueden venir como «-0.31» o «(0.31)»
+            Func<string, long> Miles = t =>
+            {
+                var neg = t.Contains("(") || t.Contains("-");
+                var n = Regex.Replace(t, @"[^0-9.]", "");
+                double v;
+                if (n.Length == 0 || !double.TryParse(n, NumberStyles.Float, CultureInfo.InvariantCulture, out v)) return 0L;
+                return (long)Math.Round((neg ? -v : v) * 1e9);
+            };
+            var porNit = new SortedDictionary<string, Tuple<int, Dictionary<string, object>>>(StringComparer.Ordinal);
+            var cifras = new Dictionary<string, SortedDictionary<int, long[]>>();
+            foreach (var r in filas)
+            {
+                var nit = Regex.Replace(S(r, "nit").Split('.')[0], @"\D", "");
+                double ya;
+                if (nit.Length < 5 || nitsNiif.Contains(nit) || !double.TryParse(S(r, "a_o_de_corte"), NumberStyles.Float, CultureInfo.InvariantCulture, out ya)) continue;
+                var anio = (int)ya;
+                if (anio < 2020) continue;
+                SortedDictionary<int, long[]> ys;
+                if (!cifras.TryGetValue(nit, out ys)) cifras[nit] = ys = new SortedDictionary<int, long[]>();
+                ys[anio] = new[] { Miles(S(r, "ingresos_operacionales")), Miles(S(r, "ganancia_p_rdida")), Miles(S(r, "total_activos")), Miles(S(r, "total_pasivos")), Miles(S(r, "total_patrimonio")) };
+                Tuple<int, Dictionary<string, object>> previo;
+                if (!porNit.TryGetValue(nit, out previo) || anio >= previo.Item1) porNit[nit] = Tuple.Create(anio, r);   // textos del último año
+            }
+            var sb = new StringBuilder("{\"fuente\":" + Esc("Superintendencia de Sociedades - 10.000 Empresas más Grandes del País (datos.gov.co " + GrandesId + ")") +
+                ",\"licencia\":\"CC BY-SA 4.0\",\"unidad\":\"Miles de COP\",\"precision\":\"Billones de COP con 2 decimales\",\"generado\":" + Esc(DateTime.Now.ToString("yyyy-MM-dd")) + ",\"d\":[");
+            var primero = true; var porSup = new Dictionary<string, int>();
+            foreach (var kv in porNit)
+            {
+                var r = kv.Value.Item2;
+                var ciiu = Regex.Replace(S(r, "ciiu").Split('.')[0], @"\D", "");
+                if (ciiu.Length > 0 && ciiu.Length < 4) ciiu = ciiu.PadLeft(4, '0');
+                var sup = S(r, "supervisor").ToUpperInvariant();
+                int c; porSup.TryGetValue(sup, out c); porSup[sup] = c + 1;
+                if (!primero) sb.Append(',');
+                primero = false;
+                sb.Append("{\"n\":").Append(Esc(kv.Key)).Append(",\"r\":").Append(Esc(S(r, "raz_n_social"))).Append(",\"k\":").Append(Esc(ciiu))
+                  .Append(",\"c\":").Append(Esc(S(r, "ciudad_domicilio"))).Append(",\"e\":").Append(Esc(S(r, "departamento_domicilio")))
+                  .Append(",\"s\":").Append(Esc(sup)).Append(",\"m\":").Append(Esc(S(r, "macrosector"))).Append(",\"y\":{")
+                  .Append(string.Join(",", cifras[kv.Key].Select(y => "\"" + y.Key + "\":[" + string.Join(",", y.Value) + "]"))).Append("}}");
+            }
+            sb.Append("]}");
+            File.WriteAllText(Ruta("grandes.json.tmp"), sb.ToString(), new UTF8Encoding(false));
+            Mover(Ruta("grandes.json.tmp"), Ruta("grandes.json"));
+            _e.Log("10.000 más grandes: " + porNit.Count.ToString("N0") + " empresas fuera de los NIIF (" + string.Join(", ", porSup.OrderByDescending(x => x.Value).Select(x => x.Key + " " + x.Value)) + ")");
         }
 
         /// <summary>Reemplaza el destino con reintentos (el sitio puede tener el archivo abierto un instante).</summary>

@@ -48,7 +48,7 @@ namespace bufinsweb.Services
                     var path = Ruta("empresas.bin");
                     var datos = Cargar(path, Ruta("meta.json"));
                     CacheBench.Clear();
-                    HttpRuntime.Cache.Insert(CacheKey, datos, new CacheDependency(new[] { path, Ruta("reglas.json"), Ruta("ipc.json") }), Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration);
+                    HttpRuntime.Cache.Insert(CacheKey, datos, new CacheDependency(new[] { path, Ruta("reglas.json"), Ruta("ipc.json"), Ruta("grandes.json") }), Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration);
                     return datos;
                 }
             }
@@ -265,7 +265,11 @@ namespace bufinsweb.Services
             };
         }
 
-        public object Buscar(string q, int take)
+        /// <summary>
+        /// Busca por nombre o NIT. Incluye las empresas de «10.000 más grandes» sin estados NIIF (parcial = true, ficha reducida)
+        /// salvo que <paramref name="soloNiif"/> sea true (el comparador necesita estados completos).
+        /// </summary>
+        public object Buscar(string q, int take, bool soloNiif = false)
         {
             var d = Datos;
             var cat = CiiuCatalogo.Actual;
@@ -274,20 +278,30 @@ namespace bufinsweb.Services
             var qn = Normalizar(q);
             var digitos = new string(q.Where(char.IsDigit).ToArray());
             var tokens = qn.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var porNit = digitos.Length >= 3 && digitos.Length >= q.Replace(" ", "").Replace(".", "").Replace("-", "").Length - 1;
 
-            IEnumerable<Empresa> hits;
-            if (digitos.Length >= 3 && digitos.Length >= q.Replace(" ", "").Replace(".", "").Replace("-", "").Length - 1)
-                hits = d.Empresas.Where(e => e.Nit.StartsWith(digitos, StringComparison.Ordinal));
-            else
-                hits = d.Empresas.Where(e => tokens.All(t => e.Busqueda.Contains(t)));
+            IEnumerable<Empresa> hits = porNit
+                ? d.Empresas.Where(e => e.Nit.StartsWith(digitos, StringComparison.Ordinal))
+                : d.Empresas.Where(e => tokens.All(t => e.Busqueda.Contains(t)));
+            IEnumerable<Complementaria> hitsC = soloNiif ? new Complementaria[0] : porNit
+                ? d.Compl.Values.Where(c => c.Nit.StartsWith(digitos, StringComparison.Ordinal))
+                : d.Compl.Values.Where(c => tokens.All(t => c.Busqueda.Contains(t)));
 
-            return hits.OrderByDescending(e => e.Busqueda.StartsWith(qn, StringComparison.Ordinal)).ThenByDescending(e => e.RankIng)
-                .Take(Math.Max(1, Math.Min(take, 15)))
-                .Select(e => new
-                {
-                    nit = e.Nit, razon = e.Razon, url = UrlEmpresa(e), ciiu = e.Ciiu, actividad = cat.Nombre(e.Ciiu), ciudad = e.Ciudad, estado = e.Estado,
-                    ing = Mm(e.RankIng), tam = Tamano(e.RankIng)
-                }).ToList();
+            var n = Math.Max(1, Math.Min(take, 15));
+            var todos = hits.Select(e => new { E = e, C = (Complementaria)null, Pref = e.Busqueda.StartsWith(qn, StringComparison.Ordinal), Rank = e.RankIng })
+                .Concat(hitsC.Select(c => new { E = (Empresa)null, C = c, Pref = c.Busqueda.StartsWith(qn, StringComparison.Ordinal), Rank = c.RankIng }));
+            return todos.OrderByDescending(x => x.Pref).ThenByDescending(x => x.Rank).Take(n)
+                .Select(x => x.E != null
+                    ? (object)new
+                    {
+                        nit = x.E.Nit, razon = x.E.Razon, url = UrlEmpresa(x.E), ciiu = x.E.Ciiu, actividad = cat.Nombre(x.E.Ciiu), ciudad = x.E.Ciudad, estado = x.E.Estado,
+                        ing = Mm(x.E.RankIng), tam = Tamano(x.E.RankIng), parcial = false, fuente = ""
+                    }
+                    : new
+                    {
+                        nit = x.C.Nit, razon = x.C.Razon, url = UrlEmpresa(x.C), ciiu = x.C.Ciiu, actividad = cat.Nombre(x.C.Ciiu), ciudad = x.C.Ciudad, estado = "",
+                        ing = Mm(x.C.RankIng), tam = Tamano(x.C.RankIng), parcial = true, fuente = x.C.Supervisor
+                    }).ToList();
         }
 
         // ---------------------------------------------------------------- análisis por sector
@@ -485,6 +499,13 @@ namespace bufinsweb.Services
         {
             [JsonProperty("p")] public Dictionary<string, string> P = null;
             [JsonProperty("y")] public Dictionary<string, Dictionary<string, long>> Y = null;
+        }
+
+        /// <summary>Empresa de «10.000 más grandes» sin estados NIIF (ficha reducida) o null.</summary>
+        public Complementaria Compl(string nit)
+        {
+            Complementaria c;
+            return !string.IsNullOrEmpty(nit) && Datos.Compl.TryGetValue(nit, out c) ? c : null;
         }
 
         public Empresa PorNit(string nit)

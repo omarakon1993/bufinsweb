@@ -13,7 +13,7 @@
     @Html.Partial("_ObsHead")
 }
 
-<section class="obs-hero obs-hero-sm">
+<section class="obs-hero obs-hero-sm obs-hero-xs">
     <div class="container">
         <nav class="obs-crumbs" aria-label="breadcrumb"><a href="/pulso-bufins">Pulso Bufins</a> <i class="fas fa-chevron-right"></i> <span>@T("Análisis por sector", "Sector analysis")</span></nav>
         <h1 class="obs-title">@T("Análisis por sector", "Sector analysis")</h1>
@@ -23,8 +23,20 @@
 
 @Html.Partial("_ObsNav")
 
-<section class="obs-main" id="obs-app" data-empresa-url="/pulso-bufins/empresa/">
+<section class="obs-main obs-sec" id="obs-app" data-empresa-url="/pulso-bufins/empresa/">
     <div class="container-xl">
+        <details class="obs-guide" id="obsGuide" open>
+            <summary><i class="fas fa-lightbulb"></i><span>@T("¿Cómo usar esta página? Cuatro pasos", "How to use this page: four steps")</span><em><span class="o">@T("Ocultar", "Hide")</span><span class="c">@T("Mostrar", "Show")</span></em></summary>
+            <ol class="obs-steps">
+                <li><b>1</b><div><strong>@T("Filtra", "Filter")</strong><span>@T("Elige año, tamaño y actividad en el panel izquierdo, o usa un atajo de prospectos.", "Pick year, size and activity in the left panel, or use a prospect shortcut.")</span></div></li>
+                <li><b>2</b><div><strong>@T("Lee el resumen", "Read the summary")</strong><span>@T("Las tarjetas y los gráficos se actualizan solos con cada filtro.", "Cards and charts update by themselves with every filter.")</span></div></li>
+                <li><b>3</b><div><strong>@T("Explora empresas", "Explore companies")</strong><span>@T("Ordena la tabla, cambia las columnas y marca hasta 4 empresas para compararlas.", "Sort the table, change columns and tick up to 4 companies to compare.")</span></div></li>
+                <li><b>4</b><div><strong>@T("Descarga o comparte", "Download or share")</strong><span>@T("Baja Excel o CSV, copia el enlace con tus filtros o imprime el análisis.", "Get Excel or CSV, copy the link with your filters or print the analysis.")</span></div></li>
+            </ol>
+        </details>
+
+        @Html.Partial("_ObsCobertura", "compacto")
+
         <div class="d-lg-none mb-3">
             <button class="btn obs-btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#obsFilters">
                 <i class="fas fa-sliders-h me-2"></i>@T("Filtros", "Filters") <span class="obs-count-badge" id="obsActiveCount" hidden>0</span>
@@ -42,100 +54,176 @@
                     <div class="offcanvas-body d-block">
                         <div class="obs-filters-head d-none d-lg-flex">
                             <h2><i class="fas fa-sliders-h me-2"></i>@T("Filtros", "Filters")</h2>
-                            <button type="button" class="obs-link" id="obsReset">@T("Limpiar", "Clear")</button>
+                            <button type="button" class="obs-link" id="obsReset"><i class="fas fa-rotate-left me-1"></i>@T("Limpiar", "Clear")</button>
                         </div>
 
-                        <div class="obs-field">
-                            <label for="fAnio">@T("Año", "Year")</label>
-                            <select id="fAnio" class="form-select"></select>
-                        </div>
-
-                        <div class="obs-field">
-                            <label>@T("Tamaño de empresa (por ingresos)", "Company size (by revenue)")</label>
-                            <div class="obs-sizes" id="fTam">
-                                <button type="button" data-t="S" title="@T("Menos de $20.000 millones", "Under COP 20,000 M")"><b>S</b><small>&lt; 20 mil M</small></button>
-                                <button type="button" data-t="M" title="@T("Entre $20.000 y $100.000 millones", "COP 20,000 – 100,000 M")"><b>M</b><small>20–100 mil M</small></button>
-                                <button type="button" data-t="L" title="@T("Entre $100.000 millones y 1 billón", "COP 100,000 M – 1 T")"><b>L</b><small>100 mil M–1 B</small></button>
-                                <button type="button" data-t="XL" title="@T("Más de 1 billón", "Over COP 1 T")"><b>XL</b><small>&gt; 1 B</small></button>
+                        <details class="obs-grp" data-g="base" open>
+                            <summary><i class="fas fa-calendar-days"></i><span>@T("Año y tamaño", "Year and size")</span><em class="obs-grp-n" hidden></em></summary>
+                            <div class="obs-grp-b">
+                                <div class="obs-field">
+                                    <label for="fAnio">@T("Año de los estados financieros", "Financial statements year")</label>
+                                    <select id="fAnio" class="form-select"></select>
+                                </div>
+                                <div class="obs-field mb-0">
+                                    <label>@T("Tamaño de empresa (por ingresos)", "Company size (by revenue)")</label>
+                                    <div class="obs-sizes" id="fTam">
+                                        <button type="button" data-t="S" title="@T("Menos de $20.000 millones", "Under COP 20,000 M")"><b>S</b><small>&lt; 20 mil M</small></button>
+                                        <button type="button" data-t="M" title="@T("Entre $20.000 y $100.000 millones", "COP 20,000 – 100,000 M")"><b>M</b><small>20–100 mil M</small></button>
+                                        <button type="button" data-t="L" title="@T("Entre $100.000 millones y 1 billón", "COP 100,000 M – 1 T")"><b>L</b><small>100 mil M–1 B</small></button>
+                                        <button type="button" data-t="XL" title="@T("Más de 1 billón", "Over COP 1 T")"><b>XL</b><small>&gt; 1 B</small></button>
+                                    </div>
+                                    <p class="obs-hint mt-1 mb-0">@T("Puedes marcar varios. Sin marcar = todos los tamaños.", "You can pick several. None = all sizes.")</p>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="obs-field">
-                            <label>@T("Actividad económica (CIIU)", "Economic activity (ISIC)")</label>
-                            <div class="obs-input-icon mb-2"><i class="fas fa-search"></i><input id="fCiiuQ" type="search" class="form-control" placeholder="@T("Buscar código o actividad…", "Search code or activity…")" /></div>
-                            <div id="fCiiuSel" class="obs-selected"></div>
-                            <div id="fCiiuTree" class="obs-tree" role="tree"></div>
-                        </div>
-
-                        <div class="obs-field">
-                            <label for="fQ">@T("Buscar empresa dentro del filtro", "Search company within filter")</label>
-                            <div class="obs-input-icon"><i class="fas fa-search"></i><input id="fQ" type="search" class="form-control" placeholder="@T("Nombre o NIT", "Name or tax ID")" autocomplete="off" /></div>
-                        </div>
-
-                        <div class="obs-field">
-                            <label for="fDepto">@T("Departamento", "Department")</label>
-                            <select id="fDepto" class="form-select"></select>
-                        </div>
-
-                        <div class="obs-field">
-                            <label for="fEstado">@T("Estado de la sociedad", "Company status")</label>
-                            <select id="fEstado" class="form-select"></select>
-                        </div>
-
-                        <div class="obs-field">
-                            <label>@T("Ingresos (millones COP)", "Revenue (COP millions)")</label>
-                            <div class="obs-range">
-                                <input id="fIMin" type="number" min="0" class="form-control" placeholder="@T("Mín", "Min")" />
-                                <span>–</span>
-                                <input id="fIMax" type="number" min="0" class="form-control" placeholder="@T("Máx", "Max")" />
-                            </div>
-                        </div>
-
-                        <div class="obs-field">
-                            <label>@T("Resultado del ejercicio", "Net result")</label>
-                            <div class="obs-seg" id="fRes">
-                                <button type="button" data-v="" class="active">@T("Todas", "All")</button>
-                                <button type="button" data-v="utilidad">@T("Utilidad", "Profit")</button>
-                                <button type="button" data-v="perdida">@T("Pérdida", "Loss")</button>
-                            </div>
-                        </div>
-
-                        <details class="obs-field obs-sig" id="fSigBox">
-                            <summary>@T("Señales de interés", "Signals of interest") <span class="obs-count-badge" id="fSigCount" hidden>0</span></summary>
-                            <p class="obs-hint">@T("Se calculan con cifras públicas del año elegido. Son indicios, no recomendaciones.", "Computed from public figures for the chosen year. They are hints, not recommendations.")</p>
-                            <div id="fSig" class="obs-sigchips"></div>
-                            <label for="fPot" class="mt-2">@T("Potencial mínimo", "Minimum potential") <output id="fPotOut">0</output></label>
-                            <input id="fPot" type="range" min="0" max="90" step="5" value="0" class="form-range" />
                         </details>
 
-                        <button type="button" class="btn obs-btn-ghost w-100 d-lg-none mt-2" id="obsResetMobile">@T("Limpiar filtros", "Clear filters")</button>
+                        <details class="obs-grp" data-g="act" open>
+                            <summary><i class="fas fa-industry"></i><span>@T("Actividad económica (CIIU)", "Economic activity (ISIC)")</span><em class="obs-grp-n" hidden></em></summary>
+                            <div class="obs-grp-b">
+                                <div class="obs-input-icon mb-2"><i class="fas fa-search"></i><input id="fCiiuQ" type="search" class="form-control" placeholder="@T("Buscar código o actividad…", "Search code or activity…")" /></div>
+                                <div id="fCiiuSel" class="obs-selected"></div>
+                                <div id="fCiiuTree" class="obs-tree" role="tree"></div>
+                                <p class="obs-hint mt-1 mb-0">@T("Marca una o varias. Al marcar un grupo se incluye todo lo que contiene; el número es la cantidad de empresas.", "Tick one or several. Ticking a group includes everything inside it; the number is the count of companies.")</p>
+                            </div>
+                        </details>
+
+                        <details class="obs-grp" data-g="loc">
+                            <summary><i class="fas fa-location-dot"></i><span>@T("Ubicación y empresa", "Location and company")</span><em class="obs-grp-n" hidden></em></summary>
+                            <div class="obs-grp-b">
+                                <div class="obs-field">
+                                    <label for="fQ">@T("Buscar empresa dentro del filtro", "Search company within filter")</label>
+                                    <div class="obs-input-icon"><i class="fas fa-search"></i><input id="fQ" type="search" class="form-control" placeholder="@T("Nombre o NIT", "Name or tax ID")" autocomplete="off" /></div>
+                                </div>
+                                <div class="obs-field">
+                                    <label for="fDepto">@T("Departamento", "Department")</label>
+                                    <select id="fDepto" class="form-select"></select>
+                                </div>
+                                <div class="obs-field mb-0">
+                                    <label for="fEstado">@T("Estado de la sociedad", "Company status")</label>
+                                    <select id="fEstado" class="form-select"></select>
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="obs-grp" data-g="fin">
+                            <summary><i class="fas fa-coins"></i><span>@T("Cifras financieras", "Financial figures")</span><em class="obs-grp-n" hidden></em></summary>
+                            <div class="obs-grp-b">
+                                <div class="obs-field">
+                                    <label>@T("Ingresos (millones COP)", "Revenue (COP millions)")</label>
+                                    <div class="obs-range">
+                                        <input id="fIMin" type="number" min="0" class="form-control" placeholder="@T("Mín", "Min")" />
+                                        <span>–</span>
+                                        <input id="fIMax" type="number" min="0" class="form-control" placeholder="@T("Máx", "Max")" />
+                                    </div>
+                                </div>
+                                <div class="obs-field mb-0">
+                                    <label>@T("Resultado del ejercicio", "Net result")</label>
+                                    <div class="obs-seg" id="fRes">
+                                        <button type="button" data-v="" class="active">@T("Todas", "All")</button>
+                                        <button type="button" data-v="utilidad">@T("Utilidad", "Profit")</button>
+                                        <button type="button" data-v="perdida">@T("Pérdida", "Loss")</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="obs-grp" id="fSigBox" data-g="sen">
+                            <summary><i class="fas fa-bell"></i><span>@T("Señales de interés", "Signals of interest")</span><em class="obs-count-badge" id="fSigCount" hidden>0</em></summary>
+                            <div class="obs-grp-b">
+                                <p class="obs-hint">@T("Se calculan con cifras públicas del año elegido. Son indicios, no recomendaciones.", "Computed from public figures for the chosen year. They are hints, not recommendations.")</p>
+                                <div id="fSig" class="obs-sigchips"></div>
+                                <label for="fPot" class="obs-pot-l">@T("Potencial mínimo", "Minimum potential") <output id="fPotOut">0</output></label>
+                                <input id="fPot" type="range" min="0" max="90" step="5" value="0" class="form-range" />
+                            </div>
+                        </details>
+
+                        <div class="obs-filters-foot d-lg-none">
+                            <button type="button" class="btn obs-btn-ghost" id="obsResetMobile">@T("Limpiar", "Clear")</button>
+                            <button type="button" class="btn obs-btn-primary flex-fill" data-bs-dismiss="offcanvas" data-bs-target="#obsFilters">@T("Ver", "Show")&nbsp;<span id="obsFootN">…</span>&nbsp;@T("empresas", "companies")</button>
+                        </div>
                     </div>
                 </div>
             </aside>
 
             <!-- ============ CONTENIDO ============ -->
             <div class="col-lg-9">
-                <div class="obs-presets" id="obsPresets" role="group" aria-label="@T("Atajos para encontrar prospectos", "Shortcuts to find prospects")">
-                    <span>@T("Prospectos:", "Prospects:")</span>
-                    <button type="button" data-p="pierden" title="@T("Empresas medianas o grandes (ingresos desde 20.000 millones) que cerraron el año sin utilidad", "Mid-size or large companies (revenue from COP 20,000 M) that closed the year without profit")">@T("Venden mucho y no ganan", "Big sales, no profit")</button>
-                    <button type="button" data-p="recurrente" title="@T("Pérdida neta este año y el anterior", "Net loss this year and last")">@T("Pérdida dos años seguidos", "Two years of losses")</button>
-                    <button type="button" data-p="presion" title="@T("Pérdida, liquidez baja y deuda alta a la vez", "Loss, low liquidity and high debt together")">@T("Pérdida con presión de caja", "Loss with cash pressure")</button>
-                    <button type="button" data-p="reorg" title="@T("En reorganización o reestructuración", "In restructuring")">@T("En reorganización", "In restructuring")</button>
-                    <label class="obs-top" for="fTop" title="@T("Muestra solo los N mejores según el orden de la tabla (por defecto, Potencial). Vacío = todos.", "Shows only the top N by the table order (Potential by default). Empty = all.")">
-                        Top <input id="fTop" type="number" min="1" max="10000" step="1" inputmode="numeric" class="form-control form-control-sm" placeholder="@T("todos", "all")" style="width:5.5rem;display:inline-block" />
-                    </label>
+                <div class="obs-bar">
+                    <div class="obs-bar-main">
+                        <div class="obs-bar-n"><strong id="obsTotal">—</strong> <span>@T("empresas", "companies")</span></div>
+                        <small id="obsBarCtx"></small>
+                    </div>
+                    <div class="obs-actions">
+                        <a class="btn obs-btn-primary btn-sm" id="obsCompare" href="/pulso-bufins/comparar" hidden><i class="fas fa-scale-balanced me-2"></i><span>@T("Comparar", "Compare")</span></a>
+                        <div class="dropdown">
+                            <button type="button" class="btn obs-btn-ghost btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-download me-2"></i>@T("Descargar", "Download")</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" id="obsExportX" href="#"><i class="fas fa-file-excel me-2"></i>Excel (.xlsx)</a></li>
+                                <li><a class="dropdown-item" id="obsExport" href="#"><i class="fas fa-file-csv me-2"></i>CSV</a></li>
+                            </ul>
+                        </div>
+                        <a class="btn obs-btn-ghost btn-sm" id="obsShare" href="#" title="@T("Copia un enlace que conserva todos tus filtros", "Copies a link that keeps all your filters")"><i class="fas fa-link me-2"></i>@T("Copiar enlace", "Copy link")</a>
+                        <button type="button" class="btn obs-btn-ghost btn-sm" id="obsPrint" title="@T("Imprimir o guardar como PDF", "Print or save as PDF")"><i class="fas fa-print me-2"></i><span class="d-none d-xl-inline">@T("Imprimir", "Print")</span></button>
+                    </div>
                 </div>
-                <div class="obs-chips" id="obsChips" aria-live="polite"></div>
+
+                <details class="obs-find" open>
+                    <summary>
+                        <i class="fas fa-bullseye"></i>
+                        <div><strong>@T("Encontrar prospectos", "Find prospects")</strong><small>@T("Atajos que aplican los filtros por ti, con cifras públicas", "Shortcuts that apply the filters for you, using public figures")</small></div>
+                    </summary>
+                    <div class="obs-find-b">
+                        <div class="obs-find-row">
+                            <span class="obs-find-l">@T("Atajos", "Shortcuts")</span>
+                            <div class="obs-presets" id="obsPresets" role="group" aria-label="@T("Atajos para encontrar prospectos", "Shortcuts to find prospects")">
+                                <button type="button" data-p="pierden" title="@T("Empresas medianas o grandes (ingresos desde 20.000 millones) que cerraron el año sin utilidad", "Mid-size or large companies (revenue from COP 20,000 M) that closed the year without profit")"><i class="fas fa-arrow-trend-down"></i>@T("Venden mucho y no ganan", "Big sales, no profit")</button>
+                                <button type="button" data-p="recurrente" title="@T("Pérdida neta este año y el anterior", "Net loss this year and last")"><i class="fas fa-repeat"></i>@T("Pérdida dos años seguidos", "Two years of losses")</button>
+                                <button type="button" data-p="presion" title="@T("Pérdida, liquidez baja y deuda alta a la vez", "Loss, low liquidity and high debt together")"><i class="fas fa-hand-holding-dollar"></i>@T("Pérdida con presión de caja", "Loss with cash pressure")</button>
+                                <button type="button" data-p="reorg" title="@T("En reorganización o reestructuración", "In restructuring")"><i class="fas fa-rotate"></i>@T("En reorganización", "In restructuring")</button>
+                            </div>
+                        </div>
+                        <div class="obs-find-row">
+                            <span class="obs-find-l">@T("Solo las mejores", "Only the best")</span>
+                            <div class="obs-topbar" id="obsTopBar" role="group" aria-label="@T("Limitar a las mejores empresas", "Limit to the best companies")">
+                                <div class="obs-topbar-chips">
+                                    <button type="button" data-top="10">Top 10</button>
+                                    <button type="button" data-top="25">25</button>
+                                    <button type="button" data-top="50">50</button>
+                                    <button type="button" data-top="100">100</button>
+                                    <button type="button" data-top="500">500</button>
+                                    <button type="button" data-top="0">@T("Todas", "All")</button>
+                                </div>
+                                <label class="obs-topbar-in" for="fTop"><span>@T("Otro:", "Other:")</span>
+                                    <input id="fTop" type="number" min="1" max="10000" step="1" inputmode="numeric" placeholder="N" aria-label="@T("Cantidad de empresas", "Number of companies")" />
+                                </label>
+                            </div>
+                        </div>
+                        <p class="obs-hint obs-find-note"><i class="fas fa-circle-info"></i> @T("Las mejores = mayor Potencial (puntaje 0–100 según las señales de interés), salvo que elijas otro orden en la tabla.", "Best = highest Potential (0–100 score from the signals of interest), unless you pick another order in the table.")</p>
+                    </div>
+                </details>
+
+                <div class="obs-chips" id="obsChips" aria-live="polite" data-label="@T("Filtros activos:", "Active filters:")"></div>
                 <div class="obs-kpis" id="obsKpis"></div>
+                <details class="obs-glosa">
+                    <summary><i class="fas fa-circle-question"></i>@T("¿Qué significan estos indicadores?", "What do these indicators mean?")</summary>
+                    <dl class="obs-glosa-g">
+                        <div><dt>EBITDA</dt><dd>@T("Lo que gana la operación antes de intereses, impuestos, depreciaciones y amortizaciones. Aproxima la generación de caja del negocio.", "What operations earn before interest, taxes, depreciation and amortization. A proxy for the business cash generation.")</dd></div>
+                        <div><dt>@T("Capital de trabajo neto", "Net working capital")</dt><dd>@T("Activo corriente menos pasivo corriente. Si es negativo, la empresa debe en el corto plazo más de lo que tiene disponible.", "Current assets minus current liabilities. If negative, short-term debts exceed short-term resources.")</dd></div>
+                        <div><dt>@T("Deuda / EBITDA", "Debt / EBITDA")</dt><dd>@T("Años de EBITDA que tomaría pagar la deuda financiera. Más de 4 veces suele considerarse alto.", "Years of EBITDA needed to repay financial debt. Above 4x is usually considered high.")</dd></div>
+                        <div><dt>@T("Márgenes", "Margins")</dt><dd>@T("Cada utilidad (bruta, operativa, EBITDA, neta) como porcentaje de los ingresos. Permiten comparar empresas de distinto tamaño.", "Each profit measure (gross, operating, EBITDA, net) as a percentage of revenue. They let you compare companies of different size.")</dd></div>
+                        <div><dt>@T("Mediana y P25–P75", "Median and P25–P75")</dt><dd>@T("La mediana es la empresa del medio; P25–P75 es el rango donde cae la mitad central. Resisten mejor a casos extremos que el promedio.", "The median is the middle company; P25–P75 is the range holding the central half. They resist extreme cases better than the average.")</dd></div>
+                        <div><dt>@T("Potencial", "Potential")</dt><dd>@T("Puntaje 0–100 de prospecto: suma puntos por tamaño y por señales de presión financiera u oportunidad. No mide la salud de la empresa.", "0–100 prospect score: adds points for size and for financial-pressure or opportunity signals. It does not measure company health.")</dd></div>
+                    </dl>
+                </details>
 
                 <ul class="nav obs-tabs" role="tablist">
                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabResumen" type="button"><i class="fas fa-chart-line me-2"></i>@T("Resumen", "Summary")</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabEmpresas" type="button"><i class="fas fa-table me-2"></i>@T("Empresas", "Companies")</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabEmpresas" type="button"><i class="fas fa-table me-2"></i>@T("Empresas", "Companies")<span class="obs-tab-n" id="obsTabN" hidden></span></button></li>
                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabDist" type="button"><i class="fas fa-chart-pie me-2"></i>@T("Distribución", "Distribution")</button></li>
                 </ul>
 
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tabResumen">
+                        <p class="obs-pane-intro">@T("Totales de las empresas del filtro, año a año. El año elegido aparece resaltado en cada gráfico.", "Totals of the companies in the filter, year by year. The chosen year is highlighted in each chart.")</p>
                         <div class="obs-medians" id="obsMedians"></div>
                         <div class="row g-4">
                             <div class="col-xl-4 col-md-6"><div class="obs-card"><div class="obs-card-head"><h3>@T("Ingresos", "Revenue")</h3></div><div class="obs-chart"><canvas id="chIng"></canvas></div></div></div>
@@ -148,38 +236,41 @@
                     </div>
 
                     <div class="tab-pane fade" id="tabEmpresas">
-                        <div class="obs-card">
-                            <div class="obs-card-head">
-                                <h3><span id="obsTotal">—</span> @T("empresas", "companies")</h3>
-                                <div class="obs-actions">
-                                    <a class="btn obs-btn-primary btn-sm" id="obsCompare" href="/pulso-bufins/comparar" hidden><i class="fas fa-balance-scale me-2"></i><span>@T("Comparar", "Compare")</span></a>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn obs-btn-ghost btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-download me-2"></i>@T("Descargar", "Download")</button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" id="obsExportX" href="#"><i class="fas fa-file-excel me-2"></i>Excel (.xlsx)</a></li>
-                                            <li><a class="dropdown-item" id="obsExport" href="#"><i class="fas fa-file-csv me-2"></i>CSV</a></li>
-                                        </ul>
+                        <div class="obs-card obs-card-flush">
+                            <div class="obs-tbar">
+                                <div class="obs-tbar-g">
+                                    <label for="obsSort">@T("Ordenar por", "Sort by")</label>
+                                    <select id="obsSort" class="form-select form-select-sm"></select>
+                                    <button type="button" class="obs-iconbtn" id="obsSortDir" title="@T("Invertir el orden", "Reverse order")" aria-label="@T("Invertir el orden", "Reverse order")"><i class="fas fa-arrow-down-wide-short"></i></button>
+                                </div>
+                                <div class="obs-tbar-g">
+                                    <span class="obs-tbar-l"><i class="fas fa-table-columns"></i> @T("Columnas", "Columns")</span>
+                                    <div class="obs-seg obs-seg-sm" id="obsCols" role="group" aria-label="@T("Columnas visibles", "Visible columns")">
+                                        <button type="button" data-v="p" class="active" title="@T("Potencial, ingresos, crecimiento, EBITDA y deuda/EBITDA", "Potential, revenue, growth, EBITDA and debt/EBITDA")">@T("Esencial", "Essential")</button>
+                                        <button type="button" data-v="r" title="@T("Utilidades y márgenes", "Profits and margins")">@T("Rentabilidad", "Profitability")</button>
+                                        <button type="button" data-v="d" title="@T("Deuda, liquidez y capital de trabajo", "Debt, liquidity and working capital")">@T("Deuda y caja", "Debt and cash")</button>
+                                        <button type="button" data-v="all">@T("Todas", "All")</button>
                                     </div>
-                                    <a class="btn obs-btn-ghost btn-sm" id="obsShare" href="#"><i class="fas fa-link me-2"></i>@T("Copiar enlace", "Copy link")</a>
                                 </div>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table obs-table align-middle">
+                            <p class="obs-hint obs-tbar-hint"><i class="fas fa-scale-balanced"></i> @T("Marca hasta 4 empresas con la casilla para compararlas. Clic en un encabezado para ordenar.", "Tick up to 4 companies to compare them. Click a header to sort.")</p>
+                            <div class="table-responsive obs-tscroll">
+                                <table class="table obs-table align-middle" id="obsTable" data-view="p">
                                     <thead>
                                         <tr>
                                             <th></th>
                                             <th data-o="nombre">@T("Empresa", "Company")</th>
-                                            <th data-o="potencial" class="text-end" title="@T("Puntaje 0-100 según las señales de interés", "0-100 score from the signals of interest")">@T("Potencial", "Potential")</th>
-                                            <th data-o="ing" class="text-end">@T("Ingresos", "Revenue")</th>
-                                            <th data-o="crec" class="text-end">@T("Crec.", "Growth")</th>
-                                            <th data-o="uop" class="text-end">@T("U. operativa", "Op. profit")</th>
-                                            <th data-o="ebitda" class="text-end">EBITDA</th>
-                                            <th data-o="deuda" class="text-end">@T("Deuda", "Debt")</th>
-                                            <th data-o="mbruto" class="text-end">@T("Mg bruto", "Gross mg")</th>
-                                            <th data-o="moper" class="text-end">@T("Mg operativo", "Op. mg")</th>
-                                            <th data-o="mebitda" class="text-end">@T("Mg EBITDA", "EBITDA mg")</th>
-                                            <th data-o="deudaebitda" class="text-end">@T("Deuda/EBITDA", "Debt/EBITDA")</th>
-                                            <th data-o="ktingresos" class="text-end">@T("KT/Ingresos", "WC/Rev.")</th>
+                                            <th data-o="potencial" class="c g-p text-end" title="@T("Puntaje 0-100 según las señales de interés", "0-100 score from the signals of interest")">@T("Potencial", "Potential")</th>
+                                            <th data-o="ing" class="c g-p g-r g-d text-end">@T("Ingresos", "Revenue")</th>
+                                            <th data-o="crec" class="c g-p g-r text-end" title="@T("Crecimiento de ingresos frente al año anterior", "Revenue growth vs. previous year")">@T("Crec.", "Growth")</th>
+                                            <th data-o="uop" class="c g-r text-end">@T("U. operativa", "Op. profit")</th>
+                                            <th data-o="ebitda" class="c g-p g-r g-d text-end">EBITDA</th>
+                                            <th data-o="deuda" class="c g-d text-end">@T("Deuda", "Debt")</th>
+                                            <th data-o="mbruto" class="c g-r text-end">@T("Mg bruto", "Gross mg")</th>
+                                            <th data-o="moper" class="c g-r text-end">@T("Mg operativo", "Op. mg")</th>
+                                            <th data-o="mebitda" class="c g-r text-end">@T("Mg EBITDA", "EBITDA mg")</th>
+                                            <th data-o="deudaebitda" class="c g-p g-d text-end" title="@T("Años de EBITDA para pagar la deuda", "Years of EBITDA to repay the debt")">@T("Deuda/EBITDA", "Debt/EBITDA")</th>
+                                            <th data-o="ktingresos" class="c g-d text-end" title="@T("Capital de trabajo neto sobre ingresos", "Net working capital over revenue")">@T("KT/Ingresos", "WC/Rev.")</th>
                                         </tr>
                                     </thead>
                                     <tbody id="obsRows"></tbody>
@@ -190,11 +281,12 @@
                     </div>
 
                     <div class="tab-pane fade" id="tabDist">
+                        <p class="obs-pane-intro">@T("Mira cómo se reparte el filtro por tamaño, territorio y actividad. Haz clic en un elemento del gráfico para filtrar por él.", "See how the filter splits by size, territory and activity. Click an element in a chart to filter by it.")</p>
                         <div class="obs-seg obs-seg-wrap mb-3" id="distView" role="group" aria-label="@T("Tipo de vista", "View type")">
-                            <button type="button" data-v="tam" class="active">@T("Tamaño", "Size")</button>
-                            <button type="button" data-v="depto">@T("Departamentos", "Departments")</button>
-                            <button type="button" data-v="act">@T("Actividades", "Activities")</button>
-                            <button type="button" data-v="disp">@T("Dispersión", "Scatter")</button>
+                            <button type="button" data-v="tam" class="active"><i class="fas fa-layer-group"></i>@T("Tamaño", "Size")</button>
+                            <button type="button" data-v="depto"><i class="fas fa-map"></i>@T("Departamentos", "Departments")</button>
+                            <button type="button" data-v="act"><i class="fas fa-industry"></i>@T("Actividades", "Activities")</button>
+                            <button type="button" data-v="disp"><i class="fas fa-braille"></i>@T("Dispersión", "Scatter")</button>
                         </div>
                         <div class="obs-dist" data-view="tam">
                             <div class="row g-4">

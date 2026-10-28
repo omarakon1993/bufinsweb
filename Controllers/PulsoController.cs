@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -80,8 +80,13 @@ namespace bufinsweb.Controllers
         /// <summary>Análisis individual de una empresa.</summary>
         public ActionResult Empresa(string id)
         {
-            var e = _svc.PorNit(PulsoService.NitDeId(id));
-            if (e == null) return NoEncontrado();
+            var nit = PulsoService.NitDeId(id);
+            var e = _svc.PorNit(nit);
+            if (e == null)
+            {
+                var g = _svc.Compl(nit);
+                return g == null ? NoEncontrado() : EmpresaReducida(g);
+            }
             // una sola URL por empresa: /pulso-bufins/empresa/{nit}-{nombre}; las demás redirigen (301)
             var canon = PulsoService.UrlEmpresa(e);
             if (!string.Equals(Request.Path, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.Url.Query);
@@ -93,11 +98,26 @@ namespace bufinsweb.Controllers
             return View(e);
         }
 
+        /// <summary>Ficha reducida de una empresa grande sin estados NIIF (solo ingresos, utilidad, activos, pasivos y patrimonio).</summary>
+        private ActionResult EmpresaReducida(Complementaria g)
+        {
+            var canon = PulsoService.UrlEmpresa(g);
+            if (!string.Equals(Request.Path, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.Url.Query);
+            Vista("vista_empresa", g.Ciiu, g.Nit, g.Razon);
+            if (SinCambios()) return NoModificado();
+            ViewBag.Datos = _svc.Datos;
+            return View("EmpresaGrande", g);
+        }
+
         /// <summary>Informe imprimible (A4) de una empresa: se guarda como PDF desde el navegador.</summary>
         public ActionResult Informe(string id)
         {
             var e = _svc.PorNit(PulsoService.NitDeId(id));
-            if (e == null) return NoEncontrado();
+            if (e == null)
+            {
+                var g = _svc.Compl(PulsoService.NitDeId(id));   // la ficha reducida no tiene informe: se manda a la ficha
+                return g == null ? NoEncontrado() : (ActionResult)RedirectPermanent(PulsoService.UrlEmpresa(g));
+            }
             Vista("informe_pdf", e.Ciiu, e.Nit, e.Razon);
             ViewBag.Datos = _svc.Datos;
             ViewBag.Narrativa = _svc.NarrativaEmpresa(e);
@@ -246,8 +266,8 @@ namespace bufinsweb.Controllers
         public ActionResult Opciones() { return JsonOut(_svc.Opciones()); }
 
         [Throttle(Grupo = "obs-buscar", Max = 120)]
-        [OutputCache(Duration = 300, VaryByParam = "q;n;v")]
-        public ActionResult Buscar(string q, int n = 8) { return JsonOut(_svc.Buscar(q, n)); }
+        [OutputCache(Duration = 300, VaryByParam = "q;n;np;v")]
+        public ActionResult Buscar(string q, int n = 8, int np = 0) { return JsonOut(_svc.Buscar(q, n, np == 1)); }
 
         [Throttle(Grupo = "obs-analisis", Max = 60)]
         [OutputCache(Duration = 300, VaryByParam = "*")]
@@ -301,7 +321,7 @@ namespace bufinsweb.Controllers
             sb.AppendLine("NIT;Razon social;CIIU;Actividad;Ciudad;Departamento;Estado;Tamano;Ingresos (millones COP);Utilidad bruta;Utilidad operativa;EBITDA;Utilidad neta;Activos;Pasivos;Patrimonio;Deuda financiera;Capital de trabajo neto;Margen bruto %;Margen operativo %;Margen EBITDA %;Margen neto %;Deuda/EBITDA (x);Capital de trabajo/Ingresos %;Crecimiento ingresos %");
             foreach (var f in filas) sb.AppendLine(string.Join(";", f.Select(Csv)));
             sb.AppendLine();
-            sb.AppendLine(Csv("Fuente: Superintendencia de Sociedades (datos.gov.co), estados financieros NIIF del ano " + anio + ", licencia CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0). Clasificacion CIIU Rev. 4 A.C.: Departamento Administrativo Nacional de Estadistica: www.dane.gov.co. Calculos de Bufins (bufins.com)."));
+            sb.AppendLine(Csv("Fuente: Superintendencia de Sociedades (datos.gov.co), estados financieros NIIF del ano " + anio + ", licencia CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0). Clasificacion CIIU Rev. 4 A.C.: Departamento Administrativo Nacional de Estadistica: www.dane.gov.co. Calculos de Bufins (bufins.com): esta adaptacion (indicadores y tablas) se comparte bajo la misma licencia CC BY-SA 4.0."));
             return File(ConBom(sb.ToString()), "text/csv", "bufins-sector-" + anio + ".csv");
         }
 
@@ -317,7 +337,7 @@ namespace bufinsweb.Controllers
             sb.AppendLine(Csv(e.Razon + " - NIT " + e.Nit));
             foreach (var f in filas) sb.AppendLine(string.Join(";", f.Select(Csv)));
             sb.AppendLine();
-            sb.AppendLine(Csv("Fuente: Superintendencia de Sociedades (datos.gov.co), licencia CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0). Cifras en miles de COP. Calculos de Bufins (bufins.com)."));
+            sb.AppendLine(Csv("Fuente: Superintendencia de Sociedades (datos.gov.co), licencia CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0). Cifras en miles de COP. Calculos de Bufins (bufins.com): esta adaptacion (indicadores y tablas) se comparte bajo la misma licencia CC BY-SA 4.0."));
             return File(ConBom(sb.ToString()), "text/csv", "bufins-" + e.Nit + ".csv");
         }
 

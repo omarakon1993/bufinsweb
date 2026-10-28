@@ -1,20 +1,29 @@
 @* Nota de fuentes de Pulso Bufins: UNA sola, compartida por todas las paginas. Si cambia una fuente (ETL), actualizar aqui.
    Modelo opcional (bool): false = texto plano sin enlaces (informe imprimible). *@
 @using bufinsweb.Helpers
+@using bufinsweb.Models.Pulso
 @{
     var T = new Func<string, string, string>(PulsoFormat.T);
+    var datosF = ViewBag.Datos as PulsoDatos;
+    var fechaF = datosF != null && datosF.Meta != null ? datosF.Meta.FuenteActualizado : null;
     var enlaces = !(Model is bool) || (bool)Model;
     Func<string, string, System.Web.IHtmlString> a = (url, texto) => enlaces
         ? new System.Web.HtmlString("<a href=\"" + url + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + texto + "</a>")
         : new System.Web.HtmlString(texto);
 }
 @T("Fuentes", "Sources"): @a("https://www.datos.gov.co/resource/pfdp-zks5", T("Superintendencia de Sociedades", "Superintendencia de Sociedades"))
-(@T("estados financieros NIIF", "IFRS financial statements")),
-@a("https://www.datos.gov.co/resource/jbjy-vk9h", "SECOP II · Colombia Compra Eficiente")
+(@T("estados financieros NIIF", "IFRS financial statements")) @T("y", "and")
+@a("https://www.datos.gov.co/resource/6cat-2gcs", T("10.000 empresas más grandes del país", "10,000 largest companies"))
+(@T("fichas reducidas", "basic profiles")),
+@a("https://www.datos.gov.co/resource/jbjy-vk9h", "SECOP II · Agencia Nacional de Contratación Pública - Colombia Compra Eficiente")
 (@T("contratación pública", "public contracting")),
 @a("https://www.datos.gov.co/resource/32sa-8pi3", T("Superintendencia Financiera de Colombia", "Superintendencia Financiera de Colombia"))
 (@T("TRM", "USD/COP exchange rate")) @T("y", "and")
 @a("https://www.dane.gov.co", "Departamento Administrativo Nacional de Estadística: www.dane.gov.co")
 (@T("IPC y clasificación CIIU Rev. 4 A.C.", "CPI and ISIC-based CIIU Rev. 4 A.C. classification")).
 @T("Datos abiertos de datos.gov.co bajo licencia", "Open data from datos.gov.co under license") @a("https://creativecommons.org/licenses/by-sa/4.0/deed.es", "CC BY-SA 4.0").
-@T("Bufins procesa y calcula los indicadores a partir de estos datos.", "Bufins processes these data and computes the ratios.")
+@T("Bufins procesa y calcula los indicadores a partir de estos datos; sus adaptaciones (indicadores, tablas y descargas) se comparten bajo la misma licencia CC BY-SA 4.0.", "Bufins processes these data and computes the ratios; its adaptations (ratios, tables and downloads) are shared under the same CC BY-SA 4.0 license.")
+@if (!string.IsNullOrEmpty(fechaF))
+{
+    @T("Datos de la Superintendencia de Sociedades actualizados en la fuente el " + fechaF + ".", "Superintendencia de Sociedades data updated at the source on " + fechaF + ".")
+}

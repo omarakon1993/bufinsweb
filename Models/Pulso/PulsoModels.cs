@@ -143,6 +143,19 @@ namespace bufinsweb.Models.Pulso
         public long[] En(int anio, int minAnio) { var i = anio - minAnio; return i >= 0 && i < Y.Length ? Y[i] : null; }
     }
 
+    /// <summary>
+    /// Empresa grande que NO reporta estados NIIF a la Supersociedades (p. ej. vigilada por la Superfinanciera) y viene del dataset
+    /// «10.000 empresas más grandes»: solo cinco cifras por año. Vive aparte de <see cref="Empresa"/> para no distorsionar sectores, rankings ni comparador.
+    /// </summary>
+    public class Complementaria
+    {
+        public const int Ing = 0, Un = 1, Act = 2, Pas = 3, Pat = 4;
+        public string Nit, Razon, Ciiu, Ciudad, Depto, Supervisor, Macrosector, Busqueda, Slug;
+        /// <summary>Año -> [ingresos, utilidad, activos, pasivos, patrimonio] en miles de COP (redondeados a 0,01 billones en la fuente).</summary>
+        public SortedDictionary<int, long[]> Y = new SortedDictionary<int, long[]>();
+        public long RankIng;
+    }
+
     public class PulsoMeta
     {
         [JsonProperty("fuente")] public string Fuente;
@@ -202,6 +215,9 @@ namespace bufinsweb.Models.Pulso
         /// <summary>Año -> inflación anual (%), tabla DANE.</summary>
         public Dictionary<int, double> Ipc = new Dictionary<int, double>();
         public ReglasProspecto Reglas = new ReglasProspecto();
+        /// <summary>Empresas de «10.000 más grandes» sin estados NIIF (grandes.json), por NIT; ficha reducida.</summary>
+        public Dictionary<string, Complementaria> Compl = new Dictionary<string, Complementaria>();
+        public string ComplFuente, ComplGenerado;
     }
 
     public class FiltroSector

@@ -132,19 +132,30 @@
         if (n) $('fSigBox').open = true;
     }
     function syncControls() {
-        $('fTop').value = st.top > 0 ? st.top : '';
+        $('fTop').value = st.top > 0 ? st.top : ''; markTop();
         $('fQ').value = st.q; $('fIMin').value = st.imin; $('fIMax').value = st.imax;
         Array.prototype.forEach.call($('fRes').querySelectorAll('button'), function (b) { b.classList.toggle('active', b.getAttribute('data-v') === st.res); });
         Array.prototype.forEach.call($('fTam').querySelectorAll('button'), function (b) { b.classList.toggle('active', st.t.indexOf(b.getAttribute('data-t')) >= 0); });
         if (opc) { $('fAnio').value = st.anio || opc.anioActual; $('fDepto').value = st.d; $('fEstado').value = st.e; renderTree(); renderSignals(); }
     }
     function reset() { var keep = st.c; st = JSON.parse(JSON.stringify(DEF)); st.c = keep; syncControls(); refresh(); }
-    $('fTop').oninput = O.debounce(function () {
-        var n = parseInt($('fTop').value, 10);
+    function setTop(n) {
         st.top = n > 0 ? Math.min(n, 10000) : 0;
         if (st.top && st.o === 'ing' && !st.asc) st.o = 'potencial';   // «mejores» = mayor potencial, salvo que ya se haya elegido otro orden
-        st.p = 1; refresh();
-    }, 400);
+        st.p = 1; markTop(); refresh();
+    }
+    function markTop() {
+        Array.prototype.forEach.call($('obsTopBar').querySelectorAll('button'), function (b) {
+            b.classList.toggle('active', parseInt(b.getAttribute('data-top'), 10) === st.top);
+        });
+        $('obsTopBar').classList.toggle('on', st.top > 0);
+    }
+    $('fTop').oninput = O.debounce(function () { setTop(parseInt($('fTop').value, 10)); }, 400);
+    $('obsTopBar').addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-top]'); if (!b) return;
+        $('fTop').value = parseInt(b.getAttribute('data-top'), 10) || '';
+        setTop(parseInt(b.getAttribute('data-top'), 10));
+    });
 
     // ---------- atajos de prospectos ----------
     var PRESETS = {
@@ -185,6 +196,21 @@
             var b = e.target.closest('.obs-chip'); if (!b) return; chips[b.getAttribute('data-i')].fn(); st.p = 1; syncControls(); refresh();
         };
         var n = activeCount(), badge = $('obsActiveCount'); badge.hidden = n === 0; badge.textContent = n;
+        updateGroups();
+    }
+    // contador de filtros activos por grupo del panel; los grupos con filtros se abren solos
+    function updateGroups() {
+        var cnt = {
+            base: st.t.length ? 1 : 0, act: st.k.length,
+            loc: (st.d ? 1 : 0) + (st.e ? 1 : 0) + (st.q ? 1 : 0),
+            fin: (st.imin !== '' || st.imax !== '' ? 1 : 0) + (st.res ? 1 : 0)
+        };
+        Array.prototype.forEach.call(document.querySelectorAll('.obs-grp[data-g]'), function (g) {
+            var c = cnt[g.getAttribute('data-g')], b = g.querySelector('.obs-grp-n');
+            if (!b || c == null) return;
+            b.hidden = !c; b.textContent = c;
+            if (c) g.open = true;
+        });
     }
 
     // ---------- carga ----------
@@ -209,18 +235,22 @@
         renderKpis(d); renderMedians(d); renderCharts(d); renderDist(d); renderTable(d);
         $('obsExport').href = '/pulso-bufins/api/exportar?' + query(false, false);
         $('obsExportX').href = '/pulso-bufins/api/exportarxlsx?' + query(false, false);
-        $('obsTotal').textContent = O.int(d.visibles != null ? d.visibles : d.total) + (d.visibles != null && d.visibles < d.total ? L(' de ', ' of ') + O.int(d.total) : '');
+        var shown = O.int(d.visibles != null ? d.visibles : d.total);
+        $('obsTotal').textContent = shown + (d.visibles != null && d.visibles < d.total ? L(' de ', ' of ') + O.int(d.total) : '');
+        $('obsFootN').textContent = shown;
+        var tn = $('obsTabN'); tn.hidden = !d.total; tn.textContent = shown;
+        $('obsBarCtx').textContent = L('Año ', 'Year ') + d.anio + ' · ' + (st.k.length ? st.k.length + (st.k.length === 1 ? L(' actividad elegida', ' activity chosen') : L(' actividades elegidas', ' activities chosen')) : L('todas las actividades', 'all activities'));
     }
     function renderKpis(d) {
         var k = d.kpis, t = d.tendencia, i = t.length - 1, idx = t.map(function (x) { return x.anio; }).indexOf(d.anio), p = idx > 0 ? t[idx - 1] : null;
-        if (!k.n) { $('obsKpis').innerHTML = '<div class="obs-empty w-100"><i class="fas fa-search"></i><p>' + L('Ninguna empresa cumple estos filtros. Prueba ampliarlos.', 'No company matches these filters. Try widening them.') + '</p></div>'; return; }
+        if (!k.n) { $('obsKpis').innerHTML = '<div class="obs-empty w-100"><i class="fas fa-search"></i><p>' + L('Ninguna empresa cumple estos filtros. Prueba ampliarlos.', 'No company matches these filters. Try widening them.') + '</p><button type="button" class="btn obs-btn-primary btn-sm" id="obsEmptyReset"><i class="fas fa-rotate-left me-2"></i>' + L('Quitar todos los filtros', 'Remove all filters') + '</button></div>'; $('obsEmptyReset').onclick = reset; return; }
         $('obsKpis').innerHTML =
-            kpi(L('Empresas', 'Companies'), O.int(k.n), '<em>' + L('Año ', 'Year ') + d.anio + '</em>') +
-            kpi(L('Ingresos', 'Revenue'), O.money(k.ing), O.delta(k.ing, p && p.ing)) +
-            kpi(L('Utilidad bruta', 'Gross profit'), O.money(k.ub), '<em>' + L('Margen', 'Margin') + ' ' + O.pct(k.mbruto) + '</em>') +
-            kpi('EBITDA', O.money(k.ebitda), '<em>' + L('Margen', 'Margin') + ' ' + O.pct(k.mebitda) + '</em>', k.ebitda < 0 ? 'neg' : '') +
-            kpi(L('Capital de trabajo neto', 'Net working capital'), O.money(k.ktn), '<em>' + O.pct(k.ktingresos) + ' ' + L('de ingresos', 'of revenue') + '</em>', k.ktn < 0 ? 'neg' : '') +
-            kpi(L('Deuda financiera', 'Financial debt'), O.money(k.deuda), '<em>' + L('Deuda/EBITDA', 'Debt/EBITDA') + ' ' + O.x(k.deudaebitda) + '</em>');
+            kpi(L('Empresas', 'Companies'), O.int(k.n), '<em>' + L('Año ', 'Year ') + d.anio + '</em>', '', 'fa-building') +
+            kpi(L('Ingresos', 'Revenue'), O.money(k.ing), O.delta(k.ing, p && p.ing), '', 'fa-coins') +
+            kpi(L('Utilidad bruta', 'Gross profit'), O.money(k.ub), '<em>' + L('Margen', 'Margin') + ' ' + O.pct(k.mbruto) + '</em>', '', 'fa-chart-pie') +
+            kpi('EBITDA', O.money(k.ebitda), '<em>' + L('Margen', 'Margin') + ' ' + O.pct(k.mebitda) + '</em>', k.ebitda < 0 ? 'neg' : '', 'fa-chart-line') +
+            kpi(L('Capital de trabajo', 'Working capital'), O.money(k.ktn), '<em>' + O.pct(k.ktingresos) + ' ' + L('de ingresos', 'of revenue') + '</em>', k.ktn < 0 ? 'neg' : '', 'fa-scale-balanced') +
+            kpi(L('Deuda financiera', 'Financial debt'), O.money(k.deuda), '<em>' + L('Deuda/EBITDA', 'Debt/EBITDA') + ' ' + O.x(k.deudaebitda) + '</em>', '', 'fa-hand-holding-dollar');
     }
     function renderMedians(d) {
         var s = d.estadisticas || {}, items = [['mebitda', L('Margen EBITDA', 'EBITDA margin'), O.pct], ['mneto', L('Margen neto', 'Net margin'), O.pct], ['endeud', L('Endeudamiento', 'Leverage'), O.pct], ['deudaebitda', 'Deuda/EBITDA', O.x], ['liquidez', L('Liquidez corriente', 'Current ratio'), O.x], ['ciclo', L('Ciclo de caja (días)', 'Cash cycle (days)'), O.days]];
@@ -392,16 +422,22 @@
             h.setAttribute('data-dir', h.getAttribute('data-o') === st.o ? (st.asc ? '▲' : '▼') : '');
             h.onclick = function () { var o = h.getAttribute('data-o'); if (st.o === o) st.asc = !st.asc; else { st.o = o; st.asc = o === 'nombre'; } st.p = 1; refresh(); };
         });
+        syncSort();
         var full = st.c.length >= 4;
+        // g-p / g-r / g-d = grupos de columnas (esencial, rentabilidad, deuda y caja); coinciden con los th de la vista
+        function td(g, cls, html) { return '<td class="c ' + g + ' text-end ' + (cls || '') + '">' + html + '</td>'; }
         $('obsRows').innerHTML = d.tabla.map(function (r) {
             var on = st.c.indexOf(r.nit) >= 0;
             return '<tr><td><input type="checkbox" class="form-check-input obs-cmp" data-nit="' + esc(r.nit) + '"' + (on ? ' checked' : '') + (full && !on ? ' disabled' : '') + ' aria-label="' + L('Comparar', 'Compare') + '"></td>' +
                 '<td><a href="' + esc(r.url || EMP + r.nit) + '" class="obs-co">' + esc(r.razon) + '</a><small>NIT ' + esc(r.nit) + ' · ' + esc(r.ciudad) + ' · <b class="obs-tam">' + r.tam + '</b></small>' + sigChips(r) + '</td>' +
-                '<td class="text-end"><span class="obs-pot ' + (r.potencial >= 60 ? 'hi' : r.potencial >= 35 ? 'mid' : 'lo') + '" title="' + L('Score de salud ', 'Health score ') + O.int(r.score) + '">' + O.int(r.potencial) + '</span></td>' +
-                '<td class="text-end">' + O.money(r.ing) + '</td>' +
-                '<td class="text-end ' + (r.crec != null && r.crec < 0 ? 'obs-neg' : '') + '">' + (r.crec == null ? '—' : (r.crec >= 0 ? '+' : '') + O.pct(r.crec)) + '</td>' +
-                '<td class="text-end ' + (r.uop < 0 ? 'obs-neg' : '') + '">' + O.money(r.uop) + '</td><td class="text-end ' + (r.ebitda < 0 ? 'obs-neg' : '') + '">' + O.money(r.ebitda) + '</td><td class="text-end">' + O.money(r.deuda) + '</td>' +
-                '<td class="text-end">' + O.pct(r.mbruto) + '</td><td class="text-end">' + O.pct(r.moper) + '</td><td class="text-end">' + O.pct(r.mebitda) + '</td><td class="text-end">' + O.x(r.deudaebitda) + '</td><td class="text-end">' + O.pct(r.ktingresos) + '</td></tr>';
+                td('g-p', '', '<span class="obs-pot ' + (r.potencial >= 60 ? 'hi' : r.potencial >= 35 ? 'mid' : 'lo') + '" title="' + L('Score de salud ', 'Health score ') + O.int(r.score) + '">' + O.int(r.potencial) + '</span>') +
+                td('g-p g-r g-d', '', O.money(r.ing)) +
+                td('g-p g-r', r.crec != null && r.crec < 0 ? 'obs-neg' : '', r.crec == null ? '—' : (r.crec >= 0 ? '+' : '') + O.pct(r.crec)) +
+                td('g-r', r.uop < 0 ? 'obs-neg' : '', O.money(r.uop)) +
+                td('g-p g-r g-d', r.ebitda < 0 ? 'obs-neg' : '', O.money(r.ebitda)) +
+                td('g-d', '', O.money(r.deuda)) +
+                td('g-r', '', O.pct(r.mbruto)) + td('g-r', '', O.pct(r.moper)) + td('g-r', '', O.pct(r.mebitda)) +
+                td('g-p g-d', '', O.x(r.deudaebitda)) + td('g-d', '', O.pct(r.ktingresos)) + '</tr>';
         }).join('') || '<tr><td colspan="13" class="text-center text-muted py-4">' + L('Sin resultados', 'No results') + '</td></tr>';
 
         var p = d.pagina, n = d.paginas, html = '';
@@ -423,6 +459,45 @@
         var b = $('obsCompare'); b.hidden = st.c.length < 2; b.href = '/pulso-bufins/comparar?nits=' + st.c.join('|');
         b.querySelector('span').textContent = L('Comparar (', 'Compare (') + st.c.length + ')';
     }
+
+    // ---------- orden y columnas de la tabla ----------
+    var TBL = $('obsTable'), COLS = 'p';
+    try { COLS = localStorage.getItem('obs_cols') || 'p'; } catch (e) { }
+    if (['p', 'r', 'd', 'all'].indexOf(COLS) < 0) COLS = 'p';
+    function setCols(v) {
+        COLS = v; TBL.setAttribute('data-view', v);
+        try { localStorage.setItem('obs_cols', v); } catch (e) { }
+        Array.prototype.forEach.call($('obsCols').querySelectorAll('button'), function (b) { b.classList.toggle('active', b.getAttribute('data-v') === v); });
+    }
+    setCols(COLS);
+    $('obsCols').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; setCols(b.getAttribute('data-v')); O.track('filtro_sector', 'columnas-' + COLS); });
+    // el orden elegido siempre debe verse: si la columna está oculta en la vista actual, se muestran todas
+    function showSortCol(o) {
+        var th = TBL.querySelector('th[data-o="' + o + '"]');
+        if (th && th.classList.contains('c') && COLS !== 'all' && !th.classList.contains('g-' + COLS)) setCols('all');
+    }
+    (function () {
+        var sel = $('obsSort');
+        sel.innerHTML = Array.prototype.map.call(TBL.querySelectorAll('th[data-o]'), function (h) {
+            return '<option value="' + h.getAttribute('data-o') + '">' + esc(h.textContent.trim()) + '</option>';
+        }).join('');
+        sel.onchange = function () { st.o = sel.value; st.asc = st.o === 'nombre'; st.p = 1; showSortCol(st.o); refresh(); };
+        $('obsSortDir').onclick = function () { st.asc = !st.asc; st.p = 1; refresh(); };
+    })();
+    function syncSort() {
+        var sel = $('obsSort'); if (!sel.querySelector('option[value="' + st.o + '"]')) sel.insertAdjacentHTML('beforeend', '<option value="' + esc(st.o) + '">' + esc(st.o) + '</option>');
+        sel.value = st.o;
+        var b = $('obsSortDir'); b.querySelector('i').className = 'fas ' + (st.asc ? 'fa-arrow-up-short-wide' : 'fa-arrow-down-wide-short');
+        showSortCol(st.o);
+    }
+
+    // ---------- guía de uso (recuerda si la cerraste) y utilidades de la barra ----------
+    (function () {
+        var g = $('obsGuide'), K = 'obs_guia';
+        try { if (localStorage.getItem(K) === '0') g.open = false; } catch (e) { }
+        g.addEventListener('toggle', function () { try { localStorage.setItem(K, g.open ? '1' : '0'); } catch (e) { } });
+        $('obsPrint').onclick = function () { O.track('imprimir', 'sectores'); window.print(); };
+    })();
 
     O.share($('obsShare'));
 

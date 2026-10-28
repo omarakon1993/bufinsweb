@@ -79,12 +79,19 @@
     </div>
 </section>
 
+<!-- Qué cubre y qué no (nota única: _ObsCobertura) -->
+<section class="obs-cob-sec">
+    <div class="container-xl">
+        @Html.Partial("_ObsCobertura")
+    </div>
+</section>
+
 <!-- Contenido estático indexable -->
 <section class="obs-seo">
     <div class="container-xl">
         <div class="row g-4">
             <div class="col-lg-7">
-                <h2 class="obs-h2">@T("Las 10 empresas con mayores ingresos en Colombia", "Colombia's 10 largest companies by revenue") (@datos.MaxAnio)</h2>
+                <h2 class="obs-h2">@T("Las 10 empresas con mayores ingresos entre las que reportan a la Supersociedades", "The 10 largest companies by revenue among those reporting to the Superintendencia de Sociedades") (@datos.MaxAnio)</h2>
                 <ol class="obs-toplist">
                     @foreach (var kv in top)
                     {
