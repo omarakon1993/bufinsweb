@@ -28,8 +28,8 @@ Sitio web informativo profesional para Bufins, un sistema de información financ
 
 ## 🛠️ Tecnologías
 
-- **Framework:** ASP.NET MVC 5
-- **.NET Version:** Framework 4.8
+- **Framework:** ASP.NET Core MVC
+- **.NET Version:** .NET 10 (LTS)
 - **Frontend:**
   - Bootstrap 5.3.0
   - Font Awesome 6.4.0
@@ -83,22 +83,12 @@ Sitio web informativo profesional para Bufins, un sistema de información financ
    Abrir bufinsweb.sln en Visual Studio
    ```
 
-2. **Restaurar paquetes NuGet**
+2. **Compilar y ejecutar** (requiere el SDK de .NET 10; los paquetes NuGet se restauran solos)
    ```
-   Click derecho en la solución → Restore NuGet Packages
-   ```
-
-3. **Compilar**
-   ```
-   Build → Rebuild Solution (Ctrl+Shift+B)
+   Visual Studio: F5   |   Terminal: dotnet run
    ```
 
-4. **Ejecutar**
-   ```
-   Presionar F5 o click en IIS Express
-   ```
-
-5. **Acceder**
+3. **Acceder**
    ```
    https://localhost:44337/
    ```
@@ -121,7 +111,9 @@ bufinsweb/
 │   ├── images/                    # Imágenes del sitio
 │   ├── css/                       # Estilos personalizados
 │   └── js/                        # Scripts personalizados
-├── Web.config                     # Configuración de la aplicación
+├── Program.cs                     # Arranque, middleware y rutas
+├── appsettings.json               # Configuración (SMTP por variables de entorno o secretsSettings.json)
+├── web.config                     # Solo para IIS (ASP.NET Core Module)
 └── favicon.ico                    # Icono del sitio
 ```
 
@@ -140,10 +132,10 @@ bufinsweb/
 
 ## 📝 Configuración
 
-### Web.config
-- Cultura: es-CO (Español - Colombia)
-- Target Framework: 4.8
-- Custom Errors: Off (para desarrollo)
+### Program.cs / appsettings.json
+- Cultura: es-CO (Español - Colombia), con en-US por la cookie `lang`
+- Target Framework: net10.0
+- Errores: página `Views/Shared/Error.cshtml` en producción (excepciones detalladas solo en Development)
 
 ### Sin Sesiones
 El sitio no utiliza sesiones ya que es completamente informativo.
@@ -189,4 +181,4 @@ El sitio no utiliza sesiones ya que es completamente informativo.
 
 ---
 
-**Desarrollado con:** ASP.NET MVC 5 | Bootstrap 5 | Google Fonts
+**Desarrollado con:** ASP.NET Core MVC (.NET 10) | Bootstrap 5 | Google Fonts

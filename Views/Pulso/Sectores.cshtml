@@ -6,11 +6,11 @@
     ViewBag.ObsActive = "sectores";
     ViewBag.Title = T("Análisis por sector económico en Colombia: benchmark financiero | Pulso Bufins", "Sector analysis in Colombia: financial benchmark | Pulso Bufins");
     ViewBag.MetaDescription = T("Compara sectores y actividades CIIU de Colombia: ingresos, EBITDA, capital de trabajo, deuda y márgenes de miles de empresas, año a año y por tamaño, ciudad y estado.", "Compare Colombian sectors and ISIC activities: revenue, EBITDA, working capital, debt and margins of thousands of companies, year by year and by size, region and status.");
-    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins/sectores";
+    var canonical = Context.Request.BaseUrl() + "/pulso-bufins/sectores";
     ViewBag.Canonical = canonical; ViewBag.OgType = "website";
 }
 @section head {
-    @Html.Partial("_ObsHead")
+    @await Html.PartialAsync("_ObsHead")
 }
 
 <section class="obs-hero obs-hero-sm obs-hero-xs">
@@ -21,7 +21,7 @@
     </div>
 </section>
 
-@Html.Partial("_ObsNav")
+@await Html.PartialAsync("_ObsNav")
 
 <section class="obs-main obs-sec" id="obs-app" data-empresa-url="/pulso-bufins/empresa/">
     <div class="container-xl">
@@ -35,7 +35,7 @@
             </ol>
         </details>
 
-        @Html.Partial("_ObsCobertura", "compacto")
+        @await Html.PartialAsync("_ObsCobertura", "compacto")
 
         <div class="d-lg-none mb-3">
             <button class="btn obs-btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#obsFilters">
@@ -329,7 +329,7 @@
                 </div>
 
                 <p class="obs-source">
-                    <i class="fas fa-info-circle me-2"></i>@Html.Partial("_ObsFuentes")
+                    <i class="fas fa-info-circle me-2"></i>@await Html.PartialAsync("_ObsFuentes")
                     @T("Sumas sobre las empresas que reportaron cada año; la variación entre años puede reflejar cambios en el conjunto de empresas. Cifras en millones de pesos; indicadores calculados por Bufins con fines informativos.",
                        "Totals over the companies that reported each year; changes between years may reflect changes in the set of companies. Figures in COP millions; ratios computed by Bufins for information only.")
                 </p>

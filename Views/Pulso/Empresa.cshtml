@@ -15,14 +15,14 @@
     ViewBag.ObsActive = "empresa";
     ViewBag.Title = e.Razon + T(" (NIT ", " (Tax ID ") + e.Nit + T("): estados financieros e indicadores | Pulso Bufins", "): financial statements and ratios | Pulso Bufins");
     ViewBag.MetaDescription = e.Razon + " — " + actividad + ", " + e.Ciudad + ". " + T("Ingresos ", "Revenue ") + PulsoFormat.Moneda(v[M.Ing] / 1000.0) + T(", EBITDA ", ", EBITDA ") + PulsoFormat.Moneda(v[M.Ebitda] / 1000.0) + " (" + anio + "). " + T("Análisis de rentabilidad, endeudamiento, liquidez y comparación con su sector.", "Profitability, leverage and liquidity analysis versus its sector.");
-    var baseUrl = Request.Url.GetLeftPart(UriPartial.Authority);
+    var baseUrl = Context.Request.BaseUrl();
     var canonical = baseUrl + PulsoService.UrlEmpresa(e);
     var narr = ViewBag.Narrativa as PulsoService.Narrativa;
     ViewBag.Canonical = canonical; ViewBag.OgType = "article";
     Func<string, string> js = s => (s ?? "").Replace("\"", "'");
 }
 @section head {
-    @Html.Partial("_ObsHead")
+    @await Html.PartialAsync("_ObsHead")
     <script type="application/ld+json">
     {
       "@@context": "https://schema.org",
@@ -57,7 +57,7 @@
     </div>
 </section>
 
-@Html.Partial("_ObsNav")
+@await Html.PartialAsync("_ObsNav")
 
 <section class="obs-main" id="empApp" data-nit="@e.Nit" data-anio="@anio" data-anios="@string.Join(",", anios)" data-razon="@e.Razon">
     <div class="container-xl">
@@ -171,7 +171,7 @@
             </div>
         </div>
 
-        @Html.Partial("_ObsTexto")
+        @await Html.PartialAsync("_ObsTexto")
 
         <!-- Datos clave renderizados en servidor (indexables) -->
         <div class="obs-card mt-4 obs-ssr">
@@ -199,14 +199,14 @@
         </div>
 
         <p class="obs-source">
-            <i class="fas fa-info-circle me-2"></i>@Html.Partial("_ObsFuentes")
+            <i class="fas fa-info-circle me-2"></i>@await Html.PartialAsync("_ObsFuentes")
             @T("Cifras reportadas por la empresa a la Supersociedades; los indicadores (EBITDA, capital de trabajo, deuda) son cálculos de Bufins. Información pública con fines informativos; no constituye asesoría financiera.",
                "Figures reported by the company to the Superintendencia de Sociedades; metrics (EBITDA, working capital, debt) are Bufins calculations. Public information, for information only; not financial advice.")
         </p>
     </div>
 </section>
 
-@Html.Partial("_ObsCta")
+@await Html.PartialAsync("_ObsCta")
 
 @functions {
     public static string PulsoService_Tam(long ingMiles) { return bufinsweb.Services.PulsoService.Tamano(ingMiles); }

@@ -90,7 +90,7 @@
         <table class="inf-table" id="infBench"><tbody><tr><td>@T("Cargando…", "Loading…")</td></tr></tbody></table>
 
         <footer class="inf-foot">
-            @Html.Partial("_ObsFuentes", false) @T("Cifras reportadas por la empresa a la Supersociedades. Información pública con fines informativos; no constituye asesoría financiera.",
+            @await Html.PartialAsync("_ObsFuentes", false) @T("Cifras reportadas por la empresa a la Supersociedades. Información pública con fines informativos; no constituye asesoría financiera.",
                "Figures reported by the company to the Superintendencia de Sociedades. Public information for information only; not financial advice.")
             · @T("Generado el ", "Generated on ")@DateTime.Now.ToString("yyyy-MM-dd")
         </footer>

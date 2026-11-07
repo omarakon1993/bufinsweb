@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" href="~/Assets/images/Bufins_Favicon.png?v=2">
 
     @* bootstrap, font-awesome, aos, inter y bufins-custom en un solo archivo comprimido (App_Start/BundleConfig.cs) *@
-    @System.Web.Optimization.Styles.Render("~/Assets/css/base")
+    @Styles.Render("~/Assets/css/base")
     @RenderSection("head", required: false)
 </head>
 <body>
@@ -43,12 +43,12 @@
                         <div class="lang-switcher-wrapper">
                             <i class="fas fa-globe lang-switcher-icon"></i>
                             <div class="lang-switcher">
-                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
+                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Context.Request.PathAndQuery() })" rel="nofollow"
                                    class="lang-btn @(!isEnglish ? "active" : "")" title="Español (Colombia)">
                                     Español
                                 </a>
                                 <span class="lang-sep"></span>
-                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
+                                <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Context.Request.PathAndQuery() })" rel="nofollow"
                                    class="lang-btn @(isEnglish ? "active" : "")" title="English (US)">
                                     English
                                 </a>
@@ -131,12 +131,12 @@
                     <div class="lang-switcher-wrapper lang-switcher-wrapper-footer">
                         <i class="fas fa-globe lang-switcher-icon"></i>
                         <div class="lang-switcher lang-switcher-footer">
-                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
+                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "es-CO", returnUrl = Context.Request.PathAndQuery() })" rel="nofollow"
                                class="lang-btn @(!isEnglish ? "active" : "")" title="Español (Colombia)">
                                 Español
                             </a>
                             <span class="lang-sep"></span>
-                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
+                            <a href="@Url.Action("SetLanguage", "Home", new { lang = "en-US", returnUrl = Context.Request.PathAndQuery() })" rel="nofollow"
                                class="lang-btn @(isEnglish ? "active" : "")" title="English (US)">
                                 English
                             </a>
@@ -153,13 +153,13 @@
     </button>
 
     <!-- Botón Flotante de Idioma -->
-    <a href="@Url.Action("SetLanguage", "Home", new { lang = switchToLang, returnUrl = Request.Url.PathAndQuery })" rel="nofollow"
+    <a href="@Url.Action("SetLanguage", "Home", new { lang = switchToLang, returnUrl = Context.Request.PathAndQuery() })" rel="nofollow"
        class="lang-float-btn" title="@switchToTitle" aria-label="@switchToTitle">
         <i class="fas fa-globe lang-float-globe"></i>
         <span class="lang-float-label">@switchToLabel</span>
     </a>
 
-    @System.Web.Optimization.Scripts.Render("~/bundles/base-js")
+    @Scripts.Render("~/bundles/base-js")
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const backToTopButton = document.getElementById('backToTop');

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Web;
 using bufinsweb.Helpers;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.OutputCaching;
 using bufinsweb.Filters;
 using bufinsweb.Models.Pulso;
 using bufinsweb.Services;
@@ -25,16 +27,17 @@ namespace bufinsweb.Controllers
         private readonly PulsoService _svc = new PulsoService();
         private static readonly HashSet<string> PaginasBot = new HashSet<string> { "Index", "Sectores", "Comparador", "Empresa", "Informe", "Ranking", "Nodo", "Og" };
 
-        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             ViewBag.ObsVer = _svc.Datos.Version;   // versiona las URL de la API: al publicar datos nuevos cambian y no se sirve caché vieja
-            var accion = Convert.ToString(filterContext.ActionDescriptor.ActionName);
-            if (Request.HttpMethod == "GET" && PaginasBot.Contains(accion) && UsoService.EsBot(Request.UserAgent))
-                UsoService.ContarBot(Request.UserAgent, accion);   // rastreadores (buscadores, IA, previsualizadores): solo un contador por familia
+            var accion = Convert.ToString(filterContext.RouteData.Values["action"]);
+            var ua = Request.UserAgentTexto();
+            if (Request.Method == "GET" && PaginasBot.Contains(accion) && UsoService.EsBot(ua))
+                UsoService.ContarBot(ua, accion);   // rastreadores (buscadores, IA, previsualizadores): solo un contador por familia
             base.OnActionExecuting(filterContext);
         }
 
-        private ContentResult JsonOut(object o)
+        private IActionResult JsonOut(object o)
         {
             // text/json (y no application/json): IIS solo comprime text/* en el hosting; el JS lo lee igual con r.json()
             return Content(JsonConvert.SerializeObject(o, JsonCfg), "text/json", Encoding.UTF8);
@@ -43,14 +46,14 @@ namespace bufinsweb.Controllers
         // ------------------------------------------------------------ páginas
 
         /// <summary>Redirige (301) las URLs anteriores del modulo a /pulso-bufins conservando ruta y parametros.</summary>
-        public ActionResult Antigua(string resto)
+        public IActionResult Antigua(string resto)
         {
-            var qs = Request.Url.Query;
+            var qs = Request.QueryString.ToUriComponent();
             return RedirectPermanent("/pulso-bufins" + (string.IsNullOrEmpty(resto) ? "" : "/" + resto) + qs);
         }
 
         /// <summary>Inicio: buscador de empresas y acceso a los tres módulos.</summary>
-        public ActionResult Index()
+        public IActionResult Index()
         {
             Vista("vista_home", "");
             if (SinCambios()) return NoModificado();
@@ -60,7 +63,7 @@ namespace bufinsweb.Controllers
         }
 
         /// <summary>Análisis por sector (benchmark).</summary>
-        public ActionResult Sectores()
+        public IActionResult Sectores()
         {
             Vista("vista_sectores", "");
             if (SinCambios()) return NoModificado();
@@ -69,7 +72,7 @@ namespace bufinsweb.Controllers
         }
 
         /// <summary>Comparación de empresas (hasta 4).</summary>
-        public ActionResult Comparador()
+        public IActionResult Comparador()
         {
             Vista("vista_comparar", "");
             if (SinCambios()) return NoModificado();
@@ -78,7 +81,7 @@ namespace bufinsweb.Controllers
         }
 
         /// <summary>Análisis individual de una empresa.</summary>
-        public ActionResult Empresa(string id)
+        public IActionResult Empresa(string id)
         {
             var nit = PulsoService.NitDeId(id);
             var e = _svc.PorNit(nit);
@@ -89,7 +92,7 @@ namespace bufinsweb.Controllers
             }
             // una sola URL por empresa: /pulso-bufins/empresa/{nit}-{nombre}; las demás redirigen (301)
             var canon = PulsoService.UrlEmpresa(e);
-            if (!string.Equals(Request.Path, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.Url.Query);
+            if (!string.Equals(Request.Path.Value, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.QueryString.ToUriComponent());
             Vista("vista_empresa", e.Ciiu, e.Nit, e.Razon);
             if (SinCambios()) return NoModificado();
             ViewBag.Datos = _svc.Datos;
@@ -99,10 +102,10 @@ namespace bufinsweb.Controllers
         }
 
         /// <summary>Ficha reducida de una empresa grande sin estados NIIF (solo ingresos, utilidad, activos, pasivos y patrimonio).</summary>
-        private ActionResult EmpresaReducida(Complementaria g)
+        private IActionResult EmpresaReducida(Complementaria g)
         {
             var canon = PulsoService.UrlEmpresa(g);
-            if (!string.Equals(Request.Path, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.Url.Query);
+            if (!string.Equals(Request.Path.Value, canon, StringComparison.Ordinal)) return RedirectPermanent(canon + Request.QueryString.ToUriComponent());
             Vista("vista_empresa", g.Ciiu, g.Nit, g.Razon);
             if (SinCambios()) return NoModificado();
             ViewBag.Datos = _svc.Datos;
@@ -110,13 +113,13 @@ namespace bufinsweb.Controllers
         }
 
         /// <summary>Informe imprimible (A4) de una empresa: se guarda como PDF desde el navegador.</summary>
-        public ActionResult Informe(string id)
+        public IActionResult Informe(string id)
         {
             var e = _svc.PorNit(PulsoService.NitDeId(id));
             if (e == null)
             {
                 var g = _svc.Compl(PulsoService.NitDeId(id));   // la ficha reducida no tiene informe: se manda a la ficha
-                return g == null ? NoEncontrado() : (ActionResult)RedirectPermanent(PulsoService.UrlEmpresa(g));
+                return g == null ? NoEncontrado() : (IActionResult)RedirectPermanent(PulsoService.UrlEmpresa(g));
             }
             Vista("informe_pdf", e.Ciiu, e.Nit, e.Razon);
             ViewBag.Datos = _svc.Datos;
@@ -125,7 +128,7 @@ namespace bufinsweb.Controllers
         }
 
         /// <summary>Rankings: sin parámetros muestra el índice; con métrica, el Top 100 (nacional, sector, departamento o ciudad).</summary>
-        public ActionResult Ranking(string metrica, string tipo, string clave)
+        public IActionResult Ranking(string metrica, string tipo, string clave)
         {
             ViewBag.Datos = _svc.Datos;
             if (string.IsNullOrEmpty(metrica))
@@ -143,8 +146,8 @@ namespace bufinsweb.Controllers
         }
 
         [Throttle(Grupo = "obs-og", Max = 40)]
-        [OutputCache(Duration = 86400, VaryByParam = "v;id")]
-        public ActionResult Og(string id)
+        [OutputCache(PolicyName = "og")]
+        public IActionResult Og(string id)
         {
             var d = _svc.Datos;
             var e = _svc.PorNit(PulsoService.NitDeId(id));
@@ -160,23 +163,23 @@ namespace bufinsweb.Controllers
                 new OgImage.Kpi { Etiqueta = "Margen EBITDA", Valor = PulsoFormat.Porcentaje(Ratio.MargenEbitda(yv)) },
                 new OgImage.Kpi { Etiqueta = "Score de salud", Valor = sal.Total.ToString("0") + " / 100" }
             };
-            var jpg = OgImage.Generar(e.Razon, cat.Nombre(e.Ciiu) + " · " + e.Ciudad, kpis, "NIT " + e.Nit + " · Año " + d.MaxAnio + " · bufins.com/pulso-bufins", Server.MapPath("~/Assets/images/Bufins_Logofinal.png"));
+            var jpg = OgImage.Generar(e.Razon, cat.Nombre(e.Ciiu) + " · " + e.Ciudad, kpis, "NIT " + e.Nit + " · Año " + d.MaxAnio + " · bufins.com/pulso-bufins", AppPaths.Map("~/Assets/images/Bufins_Logofinal.png"));
             return File(jpg, "image/jpeg");
         }
 
         [HttpPost]
         [Throttle(Grupo = "obs-evento", Max = 120)]
-        public ActionResult Evento(string t, string k, string x, int ms = 0, int sc = 0, string tz = null, int w = 0)
+        public IActionResult Evento(string t, string k, string x, int ms = 0, int sc = 0, string tz = null, int w = 0)
         {
             t = (t ?? "").Trim();
             if (UsoService.TiposCliente.Contains(t)) UsoService.Registrar(Request, t, k, x, "", ms, sc, tz, w);
-            return new HttpStatusCodeResult(204);
+            return StatusCode(204);
         }
 
         /// <summary>Vista de página (GET): registro anónimo con origen de la visita (buscador, red social, directo…).</summary>
         private void Vista(string tipo, string clave, string detalle = "", string nombre = "")
         {
-            if (Request.HttpMethod == "GET") UsoService.Registrar(Request, tipo, clave, detalle, nombre, conOrigen: true);
+            if (Request.Method == "GET") UsoService.Registrar(Request, tipo, clave, detalle, nombre, conOrigen: true);
         }
 
         // ------------------------------------------------------------ 304 Not Modified (ahorro de tráfico)
@@ -191,20 +194,19 @@ namespace bufinsweb.Controllers
         /// </summary>
         private bool SinCambios()
         {
-            if (Request.HttpMethod != "GET") return false;
+            if (Request.Method != "GET") return false;
             var lm = UltimoCambio();
             var etag = "W/\"" + lm.Ticks.ToString("x") + "-" + CultureInfo.CurrentUICulture.Name + "\"";
-            Response.Cache.SetCacheability(HttpCacheability.Private);
-            Response.Cache.SetMaxAge(TimeSpan.Zero);   // el navegador revalida siempre (y recibe 304 si nada cambió)
-            Response.AppendHeader("ETag", etag);       // Cache.SetETag no la emite con caché privada
-            Response.Cache.SetLastModified(lm);
-            Response.AppendHeader("Vary", "Cookie");    // el idioma viaja en la cookie "lang"
+            Response.Headers["Cache-Control"] = "private, max-age=0";   // el navegador revalida siempre (y recibe 304 si nada cambió)
+            Response.Headers["ETag"] = etag;
+            Response.Headers["Last-Modified"] = lm.ToString("R", CultureInfo.InvariantCulture);
+            Response.Headers["Vary"] = "Cookie";    // el idioma viaja en la cookie "lang"
 
-            var inm = Request.Headers["If-None-Match"];
-            if (inm != null) return inm.Split(',').Any(x => x.Trim() == etag || x.Trim() == etag.Substring(2));
+            string inm = Request.Headers["If-None-Match"].ToString();
+            if (!string.IsNullOrEmpty(inm)) return inm.Split(',').Any(x => x.Trim() == etag || x.Trim() == etag.Substring(2));
             DateTime ims;
-            var h = Request.Headers["If-Modified-Since"];
-            return h != null && DateTime.TryParse(h, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out ims) && lm <= ims;
+            string h = Request.Headers["If-Modified-Since"].ToString();
+            return !string.IsNullOrEmpty(h) && DateTime.TryParse(h, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out ims) && lm <= ims;
         }
 
         private DateTime UltimoCambio()
@@ -217,7 +219,7 @@ namespace bufinsweb.Controllers
                 var max = new DateTime(ahora.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);   // el pie de página muestra el año
                 Func<string, string, System.IO.SearchOption, DateTime> mas = (ruta, patron, op) =>
                 {
-                    var dir = Server.MapPath(ruta);
+                    var dir = AppPaths.Map(ruta);
                     if (!System.IO.Directory.Exists(dir)) return DateTime.MinValue;
                     return System.IO.Directory.EnumerateFiles(dir, patron, op)
                         .Where(f => !f.EndsWith("etl_status.json", StringComparison.OrdinalIgnoreCase) && !f.EndsWith(".lock", StringComparison.OrdinalIgnoreCase))
@@ -225,7 +227,7 @@ namespace bufinsweb.Controllers
                 };
                 foreach (var t in new[]
                 {
-                    mas("~/bin", "bufinsweb.dll", System.IO.SearchOption.TopDirectoryOnly),
+                    mas("~/", "bufinsweb.dll", System.IO.SearchOption.TopDirectoryOnly),
                     mas("~/Views", "*.cshtml", System.IO.SearchOption.AllDirectories),
                     mas("~/Assets/css", "*.css", System.IO.SearchOption.TopDirectoryOnly),
                     mas("~/Assets/js", "*.js", System.IO.SearchOption.TopDirectoryOnly),
@@ -239,16 +241,16 @@ namespace bufinsweb.Controllers
             }
         }
 
-        private static ActionResult NoModificado() { return new HttpStatusCodeResult(304); }
+        private static IActionResult NoModificado() { return new StatusCodeResult(304); }
 
-        private ActionResult NoEncontrado()
+        private IActionResult NoEncontrado()
         {
-            if (Request.HttpMethod == "GET") UsoService.Registrar(Request, "error_404", Convert.ToString(RouteData.Values["action"]));
-            return HttpNotFound();
+            if (Request.Method == "GET") UsoService.Registrar(Request, "error_404", Convert.ToString(RouteData.Values["action"]));
+            return NotFound();
         }
 
         /// <summary>Página indexable por sección / división / clase CIIU.</summary>
-        public ActionResult Nodo(string slug)
+        public IActionResult Nodo(string slug)
         {
             var s = _svc.Nodo(slug);
             if (s == null) return NoEncontrado();
@@ -262,20 +264,20 @@ namespace bufinsweb.Controllers
         // ------------------------------------------------------------ API (GET, solo lectura)
 
         [Throttle(Grupo = "obs-opciones", Max = 30)]
-        [OutputCache(Duration = 600, VaryByParam = "v")]
-        public ActionResult Opciones() { return JsonOut(_svc.Opciones()); }
+        [OutputCache(PolicyName = "opciones")]
+        public IActionResult Opciones() { return JsonOut(_svc.Opciones()); }
 
         [Throttle(Grupo = "obs-buscar", Max = 120)]
-        [OutputCache(Duration = 300, VaryByParam = "q;n;np;v")]
-        public ActionResult Buscar(string q, int n = 8, int np = 0) { return JsonOut(_svc.Buscar(q, n, np == 1)); }
+        [OutputCache(PolicyName = "buscar")]
+        public IActionResult Buscar(string q, int n = 8, int np = 0) { return JsonOut(_svc.Buscar(q, n, np == 1)); }
 
         [Throttle(Grupo = "obs-analisis", Max = 60)]
-        [OutputCache(Duration = 300, VaryByParam = "*")]
-        public ActionResult Analisis() { return JsonOut(_svc.Sector(LeerFiltro())); }
+        [OutputCache(PolicyName = "analisis")]
+        public IActionResult Analisis() { return JsonOut(_svc.Sector(LeerFiltro())); }
 
         [Throttle(Grupo = "obs-ficha", Max = 90)]
-        [OutputCache(Duration = 300, VaryByParam = "nit;v")]
-        public ActionResult Ficha(string nit)
+        [OutputCache(PolicyName = "ficha")]
+        public IActionResult Ficha(string nit)
         {
             var o = _svc.Detalle(nit);
             if (o == null) return NoEncontrado();
@@ -283,15 +285,15 @@ namespace bufinsweb.Controllers
         }
 
         [Throttle(Grupo = "obs-series", Max = 60)]
-        [OutputCache(Duration = 300, VaryByParam = "nits;v")]
-        public ActionResult Series(string nits)
+        [OutputCache(PolicyName = "series")]
+        public IActionResult Series(string nits)
         {
             var lista = (nits ?? "").Split(new[] { ',', '|' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim());
             return JsonOut(_svc.Comparar(lista));
         }
 
         [Throttle(Grupo = "obs-exportar", Max = 6)]
-        public ActionResult ExportarXlsx()
+        public IActionResult ExportarXlsx()
         {
             Vista2("export_xlsx", "sector");
             var f = LeerFiltro();
@@ -300,7 +302,7 @@ namespace bufinsweb.Controllers
         }
 
         [Throttle(Grupo = "obs-exportar-empresa-xlsx", Max = 15)]
-        public ActionResult ExportarEmpresaXlsx(string nit)
+        public IActionResult ExportarEmpresaXlsx(string nit)
         {
             var e = _svc.PorNit(nit);
             if (e == null) return NoEncontrado();
@@ -312,7 +314,7 @@ namespace bufinsweb.Controllers
         private void Vista2(string tipo, string clave, string detalle = "") { UsoService.Registrar(Request, tipo, clave, detalle); }
 
         [Throttle(Grupo = "obs-exportar", Max = 6)]
-        public ActionResult Exportar()
+        public IActionResult Exportar()
         {
             Vista2("export_csv", "sector");
             int anio;
@@ -326,7 +328,7 @@ namespace bufinsweb.Controllers
         }
 
         [Throttle(Grupo = "obs-exportar-empresa", Max = 15)]
-        public ActionResult ExportarEmpresa(string nit)
+        public IActionResult ExportarEmpresa(string nit)
         {
             var e = _svc.PorNit(nit);
             if (e == null) return NoEncontrado();
@@ -353,7 +355,7 @@ namespace bufinsweb.Controllers
 
         private FiltroSector LeerFiltro()
         {
-            var q = Request.QueryString;
+            var q = Request.Query;
             var f = new FiltroSector();
             f.Anio = Entero(q["anio"]);
             f.Ciiu = Lista(q["k"]);
@@ -363,12 +365,13 @@ namespace bufinsweb.Controllers
             f.Q = Texto(q["q"], 80);
             f.IngMin = Decimal(q["imin"]);
             f.IngMax = Decimal(q["imax"]);
-            f.Resultado = q["res"] == "utilidad" || q["res"] == "perdida" ? q["res"] : null;
-            var orden = q["o"];
+            string res = q["res"];
+            f.Resultado = res == "utilidad" || res == "perdida" ? res : null;
+            string orden = q["o"];
             f.Orden = new[] { "nombre", "ing", "uop", "ebitda", "un", "act", "deuda", "mbruto", "moper", "mebitda", "deudaebitda", "ktingresos", "crec", "potencial", "score" }.Contains(orden) ? orden : "ing";
             f.Senales = Lista(q["sn"]).Where(x => x.Length <= 20 && x.All(c => char.IsLetterOrDigit(c))).Take(10).ToList();
             f.PotencialMin = Math.Max(0, Math.Min(100, Entero(q["pot"]) ?? 0));
-            f.Desc = q["asc"] != "1";
+            f.Desc = q["asc"].ToString() != "1";
             f.Pagina = Entero(q["p"]) ?? 1;
             f.Tamano = Entero(q["ps"]) ?? 25;
             f.Top = Math.Max(0, Math.Min(Entero(q["top"]) ?? 0, PulsoService.MaxExportar));

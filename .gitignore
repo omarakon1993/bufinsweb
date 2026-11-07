@@ -383,3 +383,5 @@ App_Data/pulso/etl_status.json
 Tools/PulsoEtl/bin/
 Tools/PulsoEtl/obj/
 App_Data/pulso/uso/
+
+secretsSettings.json

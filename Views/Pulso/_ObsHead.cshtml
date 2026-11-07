@@ -6,7 +6,7 @@
 <meta property="og:url" content="@ViewBag.Canonical" />
 @{
     var og = (string)ViewBag.OgImage;
-    var ogAbs = string.IsNullOrEmpty(og) ? null : Request.Url.GetLeftPart(UriPartial.Authority) + og;
+    var ogAbs = string.IsNullOrEmpty(og) ? null : Context.Request.BaseUrl() + og;
 }
 @if (ogAbs != null)
 {

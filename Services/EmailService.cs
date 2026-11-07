@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Web;
-using System.Web.Hosting;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
@@ -315,7 +314,7 @@ namespace bufinsweb.Services
                 // Adjuntar el logo con Content-ID
                 try
                 {
-                    string logoPath = HostingEnvironment.MapPath("~/Assets/images/Bufins_Logofinal.png");
+                    string logoPath = AppPaths.Map("~/Assets/images/Bufins_Logofinal.png");
                     if (File.Exists(logoPath))
                     {
                         var image = bodyBuilder.LinkedResources.Add(logoPath);

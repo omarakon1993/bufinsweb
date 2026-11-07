@@ -10,7 +10,8 @@
     var nGr = d.Compl.Count.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("es-CO"));
     var anios = d.MinAnio + "–" + d.MaxAnio;
 }
-@helper Contenido(string nNiif, string nGr, string anios, PulsoDatos d)
+@{
+void Contenido(string nNiif, string nGr, string anios, PulsoDatos d)
 {
     var T = new Func<string, string, string>(PulsoFormat.T);
     <div class="obs-cob-cols">
@@ -42,12 +43,13 @@
         </div>
     </div>
 }
+}
 
 @if (compacto)
 {
     <details class="obs-cob obs-cob-compact" id="cobertura">
         <summary><i class="fas fa-circle-info"></i><span>@T("¿Qué empresas incluye esta información (y cuáles no)?", "Which companies does this cover (and which not)?")</span><em><span class="o">@T("Ocultar", "Hide")</span><span class="c">@T("Ver detalle", "See details")</span></em></summary>
-        @Contenido(nNiif, nGr, anios, d)
+        @{ Contenido(nNiif, nGr, anios, d); }
     </details>
 }
 else
@@ -60,6 +62,6 @@ else
                 <p>@T("Para que sepas qué esperar cuando busques una empresa.", "So you know what to expect when you look up a company.")</p>
             </div>
         </div>
-        @Contenido(nNiif, nGr, anios, d)
+        @{ Contenido(nNiif, nGr, anios, d); }
     </div>
 }

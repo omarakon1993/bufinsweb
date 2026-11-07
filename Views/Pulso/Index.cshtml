@@ -10,13 +10,13 @@
     ViewBag.MetaDescription = T(
         "Consulta estados financieros, indicadores y benchmark de más de " + (datos.Meta.Empresas / 1000) + " mil empresas colombianas que reportan a la Supersociedades: ingresos, EBITDA, deuda, capital de trabajo y flujo de caja.",
         "Financial statements, ratios and benchmarks for over " + (datos.Meta.Empresas / 1000) + " thousand Colombian companies reporting to the Superintendencia de Sociedades.");
-    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins";
+    var canonical = Context.Request.BaseUrl() + "/pulso-bufins";
     ViewBag.Canonical = canonical; ViewBag.OgType = "website";
     var secciones = datos.Empresas.Where(e => e.En(datos.MaxAnio, datos.MinAnio) != null && e.Seccion.Length > 0)
                          .GroupBy(e => e.Seccion).Select(g => new { cod = g.Key, n = g.Count() }).OrderByDescending(x => x.n).ToList();
 }
 @section head {
-    @Html.Partial("_ObsHead")
+    @await Html.PartialAsync("_ObsHead")
     <script type="application/ld+json">
     {
       "@@context": "https://schema.org",
@@ -52,7 +52,7 @@
     </div>
 </section>
 
-@Html.Partial("_ObsNav")
+@await Html.PartialAsync("_ObsNav")
 
 <section class="obs-main">
     <div class="container-xl">
@@ -82,7 +82,7 @@
 <!-- Qué cubre y qué no (nota única: _ObsCobertura) -->
 <section class="obs-cob-sec">
     <div class="container-xl">
-        @Html.Partial("_ObsCobertura")
+        @await Html.PartialAsync("_ObsCobertura")
     </div>
 </section>
 
@@ -113,11 +113,11 @@
                 </div>
             </div>
         </div>
-        <p class="obs-source mt-4"><i class="fas fa-info-circle me-2"></i>@Html.Partial("_ObsFuentes") @T("Cifras reportadas por las empresas; indicadores calculados por Bufins con fines informativos. No constituye asesoría financiera.", "Figures reported by the companies; ratios computed by Bufins for information only. Not financial advice.")</p>
+        <p class="obs-source mt-4"><i class="fas fa-info-circle me-2"></i>@await Html.PartialAsync("_ObsFuentes") @T("Cifras reportadas por las empresas; indicadores calculados por Bufins con fines informativos. No constituye asesoría financiera.", "Figures reported by the companies; ratios computed by Bufins for information only. Not financial advice.")</p>
     </div>
 </section>
 
-@Html.Partial("_ObsCta")
+@await Html.PartialAsync("_ObsCta")
 
 @section scripts {
     @Scripts.Render("~/bundles/obs-chart")

@@ -7,11 +7,12 @@
     var datosF = ViewBag.Datos as PulsoDatos;
     var fechaF = datosF != null && datosF.Meta != null ? datosF.Meta.FuenteActualizado : null;
     var enlaces = !(Model is bool) || (bool)Model;
-    Func<string, string, System.Web.IHtmlString> a = (url, texto) => enlaces
-        ? new System.Web.HtmlString("<a href=\"" + url + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + texto + "</a>")
-        : new System.Web.HtmlString(texto);
+    Func<string, string, Microsoft.AspNetCore.Html.IHtmlContent> a = (url, texto) => enlaces
+        ? new Microsoft.AspNetCore.Html.HtmlString("<a href=\"" + url + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + texto + "</a>")
+        : new Microsoft.AspNetCore.Html.HtmlString(texto);
 }
-@T("Fuentes", "Sources"): @a("https://www.datos.gov.co/resource/pfdp-zks5", T("Superintendencia de Sociedades", "Superintendencia de Sociedades"))
+@* Razor de ASP.NET Core descarta el salto de línea que sigue al bloque de código; MVC 5 lo conservaba (y las páginas salían con un espacio tras el icono). *@
+@Html.Raw("\n")@T("Fuentes", "Sources"): @a("https://www.datos.gov.co/resource/pfdp-zks5", T("Superintendencia de Sociedades", "Superintendencia de Sociedades"))
 (@T("estados financieros NIIF", "IFRS financial statements")) @T("y", "and")
 @a("https://www.datos.gov.co/resource/6cat-2gcs", T("10.000 empresas más grandes del país", "10,000 largest companies"))
 (@T("fichas reducidas", "basic profiles")),

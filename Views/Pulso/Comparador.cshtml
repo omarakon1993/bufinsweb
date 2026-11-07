@@ -6,11 +6,11 @@
     ViewBag.ObsActive = "comparar";
     ViewBag.Title = T("Comparar empresas en Colombia: rentabilidad, deuda y liquidez | Pulso Bufins", "Compare companies in Colombia: profitability, debt and liquidity | Pulso Bufins");
     ViewBag.MetaDescription = T("Compara hasta 4 empresas colombianas lado a lado con sus estados financieros: ingresos, EBITDA, márgenes, endeudamiento, liquidez y ciclo de caja.", "Compare up to 4 Colombian companies side by side: revenue, EBITDA, margins, leverage, liquidity and cash cycle.");
-    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins/comparar";
+    var canonical = Context.Request.BaseUrl() + "/pulso-bufins/comparar";
     ViewBag.Canonical = canonical; ViewBag.OgType = "website";
 }
 @section head {
-    @Html.Partial("_ObsHead")
+    @await Html.PartialAsync("_ObsHead")
 }
 
 <section class="obs-hero obs-hero-sm">
@@ -21,7 +21,7 @@
     </div>
 </section>
 
-@Html.Partial("_ObsNav")
+@await Html.PartialAsync("_ObsNav")
 
 <section class="obs-main" id="cmpApp" data-empresa-url="/pulso-bufins/empresa/">
     <div class="container-xl">
@@ -58,7 +58,7 @@
         </div>
 
         <p class="obs-source">
-            <i class="fas fa-info-circle me-2"></i>@Html.Partial("_ObsFuentes")
+            <i class="fas fa-info-circle me-2"></i>@await Html.PartialAsync("_ObsFuentes")
             @T("Compara empresas con distinto tamaño y actividad con cautela: los indicadores dependen del sector. Información con fines informativos; no constituye asesoría financiera.", "Compare companies of different size and activity with care: ratios depend on the sector. For information only; not financial advice.")
         </p>
     </div>

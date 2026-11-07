@@ -11,18 +11,18 @@
     ViewBag.ObsActive = "sectores";
     ViewBag.Title = Model.Titulo + T(" en Colombia: ingresos, EBITDA y empresas líderes | Pulso Bufins", " in Colombia: revenue, EBITDA and leading companies | Pulso Bufins");
     ViewBag.MetaDescription = Model.Titulo + " (" + Model.Nivel + " CIIU " + Model.Codigo + "): " + Model.Total.ToString("N0") + T(" empresas, ingresos de ", " companies, revenue of ") + PulsoFormat.Moneda(s[M.Ing] / 1000.0) + " (" + Model.Anio + "). " + T("Ranking, márgenes y endeudamiento con datos de la Supersociedades.", "Ranking, margins and leverage from Superintendencia de Sociedades data.");
-    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins/sector/" + Model.Slug;
+    var canonical = Context.Request.BaseUrl() + "/pulso-bufins/sector/" + Model.Slug;
     ViewBag.Canonical = canonical; ViewBag.OgType = "article";
     var explorar = "/pulso-bufins/sectores?k=" + Model.Codigo;
     var rankUrl = "/pulso-bufins/ranking/ingresos/sector/" + Model.Slug;
     var seccion = Model.Codigo.Length == 1 ? Model.Codigo : cat.Seccion(Model.Codigo.Substring(0, 2));
 }
 @section head {
-    @Html.Partial("_ObsHead")
+    @await Html.PartialAsync("_ObsHead")
     @PulsoSeo.Faq(ViewBag.Narrativa as PulsoService.Narrativa)
     @PulsoSeo.Breadcrumb(new[] {
-        new KeyValuePair<string, string>("Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/"),
-        new KeyValuePair<string, string>("Pulso Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins"),
+        new KeyValuePair<string, string>("Bufins", Context.Request.BaseUrl() + "/"),
+        new KeyValuePair<string, string>("Pulso Bufins", Context.Request.BaseUrl() + "/pulso-bufins"),
         new KeyValuePair<string, string>(Model.Titulo, canonical) })
 }
 
@@ -38,7 +38,7 @@
     </div>
 </section>
 
-@Html.Partial("_ObsNav")
+@await Html.PartialAsync("_ObsNav")
 
 <section class="obs-main">
     <div class="container-xl">
@@ -90,8 +90,8 @@
                 </table>
             </div>
         </div>
-        @Html.Partial("_ObsTexto")
-        <p class="obs-source"><i class="fas fa-info-circle me-2"></i>@Html.Partial("_ObsFuentes") @T("Procesado por Bufins.", "Processed by Bufins.")</p>
+        @await Html.PartialAsync("_ObsTexto")
+        <p class="obs-source"><i class="fas fa-info-circle me-2"></i>@await Html.PartialAsync("_ObsFuentes") @T("Procesado por Bufins.", "Processed by Bufins.")</p>
     </div>
 </section>
 

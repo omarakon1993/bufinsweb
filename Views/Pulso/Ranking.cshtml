@@ -11,7 +11,7 @@
     var titulo = T("Empresas con ", "Companies with ") + etiqueta + " " + ambito;
     var baseRuta = "/pulso-bufins/ranking/";
     Func<string, string> ruta = m => baseRuta + m + (Model.Tipo == "nacional" ? "" : "/" + Model.Tipo + "/" + Model.Clave);
-    var canonical = Request.Url.GetLeftPart(UriPartial.Authority) + ruta(def.Clave);
+    var canonical = Context.Request.BaseUrl() + ruta(def.Clave);
     ViewBag.ObsActive = "ranking";
     ViewBag.Title = titulo + " " + Model.Anio + " | Pulso Bufins";
     ViewBag.MetaDescription = T("Ranking de las ", "Ranking of the ") + Model.Filas.Count + T(" empresas con ", " companies with ") + etiqueta + " " + ambito + " (" + Model.Anio + T("), de ", "), out of ") + Model.Total.ToString("N0") + T(" que reportaron a la Supersociedades.", " that filed with the Superintendencia de Sociedades.");
@@ -29,11 +29,11 @@
     var aprox = def.MinIngMm > 0 || def.SinAnomalias;
 }
 @section head {
-    @Html.Partial("_ObsHead")
+    @await Html.PartialAsync("_ObsHead")
     @PulsoSeo.Breadcrumb(new[] {
-        new KeyValuePair<string, string>("Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/"),
-        new KeyValuePair<string, string>("Pulso Bufins", Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins"),
-        new KeyValuePair<string, string>("Rankings", Request.Url.GetLeftPart(UriPartial.Authority) + "/pulso-bufins/ranking"),
+        new KeyValuePair<string, string>("Bufins", Context.Request.BaseUrl() + "/"),
+        new KeyValuePair<string, string>("Pulso Bufins", Context.Request.BaseUrl() + "/pulso-bufins"),
+        new KeyValuePair<string, string>("Rankings", Context.Request.BaseUrl() + "/pulso-bufins/ranking"),
         new KeyValuePair<string, string>(titulo, canonical) })
 }
 
@@ -48,7 +48,7 @@
     </div>
 </section>
 
-@Html.Partial("_ObsNav")
+@await Html.PartialAsync("_ObsNav")
 
 <section class="obs-main">
     <div class="container-xl">
@@ -96,7 +96,7 @@
                 @T("Se excluyen empresas sin ingresos operacionales o con cifras atípicas (utilidad mayor a 3 veces los ingresos)" + (def.MinIngMm > 0 ? " y con ingresos menores a " + def.MinIngMm.ToString("N0") + " millones" : "") + ". ",
                    "Companies without operating revenue or with outlier figures (profit above 3x revenue) are excluded" + (def.MinIngMm > 0 ? " as well as those with revenue below COP " + def.MinIngMm.ToString("N0") + " million" : "") + ". ")
             }
-            @Html.Partial("_ObsFuentes") @T("Cálculos de Bufins; información pública con fines informativos.", "Bufins calculations; public information for information only.")
+            @await Html.PartialAsync("_ObsFuentes") @T("Cálculos de Bufins; información pública con fines informativos.", "Bufins calculations; public information for information only.")
         </p>
     </div>
 </section>

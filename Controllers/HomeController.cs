@@ -1,6 +1,6 @@
 using System;
-using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using bufinsweb.Models;
 using bufinsweb.Services;
 
@@ -8,27 +8,28 @@ namespace bufinsweb.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }
 
-        public ActionResult About()
+        public IActionResult About()
         {
             return View();
         }
 
-        public ActionResult Contact()
+        public IActionResult Contact()
         {
             // Embudo anónimo: ¿llegan a «Contacto» desde Pulso Bufins o de otro lado?
-            var desde = Request.UrlReferrer != null && Request.UrlReferrer.AbsolutePath.StartsWith("/pulso-bufins", StringComparison.OrdinalIgnoreCase) ? "pulso" : "otro";
+            Uri referente;
+            var desde = Uri.TryCreate(Request.Headers.Referer.ToString(), UriKind.Absolute, out referente) && referente.AbsolutePath.StartsWith("/pulso-bufins", StringComparison.OrdinalIgnoreCase) ? "pulso" : "otro";
             UsoService.Registrar(Request, "vista_contacto", desde, conOrigen: true);
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult Contact(ContactFormModel model)
+        public IActionResult Contact(ContactFormModel model)
         {
             try
             {
@@ -60,22 +61,30 @@ namespace bufinsweb.Controllers
         }
 
         [HttpGet]
-        public ActionResult SetLanguage(string lang, string returnUrl)
+        public IActionResult SetLanguage(string lang, string returnUrl)
         {
             if (lang == "es-CO" || lang == "en-US")
             {
-                var cookie = new HttpCookie("lang", lang)
+                Response.Cookies.Append("lang", lang, new CookieOptions
                 {
-                    Expires = DateTime.Now.AddYears(1),
-                    HttpOnly = true
-                };
-                Response.SetCookie(cookie);
+                    Expires = DateTimeOffset.Now.AddYears(1),
+                    HttpOnly = true,
+                    IsEssential = true
+                });
             }
 
             if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
                 returnUrl = "/";
 
             return Redirect(returnUrl);
+        }
+    
+        /// <summary>Página de error de producción (UseExceptionHandler): reemplaza a HandleError de MVC 5.</summary>
+        [Route("Home/Error")]
+        public IActionResult Error()
+        {
+            Response.StatusCode = 500;
+            return View("~/Views/Shared/Error.cshtml");
         }
     }
 }

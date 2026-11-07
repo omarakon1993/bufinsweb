@@ -6,9 +6,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using System.Web;
-using System.Web.Caching;
-using System.Web.Hosting;
 using bufinsweb.Helpers;
 using bufinsweb.Models.Pulso;
 using Newtonsoft.Json;
@@ -33,22 +30,22 @@ namespace bufinsweb.Services
         // ---------------------------------------------------------------- carga
 
         // HostingEnvironment (no HttpContext) para poder precargar desde Application_Start en un hilo de fondo
-        private static string Ruta(string archivo) { return HostingEnvironment.MapPath("~/App_Data/pulso/" + archivo); }
+        private static string Ruta(string archivo) { return AppPaths.Map("~/App_Data/pulso/" + archivo); }
 
         public PulsoDatos Datos
         {
             get
             {
-                var cached = HttpRuntime.Cache[CacheKey] as PulsoDatos;
+                var cached = ArchivosCache.Obtener<PulsoDatos>(CacheKey);
                 if (cached != null) return cached;
                 lock (Lock)
                 {
-                    cached = HttpRuntime.Cache[CacheKey] as PulsoDatos;
+                    cached = ArchivosCache.Obtener<PulsoDatos>(CacheKey);
                     if (cached != null) return cached;
                     var path = Ruta("empresas.bin");
                     var datos = Cargar(path, Ruta("meta.json"));
                     CacheBench.Clear();
-                    HttpRuntime.Cache.Insert(CacheKey, datos, new CacheDependency(new[] { path, Ruta("reglas.json"), Ruta("ipc.json"), Ruta("grandes.json") }), Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration);
+                    ArchivosCache.Guardar(CacheKey, datos, path, Ruta("reglas.json"), Ruta("ipc.json"), Ruta("grandes.json"));
                     return datos;
                 }
             }

@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
-using System.Web.Caching;
-using System.Web.Hosting;
 using Newtonsoft.Json;
 
 namespace bufinsweb.Helpers
@@ -30,11 +27,11 @@ namespace bufinsweb.Helpers
         /// <summary>Carga (o devuelve de caché) el catálogo; usa HostingEnvironment para poder invocarse desde hilos sin HttpContext.</summary>
         public static CiiuCatalogo Cargar()
         {
-            var c = HttpRuntime.Cache[CacheKey] as CiiuCatalogo;
+            var c = ArchivosCache.Obtener<CiiuCatalogo>(CacheKey);
             if (c != null) return c;
-            var path = HostingEnvironment.MapPath("~/App_Data/pulso/ciiu.json");
+            var path = AppPaths.Map("~/App_Data/pulso/ciiu.json");
             c = File.Exists(path) ? JsonConvert.DeserializeObject<CiiuCatalogo>(File.ReadAllText(path, Encoding.UTF8)) : new CiiuCatalogo();
-            HttpRuntime.Cache.Insert(CacheKey, c, File.Exists(path) ? new CacheDependency(path) : null);
+            ArchivosCache.Guardar(CacheKey, c, path);
             return c;
         }
 

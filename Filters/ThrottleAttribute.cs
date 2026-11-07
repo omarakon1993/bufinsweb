@@ -1,8 +1,6 @@
 using System;
-using System.Threading;
-using System.Web;
-using System.Web.Caching;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace bufinsweb.Filters
 {
@@ -14,8 +12,6 @@ namespace bufinsweb.Filters
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class ThrottleAttribute : ActionFilterAttribute
     {
-        private class Contador { public int N; }
-
         /// <summary>Nombre del grupo de límite (cada endpoint puede tener el suyo).</summary>
         public string Grupo { get; set; }
         /// <summary>Peticiones permitidas por ventana.</summary>
@@ -27,21 +23,14 @@ namespace bufinsweb.Filters
 
         public override void OnActionExecuting(ActionExecutingContext ctx)
         {
-            var ip = ctx.HttpContext.Request.UserHostAddress ?? "desconocida";
-            var clave = "thr:" + (Grupo ?? ctx.ActionDescriptor.ActionName) + ":" + ip;
-            var cache = HttpRuntime.Cache;
-            var c = cache[clave] as Contador;
-            if (c == null)
+            var accion = (string)ctx.RouteData.Values["action"] ?? "";
+            var grupo = Grupo ?? accion;
+            var clave = "thr:" + grupo + ":" + ctx.HttpContext.Ip();
+            if (VentanaFija.Incrementar(clave, Segundos) > Max)
             {
-                var nuevo = new Contador();
-                cache.Add(clave, nuevo, null, DateTime.UtcNow.AddSeconds(Segundos), Cache.NoSlidingExpiration, CacheItemPriority.Low, null);
-                c = cache[clave] as Contador ?? nuevo;
-            }
-            if (Interlocked.Increment(ref c.N) > Max)
-            {
-                bufinsweb.Services.UsoService.Contar("throttle_429", (Grupo ?? ctx.ActionDescriptor.ActionName).Replace(' ', '-'));
-                ctx.HttpContext.Response.AppendHeader("Retry-After", Segundos.ToString());
-                ctx.Result = new HttpStatusCodeResult(429, "Demasiadas solicitudes. Intente de nuevo en un momento.");
+                bufinsweb.Services.UsoService.Contar("throttle_429", grupo.Replace(' ', '-'));
+                ctx.HttpContext.Response.Headers["Retry-After"] = Segundos.ToString();
+                ctx.Result = new StatusCodeResult(429);
             }
         }
     }

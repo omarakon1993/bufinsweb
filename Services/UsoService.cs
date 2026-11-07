@@ -7,8 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Web;
-using System.Web.Hosting;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace bufinsweb.Services
@@ -133,20 +132,20 @@ namespace bufinsweb.Services
         /// Registra un evento anónimo. <paramref name="conOrigen"/> solo en vistas de página servidas por el servidor (en las
         /// llamadas del navegador el Referer es la propia página y no aporta).
         /// </summary>
-        public static void Registrar(HttpRequestBase req, string tipo, string clave = "", string detalle = "", string nombre = "",
+        public static void Registrar(HttpRequest req, string tipo, string clave = "", string detalle = "", string nombre = "",
             int ms = 0, int scroll = 0, string tz = "", int ancho = 0, bool conOrigen = false)
         {
             try
             {
-                if (req == null || !Tipos.Contains(tipo) || EsBot(req.UserAgent)) return;
+                if (req == null || !Tipos.Contains(tipo) || EsBot(req.UserAgentTexto())) return;
                 Contar(tipo == "perm" ? "perm" : tipo, tipo == "perm" ? CuboPermanencia(ms) : clave);
 
                 var fecha = Hoy();
                 if (_eventosDiaFecha != fecha) { _eventosDiaFecha = fecha; Interlocked.Exchange(ref _eventosDia, 0); }
                 if (Interlocked.Increment(ref _eventosDia) > MaxEventosPorDia) return;
 
-                var ip = req.UserHostAddress ?? "";
-                var ua = req.UserAgent ?? "";
+                var ip = req.HttpContext.Ip();
+                var ua = req.UserAgentTexto();
                 var v = Visitante(ip, ua);
                 if (PorVisitante.Count > 200000) PorVisitante.Clear();
                 if (PorVisitante.AddOrUpdate(fecha + "|" + v, 1, (_, cuenta) => cuenta + 1) > MaxEventosPorVisitanteDia) return;
@@ -161,7 +160,7 @@ namespace bufinsweb.Services
                 e["d"] = Dispositivo(ua, ancho);
                 var nav = Navegador(ua); e["b"] = nav;
                 e["s"] = SistemaOperativo(ua);
-                var l = Idioma(req.UserLanguages); if (l.Length > 0) e["l"] = l;
+                var l = Idioma(req.Headers.AcceptLanguage.ToString().Split(',')); if (l.Length > 0) e["l"] = l;
                 var z = LimpiarZona(tz); if (z.Length > 0) e["z"] = z;
                 if (conOrigen)
                 {
@@ -285,13 +284,13 @@ namespace bufinsweb.Services
         private static readonly string[] Redes = { "facebook.", "fb.com", "instagram.", "l.instagram", "t.co", "twitter.", "x.com", "linkedin.", "lnkd.in", "youtube.", "youtu.be", "whatsapp.", "wa.me", "tiktok.", "reddit.", "telegram.", "t.me", "pinterest." };
         private static readonly string[] Correos = { "mail.", "outlook.", "gmail.", "yahoo.com/mail", "proton." };
 
-        private static void Origen(HttpRequestBase req, out string categoria, out string host)
+        private static void Origen(HttpRequest req, out string categoria, out string host)
         {
             categoria = "directo"; host = "";
-            var r = req.UrlReferrer;
-            if (r == null) return;
+            Uri r;
+            if (!Uri.TryCreate(req.Headers.Referer.ToString(), UriKind.Absolute, out r)) return;
             var h = (r.Host ?? "").ToLowerInvariant();
-            var propio = (req.Url != null ? req.Url.Host : "").ToLowerInvariant();
+            var propio = req.Host.Host.ToLowerInvariant();
             if (h.Length == 0) return;
             if (h == propio || h.EndsWith(".bufins.com") || h == "bufins.com") { categoria = "interno"; return; }
             if (Buscadores.Any(x => h.Contains(x))) categoria = "buscador";
@@ -303,9 +302,9 @@ namespace bufinsweb.Services
             if (host.Length > 60) host = host.Substring(0, 60);
         }
 
-        private static string Utm(HttpRequestBase req)
+        private static string Utm(HttpRequest req)
         {
-            Func<string, string> g = k => Regex.Replace((req.QueryString[k] ?? "").ToLowerInvariant(), "[^a-z0-9_\\-]", "");
+            Func<string, string> g = k => Regex.Replace((req.Query[k].ToString() ?? "").ToLowerInvariant(), "[^a-z0-9_\\-]", "");
             string a = g("utm_source"), b = g("utm_medium"), c = g("utm_campaign");
             if (a.Length == 0 && b.Length == 0 && c.Length == 0) return "";
             Func<string, string> t = s => s.Length > 25 ? s.Substring(0, 25) : s;
@@ -314,7 +313,7 @@ namespace bufinsweb.Services
 
         // ------------------------------------------------------------------ volcado a disco
 
-        private static string CarpetaUso { get { return HostingEnvironment.MapPath("~/App_Data/pulso/uso"); } }
+        private static string CarpetaUso { get { return AppPaths.Map("~/App_Data/pulso/uso"); } }
 
         public static void Vaciar()
         {
@@ -378,8 +377,7 @@ namespace bufinsweb.Services
             var hoy = Hoy();
             if (_ultimaPurga == hoy) return;
             _ultimaPurga = hoy;
-            int dias;
-            if (!int.TryParse(System.Configuration.ConfigurationManager.AppSettings["ObsUsoRetencionDias"], out dias)) dias = 180;
+            int dias = bufinsweb.Helpers.EnvironmentHelper.GetIntVariable("ObsUsoRetencionDias", 180);
             dias = Math.Max(30, dias);
             var carpeta = Path.Combine(CarpetaUso, "eventos");
             if (!Directory.Exists(carpeta)) return;

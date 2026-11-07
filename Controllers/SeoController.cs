@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using bufinsweb.Models.Pulso;
 using bufinsweb.Services;
 
@@ -23,7 +23,7 @@ namespace bufinsweb.Controllers
             "facebookexternalhit", "WhatsApp", "LinkedInBot", "Twitterbot", "Slackbot", "TelegramBot"
         };
 
-        public ActionResult Robots()
+        public IActionResult Robots()
         {
             var baseUrl = BaseUrl();
             var sb = new StringBuilder();
@@ -44,7 +44,7 @@ namespace bufinsweb.Controllers
         }
 
         /// <summary>Índice de sitemaps: páginas, sectores, rankings y empresas (en trozos de 10.000).</summary>
-        public ActionResult Sitemap()
+        public IActionResult Sitemap()
         {
             var svc = new PulsoService();
             var d = svc.Datos;
@@ -60,7 +60,7 @@ namespace bufinsweb.Controllers
             return Xml(sb.ToString());
         }
 
-        public ActionResult SitemapParte(string archivo)
+        public IActionResult SitemapParte(string archivo)
         {
             var svc = new PulsoService();
             var d = svc.Datos;
@@ -90,20 +90,19 @@ namespace bufinsweb.Controllers
             else if (archivo.StartsWith("sitemap-empresas-", StringComparison.Ordinal))
             {
                 int i;
-                if (!int.TryParse(archivo.Substring(17), out i) || i < 1) return HttpNotFound();
+                if (!int.TryParse(archivo.Substring(17), out i) || i < 1) return NotFound();
                 var lista = d.Empresas.Where(x => x.En(d.MaxAnio, d.MinAnio) != null).Skip((i - 1) * PorArchivo).Take(PorArchivo).ToList();
-                if (lista.Count == 0) return HttpNotFound();
+                if (lista.Count == 0) return NotFound();
                 foreach (var e in lista) Add(sb, b + PulsoService.UrlEmpresa(e), lm, "0.5");
             }
-            else return HttpNotFound();
+            else return NotFound();
             sb.Append("</urlset>");
             return Xml(sb.ToString());
         }
 
-        private ActionResult Xml(string xml)
+        private IActionResult Xml(string xml)
         {
-            Response.Cache.SetCacheability(HttpCacheability.Public);
-            Response.Cache.SetMaxAge(TimeSpan.FromHours(6));
+            Response.Headers["Cache-Control"] = "public, max-age=21600";
             // text/xml (valido para sitemaps): IIS lo comprime con gzip; application/xml sale sin comprimir (1,5 MB por archivo)
             return Content(xml, "text/xml", Encoding.UTF8);
         }
@@ -128,7 +127,7 @@ namespace bufinsweb.Controllers
 
         private string BaseUrl()
         {
-            return Request.Url.GetLeftPart(System.UriPartial.Authority);
+            return Request.BaseUrl();
         }
     }
 }

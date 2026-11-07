@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Html;
 using bufinsweb.Services;
 using Newtonsoft.Json.Linq;
 
@@ -9,14 +9,14 @@ namespace bufinsweb.Helpers
     /// <summary>Datos estructurados (JSON-LD) de Pulso Bufins: FAQPage y BreadcrumbList.</summary>
     public static class PulsoSeo
     {
-        private static IHtmlString Script(JObject o)
+        private static IHtmlContent Script(JObject o)
         {
             // "</" dentro de un bloque script cerraría la etiqueta antes de tiempo
             var json = o.ToString(Newtonsoft.Json.Formatting.None).Replace("</", "<\\/");
             return new HtmlString("<script type=\"application/ld+json\">" + json + "</script>");
         }
 
-        public static IHtmlString Faq(PulsoService.Narrativa n)
+        public static IHtmlContent Faq(PulsoService.Narrativa n)
         {
             if (n == null || n.Faqs.Count == 0) return new HtmlString("");
             return Script(new JObject
@@ -28,7 +28,7 @@ namespace bufinsweb.Helpers
         }
 
         /// <summary>Migas de pan: pares (nombre, URL absoluta).</summary>
-        public static IHtmlString Breadcrumb(IEnumerable<KeyValuePair<string, string>> items)
+        public static IHtmlContent Breadcrumb(IEnumerable<KeyValuePair<string, string>> items)
         {
             var i = 0;
             return Script(new JObject
@@ -39,6 +39,6 @@ namespace bufinsweb.Helpers
             });
         }
 
-        public static IHtmlString Json(JObject o) { return Script(o); }
+        public static IHtmlContent Json(JObject o) { return Script(o); }
     }
 }
