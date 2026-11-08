@@ -16,6 +16,8 @@ dotnet build
 dotnet publish bufinsweb.csproj -c Release -r win-x64 --self-contained true -o <carpeta>   # paquete para el hosting (Conexcol no tiene el runtime de .NET 10)
 ```
 
+**Publicar desde Visual Studio (el botón de siempre):** clic derecho en el proyecto → Publicar → perfil «bufins.com - Web Deploy» (`Properties/PublishProfiles/bufins.com - Web Deploy.pubxml`, versionado a la fuerza porque `*.pubxml` está en `.gitignore`; la contraseña de Web Deploy la guarda VS cifrada en el `.pubxml.user`, que NO se versiona). Ya trae self-contained win-x64, `app_offline` durante la copia y no borra lo que solo existe en el servidor (`secretsSettings.json`, `App_Data/pulso/uso`, `.user.ini`). **No usar perfiles de publicación viejos de .NET Framework**: publicarían sin el runtime y el sitio daría error 500. Alternativa por línea de comandos con respaldo y restauración: `Tools/Despliegue/Desplegar-Bufins.ps1`.
+
 Publicar con `bufinsweb.csproj` explícito (la carpeta tiene también el `.sln`). El paquete incluye `Assets/`, `App_Data/pulso/` (menos `uso/`, `etl.lock`, `etl_status.json`) y `web.config` (IIS); **nunca** `secretsSettings.*` (excluidos en el `.csproj`).
 
 ## Architecture
