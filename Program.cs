@@ -96,6 +96,12 @@ foreach (var icono in new[] { "favicon.ico", "Bufins_Favicon_Ink.ico" })
     });
 }
 
+// Verificacion de propiedad en Google Search Console (metodo "Archivo HTML"). Google pide un archivo en la raiz cuyo contenido es
+// exactamente "google-site-verification: <nombre del archivo>". NO ELIMINAR esta ruta: Google la vuelve a comprobar de vez en cuando
+// y, si deja de responder, la propiedad pierde la verificacion.
+const string archivoGoogle = "google3b96dec6ec0811ba.html";
+app.MapMethods("/" + archivoGoogle, new[] { "GET", "HEAD" }, () => Results.Text("google-site-verification: " + archivoGoogle, "text/html", System.Text.Encoding.UTF8));
+
 // Idioma: cookie "lang" con "es-CO" o "en-US" (la escribe Home/SetLanguage). Por defecto es-CO; no se usa Accept-Language.
 var idiomas = new[] { new CultureInfo("es-CO"), new CultureInfo("en-US") };
 var localizacion = new RequestLocalizationOptions
