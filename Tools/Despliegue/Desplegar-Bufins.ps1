@@ -22,7 +22,7 @@ param(
     [Parameter(Mandatory = $true)][ValidateSet('Respaldar', 'Publicar', 'SubirSecretos', 'Restaurar')][string]$Accion,
     [string]$Paquete = 'C:\Users\omara_\bufins-despliegue\paquete-net10',
     [string]$Respaldo,
-    [string]$Secretos = (Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'secretsSettings.json'),
+    [string]$Secretos,
     [string]$Servicio = 'https://bufins.com:8172/msdeploy.axd?site=bufins.com',
     [string]$Sitio = 'bufins.com',
     [string]$Usuario = 'oglearni',
@@ -31,6 +31,10 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $Secretos) {
+    $carpetaScript = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
+    $Secretos = Join-Path (Split-Path (Split-Path $carpetaScript -Parent) -Parent) 'secretsSettings.json'
+}
 $carpetaBase = 'C:\Users\omara_\bufins-despliegue'
 
 $msdeploy = @('C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe', 'C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe') |
@@ -50,6 +54,7 @@ $conexion = "computerName=`"$Servicio`",userName=$Usuario,password=`"$clave`",au
 # Rutas y archivos del servidor que NUNCA se tocan al publicar
 $omitir = @(
     '-skip:objectName=dirPath,absolutePath=".*\\App_Data\\pulso\\uso$"',
+    '-skip:objectName=dirPath,absolutePath=".*\\App_Data\\dpkeys$"',    # llaves de proteccion de datos (antiforgery): no borrar
     '-skip:objectName=dirPath,absolutePath=".*\\logs$"',
     '-skip:objectName=filePath,absolutePath=".*\\secretsSettings\.json$"',
     '-skip:objectName=filePath,absolutePath=".*\\\.user\.ini$"'    # archivo de Plesk: no se toca
