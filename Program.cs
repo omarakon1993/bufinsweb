@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using bufinsweb;
 using bufinsweb.Filters;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using bufinsweb.Helpers;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,24 @@ EnvironmentHelper.Iniciar(builder.Configuration);
 Bundles.Configurar(builder.Environment);
 
 builder.WebHost.ConfigureKestrel(o => o.AddServerHeader = false);   // no anunciar el servidor (solo aplica a Kestrel; en IIS lo quita web.config)
+
+// Llaves de proteccion de datos (antiforgery del formulario de contacto): se guardan en disco solo si la carpeta es escribible.
+// En el hosting de Conexcol la identidad del sitio puede no tener permiso para crear archivos en App_Data\dpkeys; en ese caso
+// las llaves viven en memoria (un reinicio invalida los formularios abiertos) y la aplicacion no cae.
+var dp = builder.Services.AddDataProtection().SetApplicationName("bufinsweb");
+var carpetaLlaves = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "dpkeys");
+try
+{
+    Directory.CreateDirectory(carpetaLlaves);
+    var prueba = Path.Combine(carpetaLlaves, Guid.NewGuid().ToString("N") + ".prueba");
+    File.WriteAllText(prueba, "ok");
+    File.Delete(prueba);
+    dp.PersistKeysToFileSystem(new DirectoryInfo(carpetaLlaves));
+}
+catch (Exception)
+{
+    Console.Error.WriteLine("DataProtection: la carpeta de llaves no es escribible; se usan llaves en memoria.");
+}
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHostedService<InicioEnSegundoPlano>();

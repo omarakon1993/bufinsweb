@@ -385,3 +385,6 @@ Tools/PulsoEtl/obj/
 App_Data/pulso/uso/
 
 secretsSettings.json
+
+# Llaves de proteccion de datos (generadas por la aplicacion)
+App_Data/dpkeys/

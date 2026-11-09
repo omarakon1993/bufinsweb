@@ -10,6 +10,11 @@
     <UserSecretsId>bufinsweb-7c1f0a52</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <NoWarn>$(NoWarn);CA1416;ASP0019</NoWarn>
+
+    <!-- Hosting compartido: GC de estacion de trabajo y no concurrente (el modo servidor reserva un monton por nucleo y multiplica la memoria) -->
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <TieredPGO>false</TieredPGO>
   </PropertyGroup>
 
   <!-- Tools\PulsoEtl es otro programa (.NET Framework, el ETL): no forma parte del sitio -->
